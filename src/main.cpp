@@ -7,10 +7,11 @@
 Game *game = nullptr;
 
 int main() {
-  // initialize ncurses
+  // initialize curses
   initscr();
   noecho();
   cbreak();
+  start_color();
   keypad(stdscr, true);
   nodelay(stdscr, true);
 
@@ -18,5 +19,8 @@ int main() {
   game = new Game(stdscr);
   game->run();
   delete game;
+
+  // stop curses
+  endwin();
   return 0;
 }

@@ -24,5 +24,5 @@ find_package(Curses REQUIRED)
 add_executable(tank ${CMAKE_CXX_HEADERS} ${CMAKE_CXX_SOURCES})
 
 include_directories(${CMAKE_CXX_INCLUDE_PATH} ${CURSES_INCLUDE_DIR})
-target_link_libraries(tank PRIVATE ${CURSES_LIBRARIES})
+target_link_libraries(tank PRIVATE menu ${CURSES_LIBRARIES})
 target_compile_options(tank PRIVATE ${CMAKE_CXX_COMPILE_FLAGS})
