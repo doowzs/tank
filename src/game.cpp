@@ -6,23 +6,22 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <chrono>
 
 #define DEBUG true
 #include <debug.h>
 
-Game::Game(WINDOW *screen, int fps /* 60 */) {
-  fps = fps;
+Game::Game(WINDOW *screen, int fps) : fps(fps), screen(screen) {
   status = STATUS_INIT;
-  screen = screen;
 }
 
 // Run the game process.
 void Game::run() {
-  while (true) {
+  while (true && status != STATUS_EXIT) {
     menu();
-    if (status == STATUS_EXIT) break;
-    play();
-    if (status == STATUS_EXIT) break;
+    if (status != STATUS_EXIT) {
+      play();
+    }
   }
 }
 
@@ -41,9 +40,9 @@ void Game::menu() {
   menu = new_menu(items);
   set_menu_mark(menu, " -> ");
 
-  mvprintw(0, 0, "Hello!");
   post_menu(menu);
   wrefresh(stdscr);
+  status = STATUS_MENU;
 
   while (!selected) {
     int ch = getch();
@@ -76,10 +75,29 @@ void Game::menu() {
 }
 
 // Play the tank game.
-void Game::play() { Panic("please implement me"); }
+void Game::play() {
+  using namespace std::chrono;
+  using namespace std::chrono_literals;
+
+  milliseconds frame, now;
+  frame = now = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+
+  Assert(fps > 0, "fps must be positive");
+
+  status = STATUS_GAME;
+  while (status == STATUS_GAME) {
+    while (now < frame) {
+      now = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+    }
+    frame = now + (1000 / fps) * 1ms; // next tick
+    tick();
+  }
+  Assert(status == STATUS_OVER, "not over after game");
+  over();
+}
 
 // Handle the game logic.
-void Game::tick() { Panic("please implement me"); }
+void Game::tick() { Log("tick"); }
 
 // Show game over and options.
 void Game::over() { Panic("please implement me"); }

@@ -15,6 +15,7 @@
 class Game {
  private:
   int fps;
+  
   int status;
   WINDOW *screen;
 
