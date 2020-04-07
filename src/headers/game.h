@@ -6,17 +6,18 @@
 
 #include <ncurses.h>
 
-#define STATUS_INIT 0
-#define STATUS_MENU 1
-#define STATUS_GAME 2
-#define STATUS_OVER 3
-#define STATUS_EXIT -1
+enum GameStatus {
+  STATUS_INIT,
+  STATUS_MENU,
+  STATUS_PLAY,
+  STATUS_OVER,
+  STATUS_EXIT,
+};
 
 class Game {
  private:
   int fps;
-  
-  int status;
+  enum GameStatus status;
   WINDOW *screen;
 
  public:

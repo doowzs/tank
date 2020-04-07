@@ -84,8 +84,8 @@ void Game::play() {
 
   Assert(fps > 0, "fps must be positive");
 
-  status = STATUS_GAME;
-  while (status == STATUS_GAME) {
+  status = STATUS_PLAY;
+  while (status == STATUS_PLAY) {
     while (now < frame) {
       now = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
     }
