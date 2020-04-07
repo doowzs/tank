@@ -3,16 +3,17 @@
 #include <game.h>
 #include <menu.h>
 #include <ncurses.h>
+#include <object.h>
 
+#include <chrono>
 #include <cstdlib>
 #include <cstring>
-#include <chrono>
 
 #define DEBUG true
 #include <debug.h>
 
 Game::Game(WINDOW *screen, int fps) : fps(fps), screen(screen) {
-  status = STATUS_INIT;
+  status = STATUS_NULL;
 }
 
 // Run the game process.
@@ -20,6 +21,7 @@ void Game::run() {
   while (true && status != STATUS_EXIT) {
     menu();
     if (status != STATUS_EXIT) {
+      init();
       play();
     }
   }
@@ -36,7 +38,7 @@ void Game::menu() {
   items[0] = new_item("Play", "Play the game.");
   items[1] = new_item("Exit", "Exit the game.");
   items[2] = new_item(nullptr, nullptr);
-  
+
   menu = new_menu(items);
   set_menu_mark(menu, " -> ");
 
@@ -74,13 +76,20 @@ void Game::menu() {
   }
 }
 
+// Initialize the game.
+void Game::init() {
+  status = STATUS_INIT;
+  // TODO: prepare objects
+}
+
 // Play the tank game.
 void Game::play() {
   using namespace std::chrono;
   using namespace std::chrono_literals;
 
   milliseconds frame, now;
-  frame = now = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+  frame = now =
+      duration_cast<milliseconds>(system_clock::now().time_since_epoch());
 
   Assert(fps > 0, "fps must be positive");
 
@@ -89,7 +98,7 @@ void Game::play() {
     while (now < frame) {
       now = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
     }
-    frame = now + (1000 / fps) * 1ms; // next tick
+    frame = now + (1000 / fps) * 1ms;  // next tick
     tick();
   }
   Assert(status == STATUS_OVER, "not over after game");

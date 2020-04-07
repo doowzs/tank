@@ -4,11 +4,15 @@
 #ifndef TANK_GAME_H
 #define TANK_GAME_H
 
-#include <ncurses.h>
+#include <object.h>
+
+#include <vector>
+using std::vector;
 
 enum GameStatus {
-  STATUS_INIT,
+  STATUS_NULL,
   STATUS_MENU,
+  STATUS_INIT,
   STATUS_PLAY,
   STATUS_OVER,
   STATUS_EXIT,
@@ -19,6 +23,7 @@ class Game {
   int fps;
   enum GameStatus status;
   WINDOW *screen;
+  vector<Object *> objects;
 
  public:
   Game() = delete;
@@ -26,6 +31,7 @@ class Game {
   ~Game() = default;
   void run();
   void menu();
+  void init();
   void play();
   void tick();
   void over();

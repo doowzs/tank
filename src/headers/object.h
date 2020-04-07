@@ -3,6 +3,8 @@
 #ifndef TANK_OBJECT_H
 #define TANK_OBJECT_H
 
+#include <curses.h>
+
 enum ObjectType {
   OBJECT_BASE,
   OBJECT_PLAYER,
