@@ -25,9 +25,11 @@ class Game {
   unsigned long frame;
   enum GameStatus status;
   WINDOW *screen;
-  Player *world;
-  vector<Player *> players;
-  vector<Object *> objects;
+  Player *world;             // fake player
+  vector<Player *> players;  // real players
+  vector<Object *> objects;  // current objects
+  vector<Object *> appends;  // new objects
+  vector<Object *> brokens;  // past objects
 
  public:
   Game() = delete;

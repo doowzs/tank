@@ -60,7 +60,6 @@ void Game::tick() {
   // First, run all objects.
   {
     using namespace std;
-    vector<const Object *> brokens = vector<const Object *>();
     for (auto &object : objects) {
       if (object->broken()) continue;
       (*object)();
@@ -73,7 +72,7 @@ void Game::tick() {
       }
     }
     objects.erase(remove_if(objects.begin(), objects.end(),
-                            [&brokens](const Object *object) -> bool {
+                            [this](Object *object) -> bool {
                               if (object->broken()) {
                                 brokens.emplace_back(object);
                                 return true;
@@ -88,6 +87,11 @@ void Game::tick() {
       }
       delete broken;
     }
+    for (auto &append : appends) {
+      objects.emplace_back(append);
+    }
+    brokens.clear();
+    appends.clear();
   }
 
   // Second, redraw the game.
@@ -127,6 +131,6 @@ void Game::addObject(Object *object) {
     }
   }
   if (valid) {
-    objects.emplace_back(object);
+    appends.emplace_back(object);
   }
 }
