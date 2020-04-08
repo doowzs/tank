@@ -1,21 +1,21 @@
 // Definition of the game class.
 // Tianyun Zhang 2020 all rights reserved.
+
+#include <common.h>
 #include <game.h>
 #include <menu.h>
 #include <ncurses.h>
 #include <object.h>
 #include <objects/base.h>
 #include <objects/bullet.h>
+#include <player.h>
 
 #include <algorithm>
 #include <chrono>
 #include <cstdlib>
 #include <cstring>
 
-#define DEBUG true
-#include <debug.h>
-
-Game::Game(WINDOW *screen, int fps) : fps(fps), screen(screen) {
+Game::Game(WINDOW *screen, int fps) : fps(fps), frame(0), screen(screen) {
   status = STATUS_NULL;
 }
 
@@ -85,8 +85,8 @@ void Game::init() {
   status = STATUS_INIT;
   Log("initializing");
 
-  world = new Player;
-  Player *player = new Player;
+  world = new Player(this);
+  Player *player = new Player(this);
   players.emplace_back(player);
 
   Base *base = new Base(player, 0, 100);
@@ -132,6 +132,7 @@ void Game::play() {
 // Handle the game logic.
 void Game::tick() {
   wclear(screen);
+  Log("frame %lu\n", frame++);
 
   // First, run all objects.
   {
@@ -158,7 +159,7 @@ void Game::tick() {
                             }),
                   objects.end());
     for (auto &broken : brokens) {
-      if (broken->isBase()) {
+      if (broken->getType() == OBJECT_BASE) {
         // One base of players broken, game over.
         status = STATUS_OVER;
       }
@@ -191,5 +192,18 @@ void Game::over() {
       delete object;
     }
     objects.clear();
+  }
+}
+
+void Game::addObject(Object *object) {
+  bool valid = false;
+  for (auto &player : players) {
+    if (player == object->getPlayer()) {
+      valid = true;
+      break;
+    }
+  }
+  if (valid) {
+    objects.emplace_back(object);
   }
 }

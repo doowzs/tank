@@ -1,13 +1,12 @@
 // Definition of the object abstract class.
 // Tianyun Zhang 2020 all rights reserved.
 
+#include <common.h>
 #include <curses.h>
 #include <object.h>
+#include <player.h>
 
 #include <cstring>
-
-#define DEBUG true
-#include <debug.h>
 
 Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,
                int height, int width, const char *pattern)
@@ -64,17 +63,17 @@ Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,
 void Object::move() {
   // FIXME: border and collision detection
   if (speed_y != 0) {
-    tick_y += speed_y < 0 ? 1 : -1;
-    if (tick_y == 0) {
+    tick_y = tick_y - 1;
+    if (tick_y <= 0) {
       pos_y += speed_y < 0 ? -1 : 1;
-      tick_y = speed_y;
+      tick_y = speed_y < 0 ? -speed_y : speed_y;
     }
   }
   if (speed_x != 0) {
-    tick_x += speed_x < 0 ? 1 : -1;
-    if (tick_x == 0) {
+    tick_x = tick_x - 1;
+    if (tick_x <= 0) {
       pos_x += speed_x < 0 ? -1 : 1;
-      tick_x = speed_x;
+      tick_x = speed_x < 0 ? -speed_x : speed_x;
     }
   }
   Log("move to %d, %d", pos_y, pos_x);

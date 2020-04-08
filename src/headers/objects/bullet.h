@@ -4,6 +4,7 @@
 #ifndef TANK_BULLET_H
 #define TANK_BULLET_H
 
+#include <common.h>
 #include <object.h>
 
 class Bullet : public Object {

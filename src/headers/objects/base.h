@@ -4,6 +4,7 @@
 #ifndef TANK_BASE_H
 #define TANK_BASE_H
 
+#include <common.h>
 #include <object.h>
 
 class Base : public Object {

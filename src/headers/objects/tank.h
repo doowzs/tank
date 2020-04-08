@@ -6,6 +6,9 @@
 
 #include <object.h>
 
+// forward declarations
+class Bullet;
+
 enum Direction {
   D_UP,
   D_DOWN,
@@ -18,46 +21,12 @@ class Tank : public Object {
   enum Direction direction;
 
  public:
-  Tank(Player *player, int pos_y, int pos_x)
-      : Object(player, OBJECT_TANK, pos_y, pos_x, 3, 3, "         ", 3),
-        direction(direction) {}
-  void operator()() {
-    // TODO
-  }
-  void operator()(__attribute__((unused)) Object *object) {}
-  void update() {
-    switch (direction) {
-      case D_UP:
-        sprintf(pattern,
-                " + "
-                "+%c+"
-                "+++",
-                (char)('0' + life));
-        return;
-      case D_DOWN:
-        sprintf(pattern,
-                "+++"
-                "+%c+"
-                " + ",
-                (char)('0' + life));
-        return;
-      case D_LEFT:
-        sprintf(pattern,
-                " ++"
-                "+%c+"
-                " ++",
-                (char)('0' + life));
-        return;
-      case D_RIGHT:
-        sprintf(pattern,
-                "++ "
-                "+%c+"
-                "++ ",
-                (char)('0' + life));
-        return;
-    }
-    Panic("should not reach here");
-  }
+  Tank(Player *player, int pos_y, int pos_x, enum Direction direction);
+  void operator()();
+  void operator()(Object *object);
+  void shoot();
+  void move(int dy, int dx);
+  void update();
 };
 
 #endif

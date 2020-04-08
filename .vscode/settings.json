@@ -4,6 +4,7 @@
     "*.tcc": "cpp",
     "functional": "cpp",
     "random": "cpp",
-    "type_traits": "cpp"
+    "type_traits": "cpp",
+    "cstring": "cpp"
   }
 }

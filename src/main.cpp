@@ -1,10 +1,10 @@
 // Main entry of the tank game.
 // Tianyun Zhang 2020 all rights reserved.
 
+#include <common.h>
 #include <curses.h>
 #include <game.h>
 
-#define DEBUG true
 #if DEBUG
 int line = 0; // <- debug purpose
 #endif

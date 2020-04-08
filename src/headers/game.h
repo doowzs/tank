@@ -4,10 +4,14 @@
 #ifndef TANK_GAME_H
 #define TANK_GAME_H
 
-#include <object.h>
+#include <curses.h>
 
 #include <vector>
 using std::vector;
+
+// forward decalaration
+class Player;
+class Object;
 
 enum GameStatus {
   STATUS_NULL,
@@ -21,6 +25,7 @@ enum GameStatus {
 class Game {
  private:
   int fps;
+  unsigned long frame;
   enum GameStatus status;
   WINDOW *screen;
   Player *world;
@@ -36,6 +41,7 @@ class Game {
   void play();
   void tick();
   void over();
+  void addObject(Object *object);
 };
 
 #endif

@@ -4,10 +4,9 @@
 #define TANK_OBJECT_H
 
 #include <curses.h>
-#include <player.h>
 
-#define DEBUG true
-#include <debug.h>
+// forward declaration
+class Player;
 
 enum ObjectType {
   OBJECT_BASE,
@@ -44,7 +43,8 @@ class Object {
   virtual void update();
   bool broken() const;
   void draw(WINDOW *window) const;
-  bool isBase() const { return type == OBJECT_BASE; }
+  enum ObjectType getType() const { return type; }
+  Player *getPlayer() const { return player; }
   friend bool collide(const Object *obj1, const Object *obj2);
 };
 

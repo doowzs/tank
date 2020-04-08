@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.13)
 project(tank)
 
-file(GLOB CMAKE_CXX_SOURCES src/*.cpp)
-file(GLOB CMAKE_CXX_HEADERS src/headers/*.h)
+file(GLOB CMAKE_CXX_SOURCES src/*.cpp src/**/*.cpp)
+file(GLOB CMAKE_CXX_HEADERS src/headers/*.h src/headers/**/*.h)
 set(CMAKE_CXX_INCLUDE_PATH src/headers)
 set(CMAKE_CXX_STANDARD 17)
 
