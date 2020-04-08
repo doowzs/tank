@@ -5,11 +5,18 @@
 #define TANK_PLAYER_H
 
 #include <vector>
-using std::vector;
+#include <string>
+using std::vector, std::string;
 
 // forward declaration
 class Game;
 class Object;
+
+enum ClientStatus {
+  CLIENT_INIT,
+  CLIENT_PLAY,
+  CLIENT_OVER,
+};
 
 enum Action {
   ACTION_IDLE,
@@ -22,33 +29,36 @@ enum Action {
 
 class Client {
  private:
+  int fps;
   int frame;
+  enum ClientStatus status;
   vector<Object *> objects;
 
  public:
-  Client() = default;
-  virtual ~Client() = default;
-  virtual enum Action act();
-  virtual void sync();
-  virtual void draw();
+  Client() = delete;
+  explicit Client(int fps);
+  virtual ~Client();
+  void run();
+  virtual enum Action act() = 0;
+  virtual void tick() = 0;
 };
 
-class LocalClient : public Client {
+class SocketClient : public Client {
+ private:
+  string addr, port;
  public:
-  LocalClient() = default;
+  SocketClient(int fps, string addr, string port);
   enum Action act();
+  void tick();
+  void sync();
+  void draw();
 };
 
-class RemoteClient : public Client {
+class LocalAIClient : public Client {
  public:
-  RemoteClient() = default;
+  LocalAIClient(int fps);
   enum Action act();
-};
-
-class AIClient : public Client {
- public:
-  AIClient() = default;
-  enum Action act();
+  void tick();
 };
 
 #endif

@@ -62,4 +62,6 @@ Bullet *Tank::shoot() {
     case D_RIGHT:
       return new Bullet(client, pos_y + 1, pos_x + 3, 0, BULLET_SPEED);
   }
+  Panic("should not reach here");
+  return nullptr;
 }

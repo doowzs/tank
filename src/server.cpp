@@ -15,19 +15,19 @@
 #include <chrono>
 #include <cstdlib>
 #include <cstring>
+#include <string>
+using std::string, std::move, std::remove_if;
 
-Server::Server(int fps) : fps(fps), frame(0) {
+Server::Server(int fps, string addr) : fps(fps), frame(0), addr(move(addr)) {
   status = SERVER_INIT;
-
-  world = new Client();
 }
 
 void Server::run() {
   using namespace std::chrono;
   using namespace std::chrono_literals;
 
-  milliseconds frame, now;
-  frame = now =
+  milliseconds next, now;
+  next = now =
       duration_cast<milliseconds>(system_clock::now().time_since_epoch());
 
   status = SERVER_PLAY;
@@ -35,10 +35,10 @@ void Server::run() {
   Assert(fps > 0, "fps must be positive");
 
   while (status == SERVER_PLAY) {
-    while (now < frame) {
+    while (now < next) {
       now = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
     }
-    frame = now + (1000 / fps) * 1ms;  // next tick
+    next = now + (1000 / fps) * 1ms;  // next tick
     tick();
   }
   Assert(status == SERVER_OVER, "not over after Server");
@@ -46,63 +46,44 @@ void Server::run() {
 }
 
 void Server::tick() {
-  wclear(screen);
-  Log("frame %lu\n", frame++);
-
-  // First, run all objects.
-  {
-    using namespace std;
-    for (auto &object : objects) {
-      if (object->broken()) continue;
-      (*object)();
-      for (auto &target : objects) {
-        if (target == object) continue;
-        if (target->broken()) continue;
-        if (collide(object, target)) {
-          (*object)(target);
-        }
+  for (auto &object : objects) {
+    if (object->broken()) continue;
+    (*object)();
+    for (auto &target : objects) {
+      if (target == object) continue;
+      if (target->broken()) continue;
+      if (collide(object, target)) {
+        (*object)(target);
       }
     }
-    objects.erase(remove_if(objects.begin(), objects.end(),
-                            [this](Object *object) -> bool {
-                              if (object->broken()) {
-                                brokens.emplace_back(object);
-                                return true;
-                              }
-                              return false;
-                            }),
-                  objects.end());
-    for (auto &broken : brokens) {
-      if (broken->getType() == OBJECT_BASE) {
-        // One base of players broken, Server over.
-        status = SERVER_OVER;
-      }
-      delete broken;
-    }
-    for (auto &append : appends) {
-      objects.emplace_back(append);
-    }
-    brokens.clear();
-    appends.clear();
   }
-
-  // Second, redraw the Server.
-  {
-    for (auto &object : objects) {
-      object->update();
-      object->draw(screen);
+  objects.erase(remove_if(objects.begin(), objects.end(),
+                          [this](Object *object) -> bool {
+                            if (object->broken()) {
+                              brokens.emplace_back(object);
+                              return true;
+                            }
+                            return false;
+                          }),
+                objects.end());
+  for (auto &broken : brokens) {
+    if (broken->getType() == OBJECT_BASE) {
+      // One base of players broken, Server over.
+      status = SERVER_OVER;
     }
-    wrefresh(screen);
+    delete broken;
   }
+  for (auto &append : appends) {
+    objects.emplace_back(append);
+  }
+  brokens.clear();
+  appends.clear();
 }
 
 void Server::over() {
-  Log("Server Over");
   Assert(status == SERVER_OVER, "not over in over");
   // Destroy all players and objects.
   {
-    delete world;
-    world = nullptr;
     for (auto &client : clients) {
       delete client;
     }

@@ -13,8 +13,11 @@
 extern int line;
 #define wclear(s) wclear(s); line = 0;
 #define Log(format, ...) \
-  mvwprintw(stdscr, line++, 0, "[%s,%d,%s] " format, \
-    __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+  do { \
+    mvwprintw(stdscr, line++, 0, "[%s,%d,%s] " format, \
+    __FILE__, __LINE__, __func__, ## __VA_ARGS__); \
+    wrefresh(stdscr); \
+  } while (0)
 #else
 #define Log(format, ...) ;
 #endif

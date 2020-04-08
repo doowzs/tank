@@ -6,6 +6,9 @@
 
 #include <curses.h>
 
+#include <string>
+using std::string;
+
 // forward declarations
 class Server;
 
@@ -22,11 +25,12 @@ enum AppStatus {
 class App {
  public:
   static const int FPS;
+  static const string addr;
+  static const string port;
 
  private:
   enum AppStatus status;
   WINDOW *screen;
-  Server *server;
 
  public:
   App() = delete;

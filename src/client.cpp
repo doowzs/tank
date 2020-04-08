@@ -6,7 +6,47 @@
 #include <curses.h>
 #include <object.h>
 
-enum Action Client::act() {
+#include <chrono>
+#include <string>
+using std::string, std::move;
+
+Client::Client(int fps) : fps(fps), frame(0) {
+  status = CLIENT_INIT;
+  objects = vector<Object *>();
+}
+
+Client::~Client() {
+  for (auto &object : objects) {
+    delete object;
+  }
+}
+
+void Client::run() {
+  using namespace std::chrono;
+  using namespace std::chrono_literals;
+
+  milliseconds next, now;
+  next = now =
+      duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+
+  status = CLIENT_PLAY;
+  Log("Client start");
+  Assert(fps > 0, "fps must be positive");
+
+  while (status == CLIENT_PLAY) {
+    while (now < next) {
+      now = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+    }
+    next = now + (1000 / fps) * 1ms;  // next tick
+    tick();
+  }
+  Assert(status == CLIENT_OVER, "not over after Server");
+}
+
+SocketClient::SocketClient(int fps, string addr, string port)
+    : Client(fps), addr(move(addr)), port(move(port)) {}
+
+enum Action SocketClient::act() {
   int input = ERR, cur = ERR;
 
   // only take the last input
@@ -29,6 +69,19 @@ enum Action Client::act() {
   return ACTION_IDLE;
 }
 
-enum Action AIClient::act() {
+void SocketClient::tick() {
+  sync();
+  draw();
+}
+
+void SocketClient::sync() {}
+
+void SocketClient::draw() {}
+
+LocalAIClient::LocalAIClient(int fps) : Client(fps) {}
+
+enum Action LocalAIClient::act() {
   return ACTION_IDLE;  // FIXME
 }
+
+void LocalAIClient::tick() {}

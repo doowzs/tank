@@ -2,35 +2,43 @@
 // Tianyun Zhang 2020 all rights reserved.
 
 #include <app.h>
+#include <client.h>
 #include <common.h>
 #include <curses.h>
-#include <server.h>
 #include <menu.h>
+#include <server.h>
 
 #include <cstdlib>
+#include <thread>
+#include <string>
+using std::string, std::to_string;
 
 const int App::FPS = 30;
+const string App::addr = "0.0.0.0";
+const string App::port = "23333";
 
-App::App(WINDOW *screen) : screen(screen) {
-  status = APP_INIT;
-  server = nullptr;
-}
+App::App(WINDOW *screen) : screen(screen) { status = APP_INIT; }
 
-App::~App() {
-  if (server != nullptr) {
-    delete server;
-  }
-}
+App::~App() {}
 
 void App::run() {
   while (status != APP_EXIT) {
     menu();
     switch (status) {
       case APP_GAME_NORMAL: {
-        server = new Server(App::FPS);
-        server->run();
+        Server *server = new Server(App::FPS, App::addr);
+        SocketClient *client = new SocketClient(App::FPS, "localhost", App::port);
+
+        std::thread st(&Server::run, server);
+        std::thread ct(&Client::run, client);
+
+        st.join();
+        ct.join();
+
         delete server;
+        delete client;
         server = nullptr;
+        client = nullptr;
         break;
       }
       default: {
@@ -89,6 +97,8 @@ void App::menu() {
     }
     wrefresh(screen);
   }
+  wclear(screen);
+  wrefresh(screen);
 
   unpost_menu(menu);
   free_menu(menu);

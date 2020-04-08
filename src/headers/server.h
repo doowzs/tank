@@ -7,7 +7,8 @@
 #include <curses.h>
 
 #include <vector>
-using std::vector;
+#include <string>
+using std::vector, std::string;
 
 // forward decalaration
 class Client;
@@ -24,16 +25,16 @@ class Server {
   int fps;
   unsigned long frame;
   enum ServerStatus status;
+  string addr;
   WINDOW *screen;
-  Client *world;             // fake player
-  vector<Client *> clients;  // real players
+  vector<Client *> clients;
   vector<Object *> objects;  // current objects
   vector<Object *> appends;  // new objects
   vector<Object *> brokens;  // past objects
 
  public:
   Server() = delete;
-  explicit Server(int fps = 60);
+  explicit Server(int fps, string addr);
   void run();
   void tick();
   void over();

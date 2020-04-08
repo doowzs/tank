@@ -21,8 +21,10 @@ elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
 endif()
 
 find_package(Curses REQUIRED)
+find_package(Boost REQUIRED)
+find_package(Threads REQUIRED)
 add_executable(tank ${CMAKE_CXX_HEADERS} ${CMAKE_CXX_SOURCES})
 
-include_directories(${CMAKE_CXX_INCLUDE_PATH} ${CURSES_INCLUDE_DIR})
-target_link_libraries(tank PRIVATE menu ${CURSES_LIBRARIES})
+include_directories(${CMAKE_CXX_INCLUDE_PATH} ${CURSES_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
+target_link_libraries(tank PRIVATE menu ${CURSES_LIBRARIES} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 target_compile_options(tank PRIVATE ${CMAKE_CXX_COMPILE_FLAGS})
