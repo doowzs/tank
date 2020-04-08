@@ -20,6 +20,11 @@ elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
 	endif()
 endif()
 
+# Ncurses and Boost have same ID redefined, we need to avoid this macro in ncurses.
+# see https://stackoverflow.com/questions/55265851/getting-errors-when-trying-to-compile-program-using-boost-and-ncurses-libraries
+# and https://stackoverflow.com/questions/13467072/c-boost-undefined-reference-to-boostsystemgeneric-category
+add_definitions(-DNCURSES_NOMACROS -DBOOST_ERROR_CODE_HEADER_ONLY)
+
 find_package(Curses REQUIRED)
 find_package(Boost REQUIRED)
 find_package(Threads REQUIRED)

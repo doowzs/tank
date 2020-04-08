@@ -40,7 +40,8 @@ class Server {
 
  public:
   Server() = delete;
-  explicit Server(int fps, string addr, string port);
+  Server(int fps, string addr, string port);
+  ~Server();
   void run();
   void tick();
   void over();
