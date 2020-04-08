@@ -30,7 +30,6 @@ class Game {
  public:
   Game() = delete;
   Game(WINDOW *screen, int fps = 60);
-  ~Game();
   void run();
   void menu();
   void init();

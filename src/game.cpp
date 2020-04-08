@@ -19,19 +19,6 @@ Game::Game(WINDOW *screen, int fps) : fps(fps), screen(screen) {
   status = STATUS_NULL;
 }
 
-Game::~Game() {
-  delete world;
-  world = nullptr;
-  for (auto &player : players) {
-    delete player;
-  }
-  players.clear();
-  for (auto &object : objects) {
-    delete object;
-  }
-  objects.clear();
-}
-
 // Run the game process.
 void Game::run() {
   while (true && status != STATUS_EXIT) {
@@ -191,6 +178,18 @@ void Game::tick() {
 
 // Show game over and options.
 void Game::over() {
-  this->~Game();
   Log("Game Over");
+  // Destroy all players and objects.
+  {
+    delete world;
+    world = nullptr;
+    for (auto &player : players) {
+      delete player;
+    }
+    players.clear();
+    for (auto &object : objects) {
+      delete object;
+    }
+    objects.clear();
+  }
 }

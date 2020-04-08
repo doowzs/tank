@@ -22,7 +22,7 @@ int main() {
   nodelay(stdscr, true);
 
   // start the game
-  game = new Game(stdscr, 1);
+  game = new Game(stdscr, 5);
   game->run();
   delete game;
 
