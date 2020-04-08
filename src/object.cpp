@@ -11,9 +11,7 @@
 
 Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,
                int height, int width, const char *pattern)
-    : tick_y(0),
-      tick_x(0),
-      player(player),
+    : player(player),
       type(type),
       pos_y(pos_y),
       pos_x(pos_x),
@@ -21,6 +19,8 @@ Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,
       width(width),
       speed_y(0),
       speed_x(0),
+      tick_y(0),
+      tick_x(0),
       life(0),
       breakable(false) {
   strncpy(this->pattern, pattern, sizeof(char) * 32);
@@ -28,9 +28,7 @@ Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,
 
 Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,
                int height, int width, const char *pattern, int life)
-    : tick_y(0),
-      tick_x(0),
-      player(player),
+    : player(player),
       type(type),
       pos_y(pos_y),
       pos_x(pos_x),
@@ -38,6 +36,8 @@ Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,
       width(width),
       speed_y(0),
       speed_x(0),
+      tick_y(0),
+      tick_x(0),
       life(life),
       breakable(true) {
   strncpy(this->pattern, pattern, sizeof(char) * 32);
@@ -46,9 +46,7 @@ Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,
 Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,
                int height, int width, const char *pattern, int speed_y,
                int speed_x)
-    : tick_y(speed_y),
-      tick_x(speed_x),
-      player(player),
+    : player(player),
       type(type),
       pos_y(pos_y),
       pos_x(pos_x),
@@ -56,6 +54,8 @@ Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,
       width(width),
       speed_y(speed_y),
       speed_x(speed_x),
+      tick_y(0),
+      tick_x(0),
       life(1),
       breakable(true) {
   strncpy(this->pattern, pattern, sizeof(char) * 32);

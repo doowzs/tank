@@ -11,16 +11,12 @@
 
 enum ObjectType {
   OBJECT_BASE,
-  OBJECT_PLAYER,
-  OBJECT_ENEMY,
+  OBJECT_TANK,
   OBJECT_WALL,
   OBJECT_BULLET,
 };
 
 class Object {
- private:
-  int tick_y, tick_x;
-
  protected:
   Player *player;
   enum ObjectType type;
@@ -28,6 +24,7 @@ class Object {
   int height, width;
   char pattern[32];
   int speed_y, speed_x;  // speed is 2 == move 1 block per 2 ticks
+  int tick_y, tick_x;
   int life;
   bool breakable;
 
