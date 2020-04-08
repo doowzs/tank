@@ -16,7 +16,7 @@ int main() {
   nodelay(stdscr, true);
 
   // start the game
-  game = new Game(stdscr);
+  game = new Game(stdscr, 1);
   game->run();
   delete game;
 

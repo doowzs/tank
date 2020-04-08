@@ -4,6 +4,7 @@
 #define TANK_OBJECT_H
 
 #include <curses.h>
+#include <player.h>
 
 enum ObjectType {
   OBJECT_BASE,
@@ -15,29 +16,33 @@ enum ObjectType {
 
 class Object {
  private:
-  int tick_x, tick_y;
+  int tick_y, tick_x;
 
  protected:
+  Player *player;
   enum ObjectType type;
   int pos_y, pos_x;
   int height, width;
   char pattern[32];
-  int speed_x, speed_y; // speed is 2 == move 1 block per 2 ticks
+  int speed_y, speed_x;  // speed is 2 == move 1 block per 2 ticks
   int life;
   bool breakable;
 
  public:
   Object() = delete;
-  Object(enum ObjectType type, int pos_y, int pos_x, int height, int width,
-         const char *pattern);
-  Object(enum ObjectType type, int pos_y, int pos_x, int height, int width,
-         const char *pattern, int speed_x, int speed_y, int life,
+  Object(Player *player, enum ObjectType type, int pos_y, int pos_x, int height,
+         int width, const char *pattern);
+  Object(Player *player, enum ObjectType type, int pos_y, int pos_x, int height,
+         int width, const char *pattern, int speed_y, int speed_x, int life,
          bool breakable);
   virtual ~Object() = default;
   virtual void operator()() = 0;
-  virtual bool operator()(Object *object) = 0;
+  virtual void operator()(Object *object) = 0;
   void move();
-  void draw(WINDOW *window);
+  void damage();
+  bool broken() const;
+  void draw(WINDOW *window) const;
+  friend bool collide(const Object *obj1, const Object *obj2);
 };
 
 #endif

@@ -4,16 +4,28 @@
 #include <menu.h>
 #include <ncurses.h>
 #include <object.h>
+#include <objects/bullet.h>
 
+#include <algorithm>
 #include <chrono>
 #include <cstdlib>
 #include <cstring>
 
-#define DEBUG true
+#define DEBUG false
 #include <debug.h>
 
 Game::Game(WINDOW *screen, int fps) : fps(fps), screen(screen) {
   status = STATUS_NULL;
+}
+
+Game::~Game() {
+  delete world;
+  for (auto &player : players) {
+    delete player;
+  }
+  for (auto &object : objects) {
+    delete object;
+  }
 }
 
 // Run the game process.
@@ -40,10 +52,11 @@ void Game::menu() {
   items[2] = new_item(nullptr, nullptr);
 
   menu = new_menu(items);
+  set_menu_win(menu, screen);
   set_menu_mark(menu, " -> ");
 
   post_menu(menu);
-  wrefresh(stdscr);
+  wrefresh(screen);
   status = STATUS_MENU;
 
   while (!selected) {
@@ -66,7 +79,7 @@ void Game::menu() {
         break;
       }
     }
-    wrefresh(stdscr);
+    wrefresh(screen);
   }
 
   unpost_menu(menu);
@@ -79,7 +92,14 @@ void Game::menu() {
 // Initialize the game.
 void Game::init() {
   status = STATUS_INIT;
-  // TODO: prepare objects
+  Log("initializing");
+
+  world = new Player;
+  Bullet *bullet1 = new Bullet(world);
+  Bullet *bullet2 = new Bullet(world);
+
+  objects.emplace_back(bullet1);
+  objects.emplace_back(bullet2);
 }
 
 // Play the tank game.
@@ -91,9 +111,10 @@ void Game::play() {
   frame = now =
       duration_cast<milliseconds>(system_clock::now().time_since_epoch());
 
+  status = STATUS_PLAY;
+  Log("game start");
   Assert(fps > 0, "fps must be positive");
 
-  status = STATUS_PLAY;
   while (status == STATUS_PLAY) {
     while (now < frame) {
       now = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
@@ -106,7 +127,40 @@ void Game::play() {
 }
 
 // Handle the game logic.
-void Game::tick() { Log("tick"); }
+void Game::tick() {
+  Log("tick");
+  // First, run all objects.
+  {
+    int len = objects.size();
+    for (int i = 0; i < len; ++i) {
+      (*objects[i])();
+    }
+    for (int i = 0; i < len; ++i) {
+      for (int j = i + 1; j < len; ++j) {
+        if (collide(objects[i], objects[j])) {
+          (*objects[i])(objects[j]);
+        }
+      }
+    }
+  }
+  // Then remove all broken objects.
+  {
+    using namespace std;
+    remove_if(objects.begin(), objects.end(),
+              [](const Object *object) -> bool { return object->broken(); });
+  }
+  // Lastly, redraw the game.
+  {
+    wclear(screen);
+    for (auto &object : objects) {
+      object->draw(screen);
+    }
+    wrefresh(screen);
+  }
+}
 
 // Show game over and options.
-void Game::over() { Panic("please implement me"); }
+void Game::over() {
+  this->~Game();
+  Log("Game Over");
+}

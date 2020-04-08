@@ -23,12 +23,14 @@ class Game {
   int fps;
   enum GameStatus status;
   WINDOW *screen;
+  Player *world;
+  vector<Player *> players;
   vector<Object *> objects;
 
  public:
   Game() = delete;
   Game(WINDOW *screen, int fps = 60);
-  ~Game() = default;
+  ~Game();
   void run();
   void menu();
   void init();

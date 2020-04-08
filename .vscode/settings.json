@@ -1,5 +1,9 @@
 {
   "files.associations": {
-    "chrono": "cpp"
+    "chrono": "cpp",
+    "*.tcc": "cpp",
+    "functional": "cpp",
+    "random": "cpp",
+    "type_traits": "cpp"
   }
 }
