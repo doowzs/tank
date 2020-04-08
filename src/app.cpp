@@ -4,44 +4,54 @@
 #include <app.h>
 #include <common.h>
 #include <curses.h>
-#include <game.h>
+#include <server.h>
 #include <menu.h>
 
 #include <cstdlib>
 
+const int App::FPS = 30;
+
 App::App(WINDOW *screen) : screen(screen) {
   status = APP_INIT;
-  game = nullptr;
+  server = nullptr;
 }
 
 App::~App() {
-  if (game != nullptr) {
-    delete game;
+  if (server != nullptr) {
+    delete server;
   }
 }
 
 void App::run() {
   while (status != APP_EXIT) {
     menu();
-    if (status != APP_EXIT) {
-      game = new Game(screen, 60);
-      game->run();
-      delete game;
-      game = nullptr;
+    switch (status) {
+      case APP_GAME_NORMAL: {
+        server = new Server(App::FPS);
+        server->run();
+        delete server;
+        server = nullptr;
+        break;
+      }
+      default: {
+        printf("Goodbye.\n");
+      }
     }
   }
 }
 
 void App::menu() {
-  int size = 3;
+  int size = 5;
   bool selected = false;
   ITEM **items = nullptr;
   MENU *menu = nullptr;
 
   items = (ITEM **)calloc(sizeof(ITEM *), size);
-  items[0] = new_item("Play", "Play the game.");
-  items[1] = new_item("Exit", "Exit the game.");
-  items[2] = new_item(nullptr, nullptr);
+  items[0] = new_item("Normal", "Play against AI.");
+  items[1] = new_item("Cooperate", "Cooperate with a second player.");
+  items[2] = new_item("Online", "Play over the Internet.");
+  items[3] = new_item("Exit", "Exit the game.");
+  items[4] = new_item(nullptr, nullptr);
 
   menu = new_menu(items);
   set_menu_win(menu, screen);
@@ -65,7 +75,13 @@ void App::menu() {
       case 10: /* ENTER */
       case KEY_ENTER: {
         selected = true;
-        if (current_item(menu) == items[1]) {
+        if (current_item(menu) == items[0]) {
+          status = APP_GAME_NORMAL;
+        } else if (current_item(menu) == items[1]) {
+          Panic("not implemented!");
+        } else if (current_item(menu) == items[2]) {
+          Panic("not implemented!");
+        } else {
           status = APP_EXIT;
         }
         break;

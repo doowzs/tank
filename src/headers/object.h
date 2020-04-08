@@ -6,7 +6,7 @@
 #include <curses.h>
 
 // forward declaration
-class Player;
+class Client;
 
 enum ObjectType {
   OBJECT_BASE,
@@ -17,7 +17,7 @@ enum ObjectType {
 
 class Object {
  protected:
-  Player *player;
+  Client *client;
   enum ObjectType type;
   int pos_y, pos_x;
   int height, width;
@@ -29,11 +29,11 @@ class Object {
 
  public:
   Object() = delete;
-  Object(Player *player, enum ObjectType type, int pos_y, int pos_x, int height,
+  Object(Client *client, enum ObjectType type, int pos_y, int pos_x, int height,
          int width, const char *pattern);
-  Object(Player *player, enum ObjectType type, int pos_y, int pos_x, int height,
+  Object(Client *client, enum ObjectType type, int pos_y, int pos_x, int height,
          int width, const char *pattern, int life);
-  Object(Player *player, enum ObjectType type, int pos_y, int pos_x, int height,
+  Object(Client *client, enum ObjectType type, int pos_y, int pos_x, int height,
          int width, const char *pattern, int speed_y, int speed_x);
   virtual ~Object() = default;
   virtual void operator()() = 0;
@@ -44,7 +44,7 @@ class Object {
   bool broken() const;
   void draw(WINDOW *window) const;
   enum ObjectType getType() const { return type; }
-  Player *getPlayer() const { return player; }
+  Client *getClient() const { return client; }
   friend bool collide(const Object *obj1, const Object *obj2);
 };
 

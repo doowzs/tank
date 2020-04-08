@@ -1,12 +1,13 @@
 // Definition of the base object.
 // Tianyun Zhang 2020 all rights reserved.
 
+#include <client.h>
 #include <common.h>
 #include <object.h>
 #include <objects/base.h>
 
-Base::Base(Player *player, int pos_y, int pos_x)
-    : Object(player, OBJECT_BASE, pos_y, pos_x, 5, 5,
+Base::Base(Client *client, int pos_y, int pos_x)
+    : Object(client, OBJECT_BASE, pos_y, pos_x, 5, 5,
              "+---+"
              "|X X|"
              "| 9 |"

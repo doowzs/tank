@@ -1,20 +1,19 @@
 // Definition of the player class.
 // Tianyun Zhang 2020 all rights reserved.
 
+#include <client.h>
 #include <common.h>
 #include <curses.h>
-#include <game.h>
 #include <object.h>
-#include <player.h>
 
-enum Action Player::act() {
+enum Action Client::act() {
   int input = ERR, cur = ERR;
 
   // only take the last input
   while ((cur = getch()) != ERR) {
     input = cur;
   }
-  
+
   switch (input) {
     case ' ':  // spacebar
       return ACTION_SHOOT;
@@ -30,8 +29,6 @@ enum Action Player::act() {
   return ACTION_IDLE;
 }
 
-void Player::addObject(Object *object) { game->addObject(object); }
-
-enum Action AIPlayer::act() {
+enum Action AIClient::act() {
   return ACTION_IDLE;  // FIXME
 }

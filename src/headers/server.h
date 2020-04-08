@@ -10,30 +10,30 @@
 using std::vector;
 
 // forward decalaration
-class Player;
+class Client;
 class Object;
 
-enum GameStatus {
-  GAME_INIT,
-  GAME_PLAY,
-  GAME_OVER,
+enum ServerStatus {
+  SERVER_INIT,
+  SERVER_PLAY,
+  SERVER_OVER,
 };
 
-class Game {
+class Server {
  private:
   int fps;
   unsigned long frame;
-  enum GameStatus status;
+  enum ServerStatus status;
   WINDOW *screen;
-  Player *world;             // fake player
-  vector<Player *> players;  // real players
+  Client *world;             // fake player
+  vector<Client *> clients;  // real players
   vector<Object *> objects;  // current objects
   vector<Object *> appends;  // new objects
   vector<Object *> brokens;  // past objects
 
  public:
-  Game() = delete;
-  Game(WINDOW *screen, int fps = 60);
+  Server() = delete;
+  explicit Server(int fps = 60);
   void run();
   void tick();
   void over();

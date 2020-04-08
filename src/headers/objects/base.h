@@ -10,7 +10,7 @@
 class Base : public Object {
  private:
  public:
-  Base(Player *player, int pos_y, int pos_x);
+  Base(Client *client, int pos_y, int pos_x);
   void operator()();
   void operator()(Object *object);
   void update();

@@ -1,36 +1,28 @@
-// Definition of the game class.
+// Definition of the Server class.
 // Tianyun Zhang 2020 all rights reserved.
 
+#include <client.h>
 #include <common.h>
-#include <game.h>
 #include <menu.h>
 #include <ncurses.h>
 #include <object.h>
 #include <objects/base.h>
 #include <objects/bullet.h>
 #include <objects/tank.h>
-#include <player.h>
+#include <server.h>
 
 #include <algorithm>
 #include <chrono>
 #include <cstdlib>
 #include <cstring>
 
-Game::Game(WINDOW *screen, int fps) : fps(fps), frame(0), screen(screen) {
-  status = GAME_INIT;
+Server::Server(int fps) : fps(fps), frame(0) {
+  status = SERVER_INIT;
 
-  world = new Player(this);
-  Player *player = new Player(this);
-  players.emplace_back(player);
-
-  Base *base = new Base(player, 0, 100);
-  objects.emplace_back(base);
-
-  Tank *tank = new Tank(player, 0, 0, D_RIGHT);
-  objects.emplace_back(tank);
+  world = new Client();
 }
 
-void Game::run() {
+void Server::run() {
   using namespace std::chrono;
   using namespace std::chrono_literals;
 
@@ -38,22 +30,22 @@ void Game::run() {
   frame = now =
       duration_cast<milliseconds>(system_clock::now().time_since_epoch());
 
-  status = GAME_PLAY;
-  Log("game start");
+  status = SERVER_PLAY;
+  Log("Server start");
   Assert(fps > 0, "fps must be positive");
 
-  while (status == GAME_PLAY) {
+  while (status == SERVER_PLAY) {
     while (now < frame) {
       now = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
     }
     frame = now + (1000 / fps) * 1ms;  // next tick
     tick();
   }
-  Assert(status == GAME_OVER, "not over after game");
+  Assert(status == SERVER_OVER, "not over after Server");
   over();
 }
 
-void Game::tick() {
+void Server::tick() {
   wclear(screen);
   Log("frame %lu\n", frame++);
 
@@ -82,8 +74,8 @@ void Game::tick() {
                   objects.end());
     for (auto &broken : brokens) {
       if (broken->getType() == OBJECT_BASE) {
-        // One base of players broken, game over.
-        status = GAME_OVER;
+        // One base of players broken, Server over.
+        status = SERVER_OVER;
       }
       delete broken;
     }
@@ -94,7 +86,7 @@ void Game::tick() {
     appends.clear();
   }
 
-  // Second, redraw the game.
+  // Second, redraw the Server.
   {
     for (auto &object : objects) {
       object->update();
@@ -104,17 +96,17 @@ void Game::tick() {
   }
 }
 
-void Game::over() {
-  Log("Game Over");
-  Assert(status == GAME_OVER, "not over in over");
+void Server::over() {
+  Log("Server Over");
+  Assert(status == SERVER_OVER, "not over in over");
   // Destroy all players and objects.
   {
     delete world;
     world = nullptr;
-    for (auto &player : players) {
-      delete player;
+    for (auto &client : clients) {
+      delete client;
     }
-    players.clear();
+    clients.clear();
     for (auto &object : objects) {
       delete object;
     }
@@ -122,15 +114,4 @@ void Game::over() {
   }
 }
 
-void Game::addObject(Object *object) {
-  bool valid = false;
-  for (auto &player : players) {
-    if (player == object->getPlayer()) {
-      valid = true;
-      break;
-    }
-  }
-  if (valid) {
-    appends.emplace_back(object);
-  }
-}
+void Server::addObject(Object *object) { appends.emplace_back(object); }

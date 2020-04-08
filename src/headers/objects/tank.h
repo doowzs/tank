@@ -22,11 +22,9 @@ class Tank : public Object {
   enum Direction direction;
 
  public:
-  Tank(Player *player, int pos_y, int pos_x, enum Direction direction);
+  Tank(Client *client, int pos_y, int pos_x, enum Direction direction);
   void operator()();
   void operator()(Object *object);
-  void shoot();
-  void move(int dy, int dx);
   void update();
 };
 

@@ -17,22 +17,28 @@ enum Action {
   ACTION_MOVE_RIGHT,
 };
 
-class Player {
- protected:
-  Game *game;
-
+class Client {
  public:
-  Player() = delete;
-  explicit Player(Game *game) : game(game) {}
-  virtual ~Player() = default;
-  void addObject(Object *object);
+  Client() = default;
+  virtual ~Client() = default;
   virtual enum Action act();
 };
 
-class AIPlayer : public Player {
+class LocalClient : public Client {
  public:
-  AIPlayer() = delete;
-  explicit AIPlayer(Game *game) : Player(game) {}
+  LocalClient() = default;
+  enum Action act();
+};
+
+class RemoteClient : public Client {
+ public:
+  RemoteClient() = default;
+  enum Action act();
+};
+
+class AIClient : public Client {
+ public:
+  AIClient() = default;
   enum Action act();
 };
 

@@ -8,7 +8,7 @@
 
 class Bullet : public Object {
  public:
-  Bullet(Player *player, int pos_y, int pos_x, int speed_y, int speed_x);
+  Bullet(Client *client, int pos_y, int pos_x, int speed_y, int speed_x);
   void operator()();
   void operator()(Object *object);
 };

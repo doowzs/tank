@@ -4,13 +4,13 @@
 #include <common.h>
 #include <curses.h>
 #include <object.h>
-#include <player.h>
+#include <client.h>
 
 #include <cstring>
 
-Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,
+Object::Object(Client *client, enum ObjectType type, int pos_y, int pos_x,
                int height, int width, const char *pattern)
-    : player(player),
+    : client(client),
       type(type),
       pos_y(pos_y),
       pos_x(pos_x),
@@ -25,9 +25,9 @@ Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,
   strncpy(this->pattern, pattern, sizeof(char) * 32);
 }
 
-Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,
+Object::Object(Client *client, enum ObjectType type, int pos_y, int pos_x,
                int height, int width, const char *pattern, int life)
-    : player(player),
+    : client(client),
       type(type),
       pos_y(pos_y),
       pos_x(pos_x),
@@ -42,10 +42,10 @@ Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,
   strncpy(this->pattern, pattern, sizeof(char) * 32);
 }
 
-Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,
+Object::Object(Client *client, enum ObjectType type, int pos_y, int pos_x,
                int height, int width, const char *pattern, int speed_y,
                int speed_x)
-    : player(player),
+    : client(client),
       type(type),
       pos_y(pos_y),
       pos_x(pos_x),
