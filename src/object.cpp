@@ -6,7 +6,7 @@
 
 #include <cstring>
 
-#define DEBUG false
+#define DEBUG true
 #include <debug.h>
 
 Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,

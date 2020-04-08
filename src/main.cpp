@@ -4,6 +4,11 @@
 #include <curses.h>
 #include <game.h>
 
+#define DEBUG true
+#if DEBUG
+int line = 0; // <- debug purpose
+#endif
+
 Game *game = nullptr;
 
 int main() {
@@ -11,6 +16,7 @@ int main() {
   initscr();
   noecho();
   cbreak();
+  curs_set(0);
   start_color();
   keypad(stdscr, true);
   nodelay(stdscr, true);

@@ -11,7 +11,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#define DEBUG false
+#define DEBUG true
 #include <debug.h>
 
 Game::Game(WINDOW *screen, int fps) : fps(fps), screen(screen) {
@@ -128,6 +128,7 @@ void Game::play() {
 
 // Handle the game logic.
 void Game::tick() {
+  wclear(screen);
   Log("tick");
   // First, run all objects.
   {
@@ -151,7 +152,6 @@ void Game::tick() {
   }
   // Lastly, redraw the game.
   {
-    wclear(screen);
     for (auto &object : objects) {
       object->draw(screen);
     }
