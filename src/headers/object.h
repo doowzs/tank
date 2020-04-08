@@ -36,13 +36,15 @@ class Object {
   Object(Player *player, enum ObjectType type, int pos_y, int pos_x, int height,
          int width, const char *pattern);
   Object(Player *player, enum ObjectType type, int pos_y, int pos_x, int height,
-         int width, const char *pattern, int speed_y, int speed_x, int life,
-         bool breakable);
+         int width, const char *pattern, int life);
+  Object(Player *player, enum ObjectType type, int pos_y, int pos_x, int height,
+         int width, const char *pattern, int speed_y, int speed_x);
   virtual ~Object() = default;
   virtual void operator()() = 0;
   virtual void operator()(Object *object) = 0;
   void move();
   void damage();
+  virtual void update();
   bool broken() const;
   void draw(WINDOW *window) const;
   bool isBase() const { return type == OBJECT_BASE; }

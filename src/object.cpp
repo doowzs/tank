@@ -27,8 +27,25 @@ Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,
 }
 
 Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,
+               int height, int width, const char *pattern, int life)
+    : tick_y(0),
+      tick_x(0),
+      player(player),
+      type(type),
+      pos_y(pos_y),
+      pos_x(pos_x),
+      height(height),
+      width(width),
+      speed_y(0),
+      speed_x(0),
+      life(life),
+      breakable(true) {
+  strncpy(this->pattern, pattern, sizeof(char) * 32);
+}
+
+Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,
                int height, int width, const char *pattern, int speed_y,
-               int speed_x, int life, bool breakable)
+               int speed_x)
     : tick_y(speed_y),
       tick_x(speed_x),
       player(player),
@@ -39,8 +56,8 @@ Object::Object(Player *player, enum ObjectType type, int pos_y, int pos_x,
       width(width),
       speed_y(speed_y),
       speed_x(speed_x),
-      life(life),
-      breakable(breakable) {
+      life(1),
+      breakable(true) {
   strncpy(this->pattern, pattern, sizeof(char) * 32);
 }
 
@@ -68,6 +85,8 @@ void Object::damage() {
     life = life - 1;
   }
 }
+
+void Object::update() {}  // do nothing
 
 bool Object::broken() const { return breakable and life <= 0; }
 

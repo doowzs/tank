@@ -4,6 +4,7 @@
 #include <menu.h>
 #include <ncurses.h>
 #include <object.h>
+#include <objects/base.h>
 #include <objects/bullet.h>
 
 #include <algorithm>
@@ -20,12 +21,15 @@ Game::Game(WINDOW *screen, int fps) : fps(fps), screen(screen) {
 
 Game::~Game() {
   delete world;
+  world = nullptr;
   for (auto &player : players) {
     delete player;
   }
+  players.clear();
   for (auto &object : objects) {
     delete object;
   }
+  objects.clear();
 }
 
 // Run the game process.
@@ -95,11 +99,23 @@ void Game::init() {
   Log("initializing");
 
   world = new Player;
-  Bullet *bullet1 = new Bullet(world, 0, 5, 1, 0);
-  Bullet *bullet2 = new Bullet(world, 15, 5, -1, 0);
+  Player *player = new Player;
+  players.emplace_back(player);
 
-  objects.emplace_back(bullet1);
-  objects.emplace_back(bullet2);
+  Base *base = new Base(player, 0, 100);
+  objects.emplace_back(base);
+
+  objects.emplace_back(new Bullet(world, 7, 102, -1, 0));
+  objects.emplace_back(new Bullet(world, 9, 102, -1, 0));
+  objects.emplace_back(new Bullet(world, 11, 102, -1, 0));
+  objects.emplace_back(new Bullet(world, 13, 102, -1, 0));
+  objects.emplace_back(new Bullet(world, 15, 102, -1, 0));
+  objects.emplace_back(new Bullet(world, 17, 102, -1, 0));
+  objects.emplace_back(new Bullet(world, 19, 102, -1, 0));
+  objects.emplace_back(new Bullet(world, 21, 102, -1, 0));
+  objects.emplace_back(new Bullet(world, 23, 102, -1, 0));
+  objects.emplace_back(new Bullet(world, 25, 102, -1, 0));
+  objects.emplace_back(new Bullet(world, 27, 102, -1, 0));
 }
 
 // Play the tank game.
@@ -166,6 +182,7 @@ void Game::tick() {
   // Second, redraw the game.
   {
     for (auto &object : objects) {
+      object->update();
       object->draw(screen);
     }
     wrefresh(screen);
