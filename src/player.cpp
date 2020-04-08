@@ -8,9 +8,14 @@
 #include <player.h>
 
 enum Action Player::act() {
-  Log("waiting for input");
-  int ch = getch();
-  switch (ch) {
+  int input = ERR, cur = ERR;
+
+  // only take the last input
+  while ((cur = getch()) != ERR) {
+    input = cur;
+  }
+  
+  switch (input) {
     case ' ':  // spacebar
       return ACTION_SHOOT;
     case KEY_UP:
