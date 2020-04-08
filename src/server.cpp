@@ -27,8 +27,7 @@ Server::Server(int fps, string addr, string port)
   status = SERVER_INIT;
 
   context = new io_context();
-  acceptor = new tcp::acceptor(*context, tcp::endpoint(tcp::v4(), stoi(port)));
-
+  acceptor = new tcp::acceptor(*context, tcp::endpoint(tcp::v4(), stoi(this->port)));
 
   Log("waiting for player...");
 }
