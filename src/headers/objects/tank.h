@@ -1,4 +1,4 @@
-// The tank object.
+// Declaration of the tank object.
 // Tianyun Zhang 2020 all rights reserved.
 
 #ifndef TANK_TANK_H
