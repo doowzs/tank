@@ -14,12 +14,9 @@ class Player;
 class Object;
 
 enum GameStatus {
-  STATUS_NULL,
-  STATUS_MENU,
-  STATUS_INIT,
-  STATUS_PLAY,
-  STATUS_OVER,
-  STATUS_EXIT,
+  GAME_INIT,
+  GAME_PLAY,
+  GAME_OVER,
 };
 
 class Game {
@@ -36,9 +33,6 @@ class Game {
   Game() = delete;
   Game(WINDOW *screen, int fps = 60);
   void run();
-  void menu();
-  void init();
-  void play();
   void tick();
   void over();
   void addObject(Object *object);

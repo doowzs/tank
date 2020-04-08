@@ -1,17 +1,17 @@
 // Main entry of the tank game.
 // Tianyun Zhang 2020 all rights reserved.
 
+#include <app.h>
 #include <common.h>
 #include <curses.h>
-#include <game.h>
 
 #if DEBUG
-int line = 0; // <- debug purpose
+int line = 0;  // <- debug purpose
 #endif
 
-Game *game = nullptr;
-
 int main() {
+  App *app = nullptr;
+
   // initialize curses
   initscr();
   noecho();
@@ -22,9 +22,9 @@ int main() {
   nodelay(stdscr, true);
 
   // start the game
-  game = new Game(stdscr, 5);
-  game->run();
-  delete game;
+  app = new App(stdscr);
+  app->run();
+  delete app;
 
   // stop curses
   endwin();

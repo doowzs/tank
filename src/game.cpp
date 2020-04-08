@@ -16,74 +16,7 @@
 #include <cstring>
 
 Game::Game(WINDOW *screen, int fps) : fps(fps), frame(0), screen(screen) {
-  status = STATUS_NULL;
-}
-
-// Run the game process.
-void Game::run() {
-  while (true && status != STATUS_EXIT) {
-    menu();
-    if (status != STATUS_EXIT) {
-      init();
-      play();
-    }
-  }
-}
-
-// Create and show the game menu.
-void Game::menu() {
-  int size = 3;
-  bool selected = false;
-  ITEM **items = nullptr;
-  MENU *menu = nullptr;
-
-  items = (ITEM **)calloc(sizeof(ITEM *), size);
-  items[0] = new_item("Play", "Play the game.");
-  items[1] = new_item("Exit", "Exit the game.");
-  items[2] = new_item(nullptr, nullptr);
-
-  menu = new_menu(items);
-  set_menu_win(menu, screen);
-  set_menu_mark(menu, " -> ");
-
-  post_menu(menu);
-  wrefresh(screen);
-  status = STATUS_MENU;
-
-  while (!selected) {
-    int ch = getch();
-    switch (ch) {
-      case KEY_DOWN: {
-        menu_driver(menu, REQ_DOWN_ITEM);
-        break;
-      }
-      case KEY_UP: {
-        menu_driver(menu, REQ_UP_ITEM);
-        break;
-      }
-      case 10: /* ENTER */
-      case KEY_ENTER: {
-        selected = true;
-        if (current_item(menu) == items[1]) {
-          status = STATUS_EXIT;
-        }
-        break;
-      }
-    }
-    wrefresh(screen);
-  }
-
-  unpost_menu(menu);
-  free_menu(menu);
-  for (int i = 0; i < size; ++i) {
-    free_item(items[i]);
-  }
-}
-
-// Initialize the game.
-void Game::init() {
-  status = STATUS_INIT;
-  Log("initializing");
+  status = GAME_INIT;
 
   world = new Player(this);
   Player *player = new Player(this);
@@ -105,8 +38,7 @@ void Game::init() {
   objects.emplace_back(new Bullet(world, 27, 102, -1, 0));
 }
 
-// Play the tank game.
-void Game::play() {
+void Game::run() {
   using namespace std::chrono;
   using namespace std::chrono_literals;
 
@@ -114,22 +46,21 @@ void Game::play() {
   frame = now =
       duration_cast<milliseconds>(system_clock::now().time_since_epoch());
 
-  status = STATUS_PLAY;
+  status = GAME_PLAY;
   Log("game start");
   Assert(fps > 0, "fps must be positive");
 
-  while (status == STATUS_PLAY) {
+  while (status == GAME_PLAY) {
     while (now < frame) {
       now = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
     }
     frame = now + (1000 / fps) * 1ms;  // next tick
     tick();
   }
-  Assert(status == STATUS_OVER, "not over after game");
+  Assert(status == GAME_OVER, "not over after game");
   over();
 }
 
-// Handle the game logic.
 void Game::tick() {
   wclear(screen);
   Log("frame %lu\n", frame++);
@@ -161,7 +92,7 @@ void Game::tick() {
     for (auto &broken : brokens) {
       if (broken->getType() == OBJECT_BASE) {
         // One base of players broken, game over.
-        status = STATUS_OVER;
+        status = GAME_OVER;
       }
       delete broken;
     }
@@ -177,9 +108,9 @@ void Game::tick() {
   }
 }
 
-// Show game over and options.
 void Game::over() {
   Log("Game Over");
+  Assert(status == GAME_OVER, "not over in over");
   // Destroy all players and objects.
   {
     delete world;
