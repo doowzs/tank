@@ -129,10 +129,11 @@ void Game::play() {
 // Handle the game logic.
 void Game::tick() {
   wclear(screen);
-  Log("tick");
+
   // First, run all objects.
   {
     using namespace std;
+    vector<const Object *> brokens = vector<const Object *>();
     for (auto &object : objects) {
       if (object->broken()) continue;
       (*object)();
@@ -145,15 +146,23 @@ void Game::tick() {
       }
     }
     objects.erase(remove_if(objects.begin(), objects.end(),
-                            [](const Object *object) -> bool {
+                            [&brokens](const Object *object) -> bool {
                               if (object->broken()) {
-                                delete object;
+                                brokens.emplace_back(object);
                                 return true;
                               }
                               return false;
                             }),
                   objects.end());
+    for (auto &broken : brokens) {
+      if (broken->isBase()) {
+        // One base of players broken, game over.
+        status = STATUS_OVER;
+      }
+      delete broken;
+    }
   }
+
   // Second, redraw the game.
   {
     for (auto &object : objects) {

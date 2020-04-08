@@ -45,6 +45,7 @@ class Object {
   void damage();
   bool broken() const;
   void draw(WINDOW *window) const;
+  bool isBase() const { return type == OBJECT_BASE; }
   friend bool collide(const Object *obj1, const Object *obj2);
 };
 
