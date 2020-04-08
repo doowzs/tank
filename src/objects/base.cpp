@@ -7,11 +7,11 @@
 
 Base::Base(Player *player, int pos_y, int pos_x)
     : Object(player, OBJECT_BASE, pos_y, pos_x, 5, 5,
-             "X X X"
-             " X X "
-             "X 9 X"
-             " X X "
-             "X X X",
+             "+---+"
+             "|X X|"
+             "| 9 |"
+             "|X X|"
+             "+---+",
              9) {}
 
 void Base::operator()() {}

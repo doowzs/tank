@@ -19,15 +19,19 @@ void Tank::operator()() {
       shoot();
       return;
     case ACTION_MOVE_UP:
+      direction = D_UP;
       move(-1, 0);
       return;
     case ACTION_MOVE_DOWN:
+      direction = D_DOWN;
       move(1, 0);
       return;
     case ACTION_MOVE_LEFT:
+      direction = D_LEFT;
       move(0, -1);
       return;
     case ACTION_MOVE_RIGHT:
+      direction = D_RIGHT;
       move(0, 1);
       return;
     default:
@@ -67,7 +71,7 @@ void Tank::update() {
   switch (direction) {
     case D_UP:
       sprintf(pattern,
-              " + "
+              " | "
               "+%c+"
               "+++",
               (char)('0' + life));
@@ -76,20 +80,20 @@ void Tank::update() {
       sprintf(pattern,
               "+++"
               "+%c+"
-              " + ",
+              " | ",
               (char)('0' + life));
       return;
     case D_LEFT:
       sprintf(pattern,
               " ++"
-              "+%c+"
+              "-%c+"
               " ++",
               (char)('0' + life));
       return;
     case D_RIGHT:
       sprintf(pattern,
               "++ "
-              "+%c+"
+              "+%c-"
               "++ ",
               (char)('0' + life));
       return;

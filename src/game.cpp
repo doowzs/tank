@@ -8,6 +8,7 @@
 #include <object.h>
 #include <objects/base.h>
 #include <objects/bullet.h>
+#include <objects/tank.h>
 #include <player.h>
 
 #include <algorithm>
@@ -25,17 +26,8 @@ Game::Game(WINDOW *screen, int fps) : fps(fps), frame(0), screen(screen) {
   Base *base = new Base(player, 0, 100);
   objects.emplace_back(base);
 
-  objects.emplace_back(new Bullet(world, 7, 102, -1, 0));
-  objects.emplace_back(new Bullet(world, 9, 102, -1, 0));
-  objects.emplace_back(new Bullet(world, 11, 102, -1, 0));
-  objects.emplace_back(new Bullet(world, 13, 102, -1, 0));
-  objects.emplace_back(new Bullet(world, 15, 102, -1, 0));
-  objects.emplace_back(new Bullet(world, 17, 102, -1, 0));
-  objects.emplace_back(new Bullet(world, 19, 102, -1, 0));
-  objects.emplace_back(new Bullet(world, 21, 102, -1, 0));
-  objects.emplace_back(new Bullet(world, 23, 102, -1, 0));
-  objects.emplace_back(new Bullet(world, 25, 102, -1, 0));
-  objects.emplace_back(new Bullet(world, 27, 102, -1, 0));
+  Tank *tank = new Tank(player, 0, 0, D_RIGHT);
+  objects.emplace_back(tank);
 }
 
 void Game::run() {
