@@ -24,7 +24,7 @@ void App::run() {
   while (status != APP_EXIT) {
     menu();
     if (status != APP_EXIT) {
-      game = new Game(screen, 10);
+      game = new Game(screen, 60);
       game->run();
       delete game;
       game = nullptr;

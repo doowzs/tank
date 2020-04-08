@@ -18,6 +18,7 @@ enum Direction {
 
 class Tank : public Object {
  private:
+  const static int BULLET_SPEED;
   enum Direction direction;
 
  public:

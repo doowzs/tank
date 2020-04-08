@@ -7,6 +7,8 @@
 #include <objects/tank.h>
 #include <player.h>
 
+const int Tank::BULLET_SPEED = 3;
+
 Tank::Tank(Player *player, int pos_y, int pos_x, enum Direction direction)
     : Object(player, OBJECT_TANK, pos_y, pos_x, 3, 3, "         ", 3),
       direction(direction) {}
@@ -45,16 +47,16 @@ void Tank::operator()(__attribute__((unused)) Object *object) {}
 void Tank::shoot() {
   switch (direction) {
     case D_UP:
-      player->addObject(new Bullet(player, pos_y - 1, pos_x + 1, -1, 0));
+      player->addObject(new Bullet(player, pos_y - 1, pos_x + 1, -BULLET_SPEED, 0));
       return;
     case D_DOWN:
-      player->addObject(new Bullet(player, pos_y + 3, pos_x + 1, 1, 0));
+      player->addObject(new Bullet(player, pos_y + 3, pos_x + 1, BULLET_SPEED, 0));
       return;
     case D_LEFT:
-      player->addObject(new Bullet(player, pos_y + 1, pos_x - 1, 0, -1));
+      player->addObject(new Bullet(player, pos_y + 1, pos_x - 1, 0, -BULLET_SPEED));
       return;
     case D_RIGHT:
-      player->addObject(new Bullet(player, pos_y + 1, pos_x + 3, 0, 1));
+      player->addObject(new Bullet(player, pos_y + 1, pos_x + 3, 0, BULLET_SPEED));
       return;
   }
   Panic("should not reach here");
