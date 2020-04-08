@@ -6,6 +6,9 @@
 #include <curses.h>
 #include <player.h>
 
+#define DEBUG true
+#include <debug.h>
+
 enum ObjectType {
   OBJECT_BASE,
   OBJECT_PLAYER,

@@ -8,12 +8,14 @@
 
 class Bullet : public Object {
  public:
-  Bullet(Player *player)
-    : Object(player, OBJECT_BULLET, 30, 5, 1, 1, "*", -1, 0, 1, true) {}
+  Bullet(Player *player, int pos_y, int pos_x, int speed_y, int speed_x)
+      : Object(player, OBJECT_BULLET, pos_y, pos_x, 1, 1, "*", speed_y, speed_x,
+               1, true) {}
   void operator()() { move(); }
   void operator()(Object *object) {
     object->damage();
     life = 0;  // bullet conducts suicide
+    Log("bullet hits");
   }
 };
 

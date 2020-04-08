@@ -95,8 +95,8 @@ void Game::init() {
   Log("initializing");
 
   world = new Player;
-  Bullet *bullet1 = new Bullet(world);
-  Bullet *bullet2 = new Bullet(world);
+  Bullet *bullet1 = new Bullet(world, 0, 5, 1, 0);
+  Bullet *bullet2 = new Bullet(world, 15, 5, -1, 0);
 
   objects.emplace_back(bullet1);
   objects.emplace_back(bullet2);
@@ -132,25 +132,29 @@ void Game::tick() {
   Log("tick");
   // First, run all objects.
   {
-    int len = objects.size();
-    for (int i = 0; i < len; ++i) {
-      (*objects[i])();
-    }
-    for (int i = 0; i < len; ++i) {
-      for (int j = i + 1; j < len; ++j) {
-        if (collide(objects[i], objects[j])) {
-          (*objects[i])(objects[j]);
+    using namespace std;
+    for (auto &object : objects) {
+      if (object->broken()) continue;
+      (*object)();
+      for (auto &target : objects) {
+        if (target == object) continue;
+        if (target->broken()) continue;
+        if (collide(object, target)) {
+          (*object)(target);
         }
       }
     }
+    objects.erase(remove_if(objects.begin(), objects.end(),
+                            [](const Object *object) -> bool {
+                              if (object->broken()) {
+                                delete object;
+                                return true;
+                              }
+                              return false;
+                            }),
+                  objects.end());
   }
-  // Then remove all broken objects.
-  {
-    using namespace std;
-    remove_if(objects.begin(), objects.end(),
-              [](const Object *object) -> bool { return object->broken(); });
-  }
-  // Lastly, redraw the game.
+  // Second, redraw the game.
   {
     for (auto &object : objects) {
       object->draw(screen);

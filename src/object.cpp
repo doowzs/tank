@@ -49,7 +49,6 @@ void Object::move() {
   if (speed_y != 0) {
     tick_y += speed_y < 0 ? 1 : -1;
     if (tick_y == 0) {
-      Log("move y");
       pos_y += speed_y < 0 ? -1 : 1;
       tick_y = speed_y;
     }
@@ -57,11 +56,11 @@ void Object::move() {
   if (speed_x != 0) {
     tick_x += speed_x < 0 ? 1 : -1;
     if (tick_x == 0) {
-      Log("move x");
       pos_x += speed_x < 0 ? -1 : 1;
       tick_x = speed_x;
     }
   }
+  Log("move to %d, %d", pos_y, pos_x);
 }
 
 void Object::damage() {
@@ -81,8 +80,8 @@ void Object::draw(WINDOW *window) const {
 }
 
 bool collide(const Object *obj1, const Object *obj2) {
-  return obj1->pos_y + obj1->height >= obj2->pos_y and
-         obj1->pos_y <= obj2->pos_y + obj2->height and
-         obj1->pos_x + obj1->width >= obj2->pos_x and
-         obj1->pos_x <= obj2->pos_x + obj2->width;
+  return obj1->pos_y + obj1->height > obj2->pos_y and
+         obj1->pos_y < obj2->pos_y + obj2->height and
+         obj1->pos_x + obj1->width > obj2->pos_x and
+         obj1->pos_x < obj2->pos_x + obj2->width;
 }
