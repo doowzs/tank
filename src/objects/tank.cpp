@@ -50,3 +50,16 @@ void Tank::update() {
   }
   Panic("should not reach here");
 }
+
+Bullet *Tank::shoot() {
+  switch (direction) {
+    case D_UP:
+      return new Bullet(client, pos_y - 1, pos_x + 1, -BULLET_SPEED, 0);
+    case D_DOWN:
+      return new Bullet(client, pos_y + 3, pos_x + 1, BULLET_SPEED, 0);
+    case D_LEFT:
+      return new Bullet(client, pos_y + 1, pos_x - 1, 0, -BULLET_SPEED);
+    case D_RIGHT:
+      return new Bullet(client, pos_y + 1, pos_x + 3, 0, BULLET_SPEED);
+  }
+}

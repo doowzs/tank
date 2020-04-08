@@ -26,6 +26,7 @@ class Tank : public Object {
   void operator()();
   void operator()(Object *object);
   void update();
+  Bullet *shoot();
 };
 
 #endif

@@ -4,6 +4,9 @@
 #ifndef TANK_PLAYER_H
 #define TANK_PLAYER_H
 
+#include <vector>
+using std::vector;
+
 // forward declaration
 class Game;
 class Object;
@@ -18,10 +21,16 @@ enum Action {
 };
 
 class Client {
+ private:
+  int frame;
+  vector<Object *> objects;
+
  public:
   Client() = default;
   virtual ~Client() = default;
   virtual enum Action act();
+  virtual void sync();
+  virtual void draw();
 };
 
 class LocalClient : public Client {
