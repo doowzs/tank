@@ -26,7 +26,7 @@ void App::run() {
     menu();
     switch (status) {
       case APP_GAME_NORMAL: {
-        Server *server = new Server(App::FPS, App::addr);
+        Server *server = new Server(App::FPS, App::addr, App::port);
         SocketClient *client = new SocketClient(App::FPS, "localhost", App::port);
 
         std::thread st(&Server::run, server);

@@ -16,10 +16,26 @@
 #include <cstdlib>
 #include <cstring>
 #include <string>
-using std::string, std::move, std::remove_if;
+using std::string, std::stoi, std::move, std::remove_if;
 
-Server::Server(int fps, string addr) : fps(fps), frame(0), addr(move(addr)) {
+#include <boost/asio.hpp>
+using boost::asio::io_context;
+using boost::asio::ip::tcp;
+
+Server::Server(int fps, string addr, string port)
+    : fps(fps), frame(0), addr(move(addr)), port(move(port)) {
   status = SERVER_INIT;
+
+  context = new io_context();
+  acceptor = new tcp::acceptor(*context, tcp::endpoint(tcp::v4(), stoi(port)));
+
+
+  Log("waiting for player...");
+}
+
+Server::~Server() {
+  delete context;
+  delete acceptor;
 }
 
 void Server::run() {
