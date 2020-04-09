@@ -6,10 +6,14 @@
 #include <curses.h>
 
 #if DEBUG
-int line = 0;  // <- debug purpose
+FILE *debug = nullptr;
 #endif
 
 int main() {
+#if DEBUG
+  debug = fopen("./debug.log", "w+");
+  Assert(debug != nullptr, "fopen failed");
+#endif
   App *app = nullptr;
 
   // initialize curses
