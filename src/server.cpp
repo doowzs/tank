@@ -23,30 +23,27 @@ using boost::asio::io_context;
 using boost::asio::ip::tcp;
 
 Server::Server(int fps, string addr, string port)
-    : fps(fps), frame(0), addr(move(addr)), port(move(port)) {
-  status = SERVER_INIT;
+    : fps(fps),
+      frame(0),
+      status(SERVER_INIT),
+      addr(move(addr)),
+      port(move(port)) {}
 
-  context = new io_context();
-  acceptor = new tcp::acceptor(*context, tcp::endpoint(tcp::v4(), stoi(this->port)));
-
-  Log("waiting for player...");
-}
-
-Server::~Server() {
-  delete context;
-  delete acceptor;
-}
+Server::~Server() {}
 
 void Server::run() {
   using namespace std::chrono;
   using namespace std::chrono_literals;
+
+  status = SERVER_INIT;
+  Log("Server start");
+  init();
 
   milliseconds next, now;
   next = now =
       duration_cast<milliseconds>(system_clock::now().time_since_epoch());
 
   status = SERVER_PLAY;
-  Log("Server start");
   Assert(fps > 0, "fps must be positive");
 
   while (status == SERVER_PLAY) {
@@ -58,6 +55,16 @@ void Server::run() {
   }
   Assert(status == SERVER_OVER, "not over after Server");
   over();
+}
+
+void Server::init() {
+  tcp::acceptor acceptor(context, tcp::endpoint(tcp::v4(), stoi(port)));
+
+  Log("waiting for player...");
+  Client *client = new SocketClient(acceptor.accept());
+  clients.emplace_back(client);
+
+  Log("client connected");
 }
 
 void Server::tick() {

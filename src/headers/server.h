@@ -31,8 +31,7 @@ class Server {
   enum ServerStatus status;
   string addr, port;
   WINDOW *screen;
-  io_context *context;
-  tcp::acceptor *acceptor;
+  io_context context;
   vector<Client *> clients;
   vector<Object *> objects;  // current objects
   vector<Object *> appends;  // new objects
@@ -43,6 +42,7 @@ class Server {
   Server(int fps, string addr, string port);
   ~Server();
   void run();
+  void init();
   void tick();
   void over();
   void addObject(Object *object);

@@ -8,7 +8,13 @@
 
 #include <chrono>
 #include <string>
-using std::string, std::move;
+using std::string, std::move, std::exception;
+
+#include <boost/asio.hpp>
+using boost::asio::connect;
+using boost::asio::io_context;
+using boost::asio::io_service;
+using boost::asio::ip::tcp;
 
 Client::Client(int fps) : fps(fps), frame(0) {
   status = CLIENT_INIT;
@@ -25,12 +31,15 @@ void Client::run() {
   using namespace std::chrono;
   using namespace std::chrono_literals;
 
+  status = CLIENT_INIT;
+  Log("Client start");
+  init();
+
   milliseconds next, now;
   next = now =
       duration_cast<milliseconds>(system_clock::now().time_since_epoch());
 
   status = CLIENT_PLAY;
-  Log("Client start");
   Assert(fps > 0, "fps must be positive");
 
   while (status == CLIENT_PLAY) {
@@ -40,11 +49,16 @@ void Client::run() {
     next = now + (1000 / fps) * 1ms;  // next tick
     tick();
   }
+
   Assert(status == CLIENT_OVER, "not over after Server");
+  over();
 }
 
 SocketClient::SocketClient(int fps, string addr, string port)
-    : Client(fps), addr(move(addr)), port(move(port)) {}
+    : Client(fps), addr(move(addr)), port(move(port)), socket(context) {}
+
+SocketClient::SocketClient(tcp::socket &&socket)
+    : Client(0), addr(""), port(""), socket(move(socket)) {}
 
 enum Action SocketClient::act() {
   int input = ERR, cur = ERR;
@@ -69,9 +83,25 @@ enum Action SocketClient::act() {
   return ACTION_IDLE;
 }
 
+void SocketClient::init() {
+  try {
+    tcp::resolver resolver(context);
+    connect(socket, resolver.resolve(addr, port));
+  } catch (exception &e) {
+    Log("client init failed");
+  }
+}
+
 void SocketClient::tick() {
   sync();
   draw();
+}
+
+void SocketClient::over() {
+  context.post([this]() -> void {
+    socket.close();
+    socket.release();
+  });
 }
 
 void SocketClient::sync() {}
@@ -84,4 +114,8 @@ enum Action LocalAIClient::act() {
   return ACTION_IDLE;  // FIXME
 }
 
+void LocalAIClient::init() {}
+
 void LocalAIClient::tick() {}
+
+void LocalAIClient::over() {}
