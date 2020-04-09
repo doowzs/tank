@@ -32,7 +32,7 @@ enum Action {
 };
 
 class Client {
- private:
+ protected:
   int fps;
   int frame;
   enum ClientStatus status;
@@ -58,6 +58,7 @@ class SocketClient : public Client {
   SocketClient(int fps, string addr, string port);
   explicit SocketClient(tcp::socket &&socket);
   enum Action act();
+  enum Action input();
   void init();
   void tick();
   void over();

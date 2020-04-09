@@ -68,6 +68,11 @@ void Server::init() {
 }
 
 void Server::tick() {
+  for (auto &client : clients) {
+    enum Action action = client->act();
+    Log("user action: %d", static_cast<int>(action));
+  }
+
   for (auto &object : objects) {
     if (object->broken()) continue;
     (*object)();

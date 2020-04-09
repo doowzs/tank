@@ -61,6 +61,25 @@ SocketClient::SocketClient(tcp::socket &&socket)
     : Client(0), addr(""), port(""), socket(move(socket)) {}
 
 enum Action SocketClient::act() {
+  char data[32] = "";
+  size_t length = 0;
+  do {
+    boost::asio::read(socket, boost::asio::buffer(data, 27));
+  } while (length > 0);
+
+  if (data[0] == '\0') {
+    // no input from client
+    return ACTION_IDLE;
+  }
+
+  unsigned respond_frame = 0;
+  unsigned respond_status = 0;
+  unsigned respond_action = 0;
+  sscanf(data, "%08x,%08x,%08x\n", &respond_frame, &respond_status, &respond_action);
+  return static_cast<enum Action>((int)respond_action);
+}
+
+enum Action SocketClient::input() {
   int input = ERR, cur = ERR;
 
   // only take the last input
@@ -104,9 +123,21 @@ void SocketClient::over() {
   });
 }
 
-void SocketClient::sync() {}
+void SocketClient::sync() {
+  char data[32] = "";
+  unsigned current_frame = (unsigned)frame;
+  unsigned current_status = static_cast<unsigned>(status);
+  unsigned current_action = static_cast<unsigned>(input());
+  sprintf(data, "%08x,%08x,%08x\n", current_frame, current_status, current_action);
 
-void SocketClient::draw() {}
+  boost::asio::write(socket, boost::asio::buffer(data, 27));
+}
+
+void SocketClient::draw() {
+  wclear(stdscr);
+  Log("client frame %d", frame++);
+  wrefresh(stdscr);
+}
 
 LocalAIClient::LocalAIClient(int fps) : Client(fps) {}
 

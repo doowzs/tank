@@ -13,7 +13,7 @@
 #include <string>
 using std::string, std::to_string;
 
-const int App::FPS = 30;
+const int App::FPS = 10;
 const string App::addr = "0.0.0.0";
 const string App::port = "23333";
 
