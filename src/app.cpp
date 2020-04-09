@@ -3,6 +3,7 @@
 
 #include <app.h>
 #include <client.h>
+#include <clients/socket.h>
 #include <common.h>
 #include <curses.h>
 #include <menu.h>

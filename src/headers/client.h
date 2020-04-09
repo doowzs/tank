@@ -4,17 +4,8 @@
 #ifndef TANK_PLAYER_H
 #define TANK_PLAYER_H
 
-#include <string>
-#include <vector>
-using std::vector, std::string;
-
-#include <boost/asio.hpp>
-using boost::asio::io_context;
-using boost::asio::ip::tcp;
-
 // forward declaration
 class Object;
-class ServerPacket;
 
 enum ClientStatus {
   CLIENT_INIT,
@@ -47,37 +38,6 @@ class Client {
   virtual void init() = 0;
   virtual void tick() = 0;
   virtual void over() = 0;
-};
-
-class SocketClient : public Client {
- private:
-  string addr, port;
-  io_context context;
-  tcp::socket socket;
-  vector<ServerPacket *> packets, refresh;
-
- public:
-  SocketClient(int fps, string addr, string port);
-  explicit SocketClient(tcp::socket &&socket);
-  ~SocketClient();
-  enum PlayerAction act();
-  enum PlayerAction input();
-  void post(int now, const Object *object);
-  void init();
-  void tick();
-  void over();
-  void sync();
-  void draw();
-};
-
-class LocalAIClient : public Client {
- public:
-  LocalAIClient(int fps);
-  enum PlayerAction act();
-  void post(int now, const Object *object);
-  void init();
-  void tick();
-  void over();
 };
 
 #endif

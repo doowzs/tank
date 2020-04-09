@@ -2,6 +2,7 @@
 // Tianyun Zhang 2020 all rights reserved.
 
 #include <client.h>
+#include <clients/socket.h>
 #include <common.h>
 #include <menu.h>
 #include <ncurses.h>
