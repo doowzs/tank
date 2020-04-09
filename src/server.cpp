@@ -70,7 +70,6 @@ void Server::init() {
 }
 
 void Server::tick() {
-
   for (auto &object : objects) {
     if (object->broken()) continue;
     (*object)();

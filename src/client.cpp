@@ -74,12 +74,13 @@ SocketClient::~SocketClient() {
 }
 
 enum PlayerAction SocketClient::act() {
-  size_t length = 0;
   char buffer[128] = "";  // ISO C++ forbids VLA
-  do {
-    length = boost::asio::read(
+  size_t length = socket.available();
+
+  while (length >= ClientPacket::length) {
+    length -= boost::asio::read(
         socket, boost::asio::buffer(buffer, ClientPacket::length));
-  } while (length > 0);
+  }
 
   if (buffer[0] == '\0') {
     // no input from client
@@ -141,17 +142,14 @@ void SocketClient::sync() {
 
     boost::asio::write(
         socket, boost::asio::buffer(packet.buffer, ClientPacket::length));
-        Log("send");
   }
   // Second, read object packets from server.
   {
-    size_t length = 0;
     char buffer[128] = "";  // ISO C++ forbids VLA
-    vector<Object *> nextFrame = vector<Object *>();
+    size_t length = socket.available();
 
-    do {
-        Log("read");
-      length = boost::asio::read(
+    while (length >= ServerPacket::length) {
+      length -= boost::asio::read(
           socket, boost::asio::buffer(buffer, ServerPacket::length));
       ServerPacket *current = new ServerPacket(buffer);
       if (current->type == OBJECT_NULL and current->frame > frame) {
@@ -165,7 +163,7 @@ void SocketClient::sync() {
       } else {
         refresh.emplace_back(current);
       }
-    } while (length > 0);
+    }
   }
 }
 
