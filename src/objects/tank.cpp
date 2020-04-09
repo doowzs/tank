@@ -13,7 +13,36 @@ Tank::Tank(Client *client, int pos_y, int pos_x, enum Direction direction)
     : Object(client, OBJECT_TANK, pos_y, pos_x, 3, 3, "         ", 3),
       direction(direction) {}
 
-void Tank::operator()() {}
+void Tank::operator()() {
+  enum PlayerAction action = client->act();
+  switch (action) {
+    case ACTION_SHOOT:
+      shoot();
+      break;
+    case ACTION_MOVE_UP:
+      speed_y = -1, speed_x = 0;
+      tick_y = tick_x = 0;
+      move();
+      break;
+    case ACTION_MOVE_DOWN:
+      speed_y = 1, speed_x = 0;
+      tick_y = tick_x = 0;
+      move();
+      break;
+    case ACTION_MOVE_LEFT:
+      speed_y = 0, speed_x = -1;
+      tick_y = tick_x = 0;
+      move();
+      break;
+    case ACTION_MOVE_RIGHT:
+      speed_y = 0, speed_x = 1;
+      tick_y = tick_x = 0;
+      move();
+      break;
+    default:
+      break; // IDLE
+  }
+}
 
 void Tank::operator()(__attribute__((unused)) Object *object) {}
 

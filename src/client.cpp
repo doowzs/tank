@@ -5,6 +5,7 @@
 #include <common.h>
 #include <curses.h>
 #include <object.h>
+#include <packet.h>
 
 #include <chrono>
 #include <string>
@@ -16,16 +17,9 @@ using boost::asio::io_context;
 using boost::asio::io_service;
 using boost::asio::ip::tcp;
 
-Client::Client(int fps) : fps(fps), frame(0) {
-  status = CLIENT_INIT;
-  objects = vector<Object *>();
-}
+Client::Client(int fps) : fps(fps), frame(0) { status = CLIENT_INIT; }
 
-Client::~Client() {
-  for (auto &object : objects) {
-    delete object;
-  }
-}
+Client::~Client() {}
 
 void Client::run() {
   using namespace std::chrono;
@@ -54,32 +48,48 @@ void Client::run() {
   over();
 }
 
+// client side constructor
 SocketClient::SocketClient(int fps, string addr, string port)
-    : Client(fps), addr(move(addr)), port(move(port)), socket(context) {}
-
-SocketClient::SocketClient(tcp::socket &&socket)
-    : Client(0), addr(""), port(""), socket(move(socket)) {}
-
-enum Action SocketClient::act() {
-  char data[32] = "";
-  size_t length = 0;
-  do {
-    boost::asio::read(socket, boost::asio::buffer(data, 27));
-  } while (length > 0);
-
-  if (data[0] == '\0') {
-    // no input from client
-    return ACTION_IDLE;
-  }
-
-  unsigned respond_frame = 0;
-  unsigned respond_status = 0;
-  unsigned respond_action = 0;
-  sscanf(data, "%08x,%08x,%08x\n", &respond_frame, &respond_status, &respond_action);
-  return static_cast<enum Action>((int)respond_action);
+    : Client(fps), addr(move(addr)), port(move(port)), socket(context) {
+  packets = vector<ServerPacket *>();
+  refresh = vector<ServerPacket *>();
 }
 
-enum Action SocketClient::input() {
+// server side constructor
+SocketClient::SocketClient(tcp::socket &&socket)
+    : Client(0), addr(""), port(""), socket(move(socket)) {
+  packets = vector<ServerPacket *>();
+  refresh = vector<ServerPacket *>();
+}
+
+SocketClient::~SocketClient() {
+  for (auto &packet : packets) {
+    delete packet;
+  }
+  packets.clear();
+  for (auto &packet : refresh) {
+    delete packet;
+  }
+  refresh.clear();
+}
+
+enum PlayerAction SocketClient::act() {
+  size_t length = 0;
+  char buffer[128] = "";  // ISO C++ forbids VLA
+  do {
+    length = boost::asio::read(
+        socket, boost::asio::buffer(buffer, ClientPacket::length));
+  } while (length > 0);
+
+  if (buffer[0] == '\0') {
+    // no input from client
+    return ACTION_IDLE;
+  } else {
+    return ClientPacket(buffer).action;
+  }
+}
+
+enum PlayerAction SocketClient::input() {
   int input = ERR, cur = ERR;
 
   // only take the last input
@@ -124,24 +134,56 @@ void SocketClient::over() {
 }
 
 void SocketClient::sync() {
-  char data[32] = "";
-  unsigned current_frame = (unsigned)frame;
-  unsigned current_status = static_cast<unsigned>(status);
-  unsigned current_action = static_cast<unsigned>(input());
-  sprintf(data, "%08x,%08x,%08x\n", current_frame, current_status, current_action);
+  // First, send user input to server.
+  {
+    enum PlayerAction action = input();
+    ClientPacket packet = ClientPacket(frame, status, action);
 
-  boost::asio::write(socket, boost::asio::buffer(data, 27));
+    boost::asio::write(
+        socket, boost::asio::buffer(packet.buffer, ClientPacket::length));
+        Log("send");
+  }
+  // Second, read object packets from server.
+  {
+    size_t length = 0;
+    char buffer[128] = "";  // ISO C++ forbids VLA
+    vector<Object *> nextFrame = vector<Object *>();
+
+    do {
+        Log("read");
+      length = boost::asio::read(
+          socket, boost::asio::buffer(buffer, ServerPacket::length));
+      ServerPacket *current = new ServerPacket(buffer);
+      if (current->type == OBJECT_NULL and current->frame > frame) {
+        frame = current->frame;
+        for (auto &packet : packets) {
+          delete packet;
+        }
+        delete current;
+        packets = refresh;
+        refresh.clear();
+      } else {
+        refresh.emplace_back(current);
+      }
+    } while (length > 0);
+  }
 }
 
 void SocketClient::draw() {
   wclear(stdscr);
-  Log("client frame %d", frame++);
+  for (auto &packet : packets) {
+    for (int i = 0, y = packet->pos_y; i < packet->height; ++i, ++y) {
+      for (int j = 0, x = packet->pos_x; j < packet->width; ++j, ++x) {
+        mvwaddch(stdscr, y, x, packet->pattern[i * packet->width + j]);
+      }
+    }
+  }
   wrefresh(stdscr);
 }
 
 LocalAIClient::LocalAIClient(int fps) : Client(fps) {}
 
-enum Action LocalAIClient::act() {
+enum PlayerAction LocalAIClient::act() {
   return ACTION_IDLE;  // FIXME
 }
 

@@ -13,8 +13,7 @@ using boost::asio::io_context;
 using boost::asio::ip::tcp;
 
 // forward declaration
-class Game;
-class Object;
+class ServerPacket;
 
 enum ClientStatus {
   CLIENT_INIT,
@@ -22,7 +21,7 @@ enum ClientStatus {
   CLIENT_OVER,
 };
 
-enum Action {
+enum PlayerAction {
   ACTION_IDLE,
   ACTION_SHOOT,
   ACTION_MOVE_UP,
@@ -36,14 +35,13 @@ class Client {
   int fps;
   int frame;
   enum ClientStatus status;
-  vector<Object *> objects;
 
  public:
   Client() = delete;
   explicit Client(int fps);
   virtual ~Client();
   void run();
-  virtual enum Action act() = 0;
+  virtual enum PlayerAction act() = 0;
   virtual void init() = 0;
   virtual void tick() = 0;
   virtual void over() = 0;
@@ -54,11 +52,13 @@ class SocketClient : public Client {
   string addr, port;
   io_context context;
   tcp::socket socket;
+  vector<ServerPacket *> packets, refresh;
  public:
   SocketClient(int fps, string addr, string port);
   explicit SocketClient(tcp::socket &&socket);
-  enum Action act();
-  enum Action input();
+  ~SocketClient();
+  enum PlayerAction act();
+  enum PlayerAction input();
   void init();
   void tick();
   void over();
@@ -69,7 +69,7 @@ class SocketClient : public Client {
 class LocalAIClient : public Client {
  public:
   LocalAIClient(int fps);
-  enum Action act();
+  enum PlayerAction act();
   void init();
   void tick();
   void over();

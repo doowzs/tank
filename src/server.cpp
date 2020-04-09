@@ -16,7 +16,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <string>
-using std::string, std::stoi, std::move, std::remove_if;
+using std::make_pair, std::string, std::stoi, std::move, std::remove_if;
 
 #include <boost/asio.hpp>
 using boost::asio::io_context;
@@ -62,16 +62,14 @@ void Server::init() {
 
   Log("waiting for player...");
   Client *client = new SocketClient(acceptor.accept());
-  clients.emplace_back(client);
+  Tank *tank = new Tank(client, 0, 0, D_RIGHT);
+  players.emplace_back(make_pair(client, tank));
+  objects.emplace_back(tank);
 
-  Log("client connected");
+  Log("all players connected");
 }
 
 void Server::tick() {
-  for (auto &client : clients) {
-    enum Action action = client->act();
-    Log("user action: %d", static_cast<int>(action));
-  }
 
   for (auto &object : objects) {
     if (object->broken()) continue;
@@ -111,10 +109,10 @@ void Server::over() {
   Assert(status == SERVER_OVER, "not over in over");
   // Destroy all players and objects.
   {
-    for (auto &client : clients) {
-      delete client;
+    for (auto &player : players) {
+      delete player.first;
     }
-    clients.clear();
+    players.clear();
     for (auto &object : objects) {
       delete object;
     }

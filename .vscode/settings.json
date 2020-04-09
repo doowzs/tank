@@ -29,6 +29,8 @@
     "system_error": "cpp",
     "thread": "cpp",
     "tuple": "cpp",
-    "typeinfo": "cpp"
-  }
+    "typeinfo": "cpp",
+    "array": "cpp"
+  },
+  "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools"
 }

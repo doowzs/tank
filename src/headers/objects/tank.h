@@ -7,6 +7,7 @@
 #include <object.h>
 
 // forward declarations
+class Client;
 class Bullet;
 
 enum Direction {

@@ -17,6 +17,7 @@ using boost::asio::ip::tcp;
 // forward decalaration
 class Client;
 class Object;
+class Tank;
 
 enum ServerStatus {
   SERVER_INIT,
@@ -32,7 +33,7 @@ class Server {
   string addr, port;
   WINDOW *screen;
   io_context context;
-  vector<Client *> clients;
+  vector<pair<Client *, Tank *>> players;
   vector<Object *> objects;  // current objects
   vector<Object *> appends;  // new objects
   vector<Object *> brokens;  // past objects

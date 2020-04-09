@@ -13,6 +13,7 @@ enum ObjectType {
   OBJECT_TANK,
   OBJECT_WALL,
   OBJECT_BULLET,
+  OBJECT_NULL,
 };
 
 class Object {
@@ -29,6 +30,8 @@ class Object {
 
  public:
   Object() = delete;
+  Object(enum ObjectType type, int pos_y, int pos_x, int height, int width,
+         const char *pattern);  // client-side rendering
   Object(Client *client, enum ObjectType type, int pos_y, int pos_x, int height,
          int width, const char *pattern);
   Object(Client *client, enum ObjectType type, int pos_y, int pos_x, int height,
@@ -42,7 +45,6 @@ class Object {
   void damage();
   virtual void update();
   bool broken() const;
-  void draw(WINDOW *window) const;
   enum ObjectType getType() const { return type; }
   Client *getClient() const { return client; }
   friend bool collide(const Object *obj1, const Object *obj2);

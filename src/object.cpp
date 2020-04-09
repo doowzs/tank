@@ -1,12 +1,29 @@
 // Definition of the object abstract class.
 // Tianyun Zhang 2020 all rights reserved.
 
+#include <client.h>
 #include <common.h>
 #include <curses.h>
 #include <object.h>
-#include <client.h>
 
 #include <cstring>
+
+Object::Object(enum ObjectType type, int pos_y, int pos_x, int height,
+               int width, const char *pattern)
+    : client(nullptr),
+      type(type),
+      pos_y(pos_y),
+      pos_x(pos_x),
+      height(height),
+      width(width),
+      speed_y(0),
+      speed_x(0),
+      tick_y(0),
+      tick_x(0),
+      life(0),
+      breakable(false) {
+  memcpy(this->pattern, pattern, sizeof(this->pattern));
+}
 
 Object::Object(Client *client, enum ObjectType type, int pos_y, int pos_x,
                int height, int width, const char *pattern)
@@ -22,7 +39,7 @@ Object::Object(Client *client, enum ObjectType type, int pos_y, int pos_x,
       tick_x(0),
       life(0),
       breakable(false) {
-  strncpy(this->pattern, pattern, sizeof(char) * 32);
+  memcpy(this->pattern, pattern, sizeof(this->pattern));
 }
 
 Object::Object(Client *client, enum ObjectType type, int pos_y, int pos_x,
@@ -39,7 +56,7 @@ Object::Object(Client *client, enum ObjectType type, int pos_y, int pos_x,
       tick_x(0),
       life(life),
       breakable(true) {
-  strncpy(this->pattern, pattern, sizeof(char) * 32);
+  memcpy(this->pattern, pattern, sizeof(this->pattern));
 }
 
 Object::Object(Client *client, enum ObjectType type, int pos_y, int pos_x,
@@ -57,7 +74,7 @@ Object::Object(Client *client, enum ObjectType type, int pos_y, int pos_x,
       tick_x(0),
       life(1),
       breakable(true) {
-  strncpy(this->pattern, pattern, sizeof(char) * 32);
+  memcpy(this->pattern, pattern, sizeof(this->pattern));
 }
 
 void Object::move() {
@@ -88,14 +105,6 @@ void Object::damage() {
 void Object::update() {}  // do nothing
 
 bool Object::broken() const { return breakable and life <= 0; }
-
-void Object::draw(WINDOW *window) const {
-  for (int i = 0, y = pos_y; i < height; ++i, ++y) {
-    for (int j = 0, x = pos_x; j < width; ++j, ++x) {
-      mvwaddch(window, y, x, pattern[i * width + j]);
-    }
-  }
-}
 
 bool collide(const Object *obj1, const Object *obj2) {
   return obj1->pos_y + obj1->height > obj2->pos_y and
