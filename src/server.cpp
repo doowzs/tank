@@ -51,7 +51,7 @@ void Server::run() {
       now = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
     }
     next = now + (1000 / fps) * 1ms;  // next tick
-    tick();
+    ++frame, tick();
   }
   Assert(status == SERVER_OVER, "not over after Server");
   over();
@@ -70,6 +70,11 @@ void Server::init() {
 }
 
 void Server::tick() {
+  logic();
+  post();
+}
+
+void Server::logic() {
   for (auto &object : objects) {
     if (object->broken()) continue;
     (*object)();
@@ -102,6 +107,18 @@ void Server::tick() {
   }
   brokens.clear();
   appends.clear();
+  for (auto &object : objects) {
+    object->update();
+  }
+}
+
+void Server::post() {
+  for (auto &player : players) {
+    for (auto &object : objects) {
+      player.first->post(frame, object);
+    }
+    player.first->post(frame, nullptr);
+  }
 }
 
 void Server::over() {

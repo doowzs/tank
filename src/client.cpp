@@ -113,6 +113,20 @@ enum PlayerAction SocketClient::input() {
   return ACTION_IDLE;
 }
 
+void SocketClient::post(int now, const Object *object) {
+  if (object != nullptr) {
+    ServerPacket packet = ServerPacket(
+        now, object->getType(), object->getPosY(), object->getPosX(),
+        object->getHeight(), object->getWidth(), object->getPattern());
+    boost::asio::write(
+        socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
+  } else {
+    ServerPacket packet = ServerPacket(now, OBJECT_NULL, 0, 0, 0, 0, "");
+    boost::asio::write(
+        socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
+  }
+}
+
 void SocketClient::init() {
   try {
     tcp::resolver resolver(context);
@@ -184,6 +198,9 @@ LocalAIClient::LocalAIClient(int fps) : Client(fps) {}
 enum PlayerAction LocalAIClient::act() {
   return ACTION_IDLE;  // FIXME
 }
+
+void LocalAIClient::post(__attribute__((unused)) int now,
+                         __attribute__((unused)) const Object *object) {}
 
 void LocalAIClient::init() {}
 

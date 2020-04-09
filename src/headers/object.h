@@ -7,6 +7,7 @@
 
 // forward declaration
 class Client;
+class ServerPacket;
 
 enum ObjectType {
   OBJECT_BASE,
@@ -45,8 +46,13 @@ class Object {
   void damage();
   virtual void update();
   bool broken() const;
-  enum ObjectType getType() const { return type; }
   Client *getClient() const { return client; }
+  enum ObjectType getType() const { return type; }
+  int getPosY() const { return pos_y; }
+  int getPosX() const { return pos_x; }
+  int getHeight() const { return height; }
+  int getWidth() const { return width; }
+  const char *getPattern() const { return pattern; }
   friend bool collide(const Object *obj1, const Object *obj2);
 };
 

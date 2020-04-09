@@ -39,6 +39,7 @@ class ServerPacket {
   char buffer[80];
 
  public:
+  ServerPacket(int frame, const Object *object);
   ServerPacket(int frame, enum ObjectType type, int pos_y, int pos_x,
                int height, int width, const char *pattern);
   ServerPacket(const char *buf);

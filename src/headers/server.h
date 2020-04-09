@@ -45,6 +45,8 @@ class Server {
   void run();
   void init();
   void tick();
+  void logic();
+  void post();
   void over();
   void addObject(Object *object);
 };
