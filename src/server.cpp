@@ -23,6 +23,9 @@ using std::make_pair, std::string, std::stoi, std::move, std::remove_if;
 using boost::asio::io_context;
 using boost::asio::ip::tcp;
 
+const int Server::MAP_HEIGHT = 90;
+const int Server::MAP_WIDTH = 90;
+
 Server::Server(int fps, string addr, string port)
     : fps(fps),
       frame(0),

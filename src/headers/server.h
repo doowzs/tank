@@ -6,8 +6,8 @@
 
 #include <curses.h>
 
-#include <vector>
 #include <string>
+#include <vector>
 using std::pair, std::vector, std::string;
 
 #include <boost/asio.hpp>
@@ -26,6 +26,10 @@ enum ServerStatus {
 };
 
 class Server {
+ public:
+  static const int MAP_HEIGHT;
+  static const int MAP_WIDTH;
+
  private:
   int fps;
   unsigned long frame;
