@@ -6,18 +6,20 @@
 #include <object.h>
 #include <objects/bullet.h>
 #include <objects/tank.h>
+#include <server.h>
 
 const int Tank::BULLET_SPEED = 3;
 
-Tank::Tank(Client *client, int pos_y, int pos_x, enum Direction direction)
-    : Object(client, OBJECT_TANK, pos_y, pos_x, 3, 3, "         ", 3),
+Tank::Tank(Server *server, Client *client, int pos_y, int pos_x,
+           enum Direction direction)
+    : Object(server, client, OBJECT_TANK, pos_y, pos_x, 3, 3, "         ", 3),
       direction(direction) {}
 
 void Tank::operator()() {
   enum PlayerAction action = client->act();
   switch (action) {
     case ACTION_SHOOT:
-      shoot();
+      server->addObject(shoot());
       break;
     case ACTION_MOVE_UP:
       direction = D_UP;
@@ -87,13 +89,13 @@ void Tank::update() {
 Bullet *Tank::shoot() {
   switch (direction) {
     case D_UP:
-      return new Bullet(client, pos_y - 1, pos_x + 1, -BULLET_SPEED, 0);
+      return new Bullet(server, client, pos_y - 1, pos_x + 1, -BULLET_SPEED, 0);
     case D_DOWN:
-      return new Bullet(client, pos_y + 3, pos_x + 1, BULLET_SPEED, 0);
+      return new Bullet(server, client, pos_y + 3, pos_x + 1, BULLET_SPEED, 0);
     case D_LEFT:
-      return new Bullet(client, pos_y + 1, pos_x - 1, 0, -BULLET_SPEED);
+      return new Bullet(server, client, pos_y + 1, pos_x - 1, 0, -BULLET_SPEED);
     case D_RIGHT:
-      return new Bullet(client, pos_y + 1, pos_x + 3, 0, BULLET_SPEED);
+      return new Bullet(server, client, pos_y + 1, pos_x + 3, 0, BULLET_SPEED);
   }
   Panic("should not reach here");
   return nullptr;

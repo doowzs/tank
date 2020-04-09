@@ -6,6 +6,7 @@
 #include <curses.h>
 
 // forward declaration
+class Server;
 class Client;
 class ServerPacket;
 
@@ -19,6 +20,7 @@ enum ObjectType {
 
 class Object {
  protected:
+  Server *server;
   Client *client;
   enum ObjectType type;
   int pos_y, pos_x;
@@ -33,17 +35,18 @@ class Object {
   Object() = delete;
   Object(enum ObjectType type, int pos_y, int pos_x, int height, int width,
          const char *pattern);  // client-side rendering
-  Object(Client *client, enum ObjectType type, int pos_y, int pos_x, int height,
+  Object(Server *server, Client *client, enum ObjectType type, int pos_y, int pos_x, int height,
          int width, const char *pattern);
-  Object(Client *client, enum ObjectType type, int pos_y, int pos_x, int height,
+  Object(Server *server, Client *client, enum ObjectType type, int pos_y, int pos_x, int height,
          int width, const char *pattern, int life);
-  Object(Client *client, enum ObjectType type, int pos_y, int pos_x, int height,
+  Object(Server *server, Client *client, enum ObjectType type, int pos_y, int pos_x, int height,
          int width, const char *pattern, int speed_y, int speed_x);
   virtual ~Object() = default;
   virtual void operator()() = 0;
   virtual void operator()(Object *object) = 0;
   void move();
   void damage();
+  void suicide();
   virtual void update();
   bool broken() const;
   Client *getClient() const { return client; }

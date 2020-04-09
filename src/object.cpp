@@ -10,7 +10,8 @@
 
 Object::Object(enum ObjectType type, int pos_y, int pos_x, int height,
                int width, const char *pattern)
-    : client(nullptr),
+    : server(nullptr),
+      client(nullptr),
       type(type),
       pos_y(pos_y),
       pos_x(pos_x),
@@ -25,9 +26,10 @@ Object::Object(enum ObjectType type, int pos_y, int pos_x, int height,
   memcpy(this->pattern, pattern, sizeof(this->pattern));
 }
 
-Object::Object(Client *client, enum ObjectType type, int pos_y, int pos_x,
-               int height, int width, const char *pattern)
-    : client(client),
+Object::Object(Server *server, Client *client, enum ObjectType type, int pos_y,
+               int pos_x, int height, int width, const char *pattern)
+    : server(server),
+      client(client),
       type(type),
       pos_y(pos_y),
       pos_x(pos_x),
@@ -42,9 +44,10 @@ Object::Object(Client *client, enum ObjectType type, int pos_y, int pos_x,
   memcpy(this->pattern, pattern, sizeof(this->pattern));
 }
 
-Object::Object(Client *client, enum ObjectType type, int pos_y, int pos_x,
-               int height, int width, const char *pattern, int life)
-    : client(client),
+Object::Object(Server *server, Client *client, enum ObjectType type, int pos_y,
+               int pos_x, int height, int width, const char *pattern, int life)
+    : server(server),
+      client(client),
       type(type),
       pos_y(pos_y),
       pos_x(pos_x),
@@ -59,10 +62,11 @@ Object::Object(Client *client, enum ObjectType type, int pos_y, int pos_x,
   memcpy(this->pattern, pattern, sizeof(this->pattern));
 }
 
-Object::Object(Client *client, enum ObjectType type, int pos_y, int pos_x,
-               int height, int width, const char *pattern, int speed_y,
-               int speed_x)
-    : client(client),
+Object::Object(Server *server, Client *client, enum ObjectType type, int pos_y,
+               int pos_x, int height, int width, const char *pattern,
+               int speed_y, int speed_x)
+    : server(server),
+      client(client),
       type(type),
       pos_y(pos_y),
       pos_x(pos_x),
@@ -100,6 +104,11 @@ void Object::damage() {
   if (breakable) {
     life = life - 1;
   }
+}
+
+void Object::suicide() {
+  life = 0;
+  breakable = true;
 }
 
 void Object::update() {}  // do nothing

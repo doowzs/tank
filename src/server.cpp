@@ -63,7 +63,7 @@ void Server::init() {
 
   Log("waiting for player...");
   Client *client = new SocketClient(acceptor.accept());
-  Tank *tank = new Tank(client, 0, 0, D_RIGHT);
+  Tank *tank = new Tank(this, client, 0, 0, D_RIGHT);
   players.emplace_back(make_pair(client, tank));
   objects.emplace_back(tank);
 
