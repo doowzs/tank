@@ -20,27 +20,31 @@ void Tank::operator()() {
       shoot();
       break;
     case ACTION_MOVE_UP:
+      direction = D_UP;
       speed_y = -1, speed_x = 0;
       tick_y = tick_x = 0;
       move();
       break;
     case ACTION_MOVE_DOWN:
+      direction = D_DOWN;
       speed_y = 1, speed_x = 0;
       tick_y = tick_x = 0;
       move();
       break;
     case ACTION_MOVE_LEFT:
+      direction = D_LEFT;
       speed_y = 0, speed_x = -1;
       tick_y = tick_x = 0;
       move();
       break;
     case ACTION_MOVE_RIGHT:
+      direction = D_RIGHT;
       speed_y = 0, speed_x = 1;
       tick_y = tick_x = 0;
       move();
       break;
     default:
-      break; // IDLE
+      break;  // IDLE
   }
 }
 
