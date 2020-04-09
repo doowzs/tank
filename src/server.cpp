@@ -10,6 +10,7 @@
 #include <objects/base.h>
 #include <objects/bullet.h>
 #include <objects/tank.h>
+#include <player.h>
 #include <server.h>
 
 #include <algorithm>
@@ -23,8 +24,8 @@ using std::make_pair, std::string, std::stoi, std::move, std::remove_if;
 using boost::asio::io_context;
 using boost::asio::ip::tcp;
 
-const int Server::MAP_HEIGHT = 90;
-const int Server::MAP_WIDTH = 90;
+const int Server::MAP_HEIGHT = 30;
+const int Server::MAP_WIDTH = 20;
 
 Server::Server(int fps, string addr, string port)
     : fps(fps),
@@ -66,9 +67,8 @@ void Server::init() {
 
   Log("waiting for player...");
   Client *client = new SocketClient(acceptor.accept());
-  Tank *tank = new Tank(this, client, 0, 0, D_RIGHT);
-  players.emplace_back(make_pair(client, tank));
-  objects.emplace_back(tank);
+  Player *player = new Player(this, client, MAP_HEIGHT - 5, true);
+  players.emplace_back(player);
 
   Log("all players connected");
 }
@@ -119,9 +119,9 @@ void Server::logic() {
 void Server::post() {
   for (auto &player : players) {
     for (auto &object : objects) {
-      player.first->post(frame, object);
+      player->client->post(frame, object);
     }
-    player.first->post(frame, nullptr);
+    player->client->post(frame, nullptr);
   }
 }
 
@@ -130,7 +130,7 @@ void Server::over() {
   // Destroy all players and objects.
   {
     for (auto &player : players) {
-      delete player.first;
+      delete player;
     }
     players.clear();
     for (auto &object : objects) {

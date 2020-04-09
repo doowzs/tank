@@ -1,4 +1,4 @@
-// Definition of the player class.
+// Definition of the client class.
 // Tianyun Zhang 2020 all rights reserved.
 
 #include <client.h>

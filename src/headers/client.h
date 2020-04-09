@@ -1,8 +1,8 @@
-// Declaration of the player class.
+// Declaration of the client class.
 // Tianyun Zhang 2020 all rights reserved.
 
-#ifndef TANK_PLAYER_H
-#define TANK_PLAYER_H
+#ifndef TANK_CLIENT_H
+#define TANK_CLIENT_H
 
 // forward declaration
 class Object;
