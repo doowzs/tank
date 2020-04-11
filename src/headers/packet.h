@@ -8,6 +8,12 @@
 #include <object.h>
 #include <server.h>
 
+enum PacketType {
+  PACKET_OBJECT,
+  PACKET_PLAYER,
+  PACKET_NULL,
+};
+
 class ClientPacket {
  public:
   friend class SocketClient;
@@ -20,6 +26,7 @@ class ClientPacket {
   char buffer[32];
 
  public:
+  ClientPacket() = delete;
   ClientPacket(int frame, enum ClientStatus status, enum PlayerAction action);
   ClientPacket(const char *buf);
 };
@@ -32,16 +39,21 @@ class ServerPacket {
 
  private:
   int frame;
-  enum ObjectType type;
+  enum PacketType type;
+  // Object-type data
   int pos_y, pos_x;
   int height, width;
   char pattern[32];
+  // Player-type data
+  int score;
   char buffer[80];
 
  public:
+  ServerPacket() = delete;
+  ServerPacket(int frame);
   ServerPacket(int frame, const Object *object);
-  ServerPacket(int frame, enum ObjectType type, int pos_y, int pos_x,
-               int height, int width, const char *pattern);
+  ServerPacket(int frame, int pos_y, int pos_x, int height, int width,
+               const char *pattern);
   ServerPacket(const char *buf);
 };
 

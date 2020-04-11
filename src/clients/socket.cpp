@@ -85,13 +85,11 @@ enum PlayerAction SocketClient::input() {
 
 void SocketClient::post(int now, const Object *object) {
   if (object != nullptr) {
-    ServerPacket packet = ServerPacket(
-        now, object->getType(), object->getPosY(), object->getPosX(),
-        object->getHeight(), object->getWidth(), object->getPattern());
+    ServerPacket packet = ServerPacket(now, object);
     boost::asio::write(
         socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
   } else {
-    ServerPacket packet = ServerPacket(now, OBJECT_NULL, 0, 0, 0, 0, "");
+    ServerPacket packet = ServerPacket(now);
     boost::asio::write(
         socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
   }
@@ -136,16 +134,27 @@ void SocketClient::sync() {
       length -= boost::asio::read(
           socket, boost::asio::buffer(buffer, ServerPacket::length));
       ServerPacket *current = new ServerPacket(buffer);
-      if (current->type == OBJECT_NULL and current->frame > frame) {
-        frame = current->frame;
-        for (auto &packet : packets) {
-          delete packet;
+      Log("received %d", static_cast<int>(current->type));
+      switch (current->type) {
+        case PACKET_OBJECT: {
+          refresh.emplace_back(current);
+          break;
         }
-        delete current;
-        packets = refresh;
-        refresh.clear();
-      } else {
-        refresh.emplace_back(current);
+        case PACKET_PLAYER: {
+          // TODO
+          break;
+        }
+        default: {
+          if (current->frame > frame) {
+            frame = current->frame;
+            for (auto &packet : packets) {
+              delete packet;
+            }
+            delete current;
+            packets = refresh;
+            refresh.clear();
+          }
+        }
       }
     }
   }
