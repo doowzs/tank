@@ -169,7 +169,10 @@ void SocketClient::sync() {
           socket, boost::asio::buffer(buffer, ServerPacket::length));
       ServerPacket *current = new ServerPacket(buffer);
       switch (current->type) {
-        case PACKET_OBJECT: 
+        case PACKET_OBJECT: {
+          refresh.emplace_back(current);
+          break;
+        }
         case PACKET_PLAYER: {
           refresh.emplace_back(current);
           break;

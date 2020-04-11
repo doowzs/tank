@@ -2,6 +2,7 @@
 // Tianyun Zhang 2020 all rights reserved.
 
 #include <client.h>
+#include <clients/ai.h>
 #include <clients/socket.h>
 #include <common.h>
 #include <menu.h>
@@ -73,6 +74,11 @@ void Server::init() {
   Player *player = new Player(this, client, MAP_HEIGHT - 5, true);
   players.emplace_back(player);
 
+  Log("adding AI players...");
+  Client *ai_client = new AIClient("artificial idiot");
+  Player *ai_player = new Player(this, ai_client, 5, true);
+  players.emplace_back(ai_player);
+
   Log("all players connected");
 }
 
@@ -126,9 +132,9 @@ void Server::post() {
       if (!healthy) break;
       healthy &= player->client->post(frame, object);
     }
-    for (auto &player : players) {
+    for (auto &someone : players) {
       if (!healthy) break;
-      healthy &= player->client->post(frame, player);
+      healthy &= player->client->post(frame, someone);
     }
     if (healthy) {
       player->client->post(frame); // end-of-frame

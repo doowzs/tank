@@ -8,7 +8,7 @@
 
 class AIClient : public Client {
  public:
-  AIClient(const char *name, int fps);
+  AIClient(const char *name);
   enum PlayerAction act();
   bool post(int now);
   bool post(int now, const Object *object);
