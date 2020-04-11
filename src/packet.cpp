@@ -39,8 +39,8 @@ ServerPacket::ServerPacket(int frame, const Object *object)
   sprintf(buffer, "%08x%08x%08x%08x%08x%08x", (unsigned)frame,
           static_cast<unsigned>(type), (unsigned)pos_y, (unsigned)pos_x,
           (unsigned)height, (unsigned)width);
-  memcpy(this->pattern, object->getPattern(), sizeof(this->pattern));
-  memcpy(this->buffer + offset, object->getPattern(), sizeof(this->pattern));
+  strncpy(this->pattern, object->getPattern(), sizeof(this->pattern));
+  strncpy(this->buffer + offset, object->getPattern(), sizeof(this->pattern));
 }
 
 ServerPacket::ServerPacket(int frame, int pos_y, int pos_x, int height,
@@ -54,8 +54,8 @@ ServerPacket::ServerPacket(int frame, int pos_y, int pos_x, int height,
   sprintf(buffer, "%08x%08x%08x%08x%08x%08x", (unsigned)frame,
           static_cast<unsigned>(type), (unsigned)pos_y, (unsigned)pos_x,
           (unsigned)height, (unsigned)width);
-  memcpy(this->pattern, pattern, sizeof(this->pattern));
-  memcpy(this->buffer + offset, pattern, sizeof(this->pattern));
+  strncpy(this->pattern, pattern, sizeof(this->pattern));
+  strncpy(this->buffer + offset, pattern, sizeof(this->pattern));
 }
 
 ServerPacket::ServerPacket(const char *buf) {
