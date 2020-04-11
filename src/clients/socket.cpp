@@ -169,12 +169,9 @@ void SocketClient::sync() {
           socket, boost::asio::buffer(buffer, ServerPacket::length));
       ServerPacket *current = new ServerPacket(buffer);
       switch (current->type) {
-        case PACKET_OBJECT: {
-          refresh.emplace_back(current);
-          break;
-        }
+        case PACKET_OBJECT: 
         case PACKET_PLAYER: {
-          // TODO
+          refresh.emplace_back(current);
           break;
         }
         default: {
@@ -199,10 +196,24 @@ void SocketClient::sync() {
 void SocketClient::draw() {
   wclear(stdscr);
   mvwprintw(stdscr, 0, 0, "server: %s", addr.c_str());
+  int line = 0;
   for (auto &packet : packets) {
-    for (int i = 0, y = packet->pos_y; i < packet->height; ++i, ++y) {
-      for (int j = 0, x = packet->pos_x; j < packet->width; ++j, ++x) {
-        mvwaddch(stdscr, y, x, packet->pattern[i * packet->width + j]);
+    switch (packet->type) {
+      case PACKET_OBJECT: {
+        for (int i = 0, y = packet->pos_y; i < packet->height; ++i, ++y) {
+          for (int j = 0, x = packet->pos_x; j < packet->width; ++j, ++x) {
+            mvwaddch(stdscr, y, x, packet->pattern[i * packet->width + j]);
+          }
+        }
+        break;
+      }
+      case PACKET_PLAYER: {
+        mvwprintw(stdscr, ++line, 0, "player %s: %d", packet->name, packet->score);
+        break;
+      }
+      default: {
+        Panic("should not have packet of type %d",
+              static_cast<int>(packet->type));
       }
     }
   }

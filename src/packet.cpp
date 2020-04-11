@@ -88,14 +88,18 @@ ServerPacket::ServerPacket(const char *buf) {
       pos_x = (int)upos_x;
       height = (int)uheight;
       width = (int)uwidth;
-      memcpy(this->pattern, buf + offset, sizeof(this->pattern));
+      strncpy(this->pattern, buf + offset, sizeof(this->pattern));
+      break;
     }
     case PACKET_PLAYER: {
-      // FIXME
+      unsigned uscore = 0;
+      sscanf(buf + 16, "%08x", &uscore);
+      score = (int)uscore;
+      strncpy(this->name, buf + offset, sizeof(this->name));
       break;
     }
     default: {
-      return;
+      // do nothing
     }
   }
 }
