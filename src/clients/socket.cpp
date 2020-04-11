@@ -7,6 +7,7 @@
 #include <curses.h>
 #include <object.h>
 #include <packet.h>
+#include <player.h>
 
 #include <chrono>
 #include <string>
@@ -86,17 +87,37 @@ enum PlayerAction SocketClient::input() {
   return ACTION_IDLE;
 }
 
-bool SocketClient::post(int now, const Object *object) {
+bool SocketClient::post(int now) {
   try {
-    if (object != nullptr) {
-      ServerPacket packet = ServerPacket(now, object);
-      boost::asio::write(
-          socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
-    } else {
-      ServerPacket packet = ServerPacket(now);
-      boost::asio::write(
-          socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
-    }
+    ServerPacket packet = ServerPacket(now);
+    boost::asio::write(
+        socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
+    return true;
+  } catch (exception &e) {
+    Log("post failed: %s", e.what());
+    return false;
+  }
+}
+
+bool SocketClient::post(int now, const Object *object) {
+  if (object == nullptr) return true;
+  try {
+    ServerPacket packet = ServerPacket(now, object);
+    boost::asio::write(
+        socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
+    return true;
+  } catch (exception &e) {
+    Log("post failed: %s", e.what());
+    return false;
+  }
+}
+
+bool SocketClient::post(int now, const Player *player) {
+  if (player == nullptr) return true;
+  try {
+    ServerPacket packet = ServerPacket(now, player);
+    boost::asio::write(
+        socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
     return true;
   } catch (exception &e) {
     Log("post failed: %s", e.what());

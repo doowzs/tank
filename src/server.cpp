@@ -123,14 +123,15 @@ void Server::post() {
   for (auto &player : players) {
     bool healthy = true;
     for (auto &object : objects) {
-      if (!player->client->post(frame, object)) {
-        Log("server post failed");
-        healthy = false;
-        break;
-      }
+      if (!healthy) break;
+      healthy &= player->client->post(frame, object);
+    }
+    for (auto &player : players) {
+      if (!healthy) break;
+      healthy &= player->client->post(frame, player);
     }
     if (healthy) {
-      player->client->post(frame, nullptr); // end-of-frame
+      player->client->post(frame); // end-of-frame
     }
   }
 }

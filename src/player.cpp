@@ -9,7 +9,7 @@
 #include <server.h>
 
 Player::Player(Server *server, Client *client, int respawn_y, bool hasBase)
-    : server(server), client(client), respawn_y(respawn_y) {
+    : server(server), client(client), score(0), respawn_y(respawn_y) {
   respawn();
   if (hasBase) {
     genBase();

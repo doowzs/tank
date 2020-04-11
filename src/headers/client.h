@@ -6,6 +6,7 @@
 
 // forward declaration
 class Object;
+class Player;
 
 enum ClientStatus {
   CLIENT_INIT,
@@ -24,6 +25,9 @@ enum PlayerAction {
 };
 
 class Client {
+ public:
+  friend class Player;
+
  protected:
   char name[32];
   int fps, frame;
@@ -35,7 +39,9 @@ class Client {
   virtual ~Client();
   void run();
   virtual enum PlayerAction act() = 0;
+  virtual bool post(int now) = 0;
   virtual bool post(int now, const Object *object) = 0;
+  virtual bool post(int now, const Player *player) = 0;
   virtual void init() = 0;
   virtual void tick() = 0;
   virtual void over() = 0;

@@ -4,6 +4,7 @@
 #include <client.h>
 #include <object.h>
 #include <packet.h>
+#include <player.h>
 #include <server.h>
 
 const size_t ClientPacket::length = 24;
@@ -56,6 +57,22 @@ ServerPacket::ServerPacket(int frame, int pos_y, int pos_x, int height,
           (unsigned)height, (unsigned)width);
   strncpy(this->pattern, pattern, sizeof(this->pattern));
   strncpy(this->buffer + offset, pattern, sizeof(this->pattern));
+}
+
+ServerPacket::ServerPacket(int frame, const Player *player)
+    : frame(frame), type(PACKET_PLAYER), score(player->getScore()) {
+  sprintf(buffer, "%08x%08x%08x", (unsigned)frame, static_cast<unsigned>(type),
+          (unsigned)score);
+  strncpy(this->name, player->getName(), sizeof(this->name));
+  strncpy(this->buffer + offset, player->getName(), sizeof(this->name));
+}
+
+ServerPacket::ServerPacket(int frame, int score, const char *name)
+    : frame(frame), type(PACKET_PLAYER), score(score) {
+  sprintf(buffer, "%08x%08x%08x", (unsigned)frame, static_cast<unsigned>(type),
+          (unsigned)score);
+  strncpy(this->name, name, sizeof(this->name));
+  strncpy(this->buffer + offset, name, sizeof(this->name));
 }
 
 ServerPacket::ServerPacket(const char *buf) {

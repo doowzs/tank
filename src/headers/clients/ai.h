@@ -10,7 +10,9 @@ class AIClient : public Client {
  public:
   AIClient(const char *name, int fps);
   enum PlayerAction act();
+  bool post(int now);
   bool post(int now, const Object *object);
+  bool post(int now, const Player *player);
   void init();
   void tick();
   void over();

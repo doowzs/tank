@@ -17,14 +17,16 @@ class Player {
  private:
   Server *server;
   Client *client;
-  int respawn_y;
+  int score, respawn_y;
   Tank *tank;  // each player MUST control a tank
   Base *base;  // each player MAY have a base
 
-public:
+ public:
   Player() = delete;
   Player(Server *server, Client *client, int respawn_y, bool hasBase);
   ~Player();
+  int getScore() const { return score; }
+  const char *getName() const { return client->name; }
   void respawn();
   void genBase();
 };
