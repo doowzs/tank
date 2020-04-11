@@ -21,6 +21,5 @@ void Base::operator()() {}
 void Base::operator()(__attribute__((unused)) Object *object) {}
 
 void Base::update() {
-  Log("base life %d", life);
   pattern[12] = (char)('0' + life);
 }

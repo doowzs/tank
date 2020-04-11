@@ -147,7 +147,6 @@ void SocketClient::sync() {
       length -= boost::asio::read(
           socket, boost::asio::buffer(buffer, ServerPacket::length));
       ServerPacket *current = new ServerPacket(buffer);
-      Log("received %d", static_cast<int>(current->type));
       switch (current->type) {
         case PACKET_OBJECT: {
           refresh.emplace_back(current);
