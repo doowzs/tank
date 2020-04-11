@@ -4,7 +4,7 @@
 #include <client.h>
 #include <clients/ai.h>
 
-AIClient::AIClient(int fps) : Client(fps) {}
+AIClient::AIClient(const char *name, int fps) : Client(name, fps) {}
 
 enum PlayerAction AIClient::act() {
   return ACTION_IDLE;  // FIXME

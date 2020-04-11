@@ -46,6 +46,7 @@ class ServerPacket {
   char pattern[32];
   // Player-type data
   int score;
+  char name[32];
   char buffer[80];
 
  public:
@@ -54,6 +55,8 @@ class ServerPacket {
   ServerPacket(int frame, const Object *object);
   ServerPacket(int frame, int pos_y, int pos_x, int height, int width,
                const char *pattern);
+  ServerPacket(int frame, const Player *player);
+  ServerPacket(int frame, int score, const char *name);
   ServerPacket(const char *buf);
 };
 

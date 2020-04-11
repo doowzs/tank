@@ -19,15 +19,15 @@ using boost::asio::io_service;
 using boost::asio::ip::tcp;
 
 // client side constructor
-SocketClient::SocketClient(int fps, string addr, string port)
-    : Client(fps), addr(move(addr)), port(move(port)), socket(context) {
+SocketClient::SocketClient(const char *name, int fps, string addr, string port)
+    : Client(name, fps), addr(move(addr)), port(move(port)), socket(context) {
   packets = vector<ServerPacket *>();
   refresh = vector<ServerPacket *>();
 }
 
 // server side constructor
-SocketClient::SocketClient(tcp::socket &&socket)
-    : Client(0), addr(""), port(""), socket(move(socket)) {
+SocketClient::SocketClient(const char *name, tcp::socket &&socket)
+    : Client(name, 0), addr(""), port(""), socket(move(socket)) {
   packets = vector<ServerPacket *>();
   refresh = vector<ServerPacket *>();
 }
@@ -177,6 +177,7 @@ void SocketClient::sync() {
 
 void SocketClient::draw() {
   wclear(stdscr);
+  mvwprintw(stdscr, 0, 0, "server: %s", addr.c_str());
   for (auto &packet : packets) {
     for (int i = 0, y = packet->pos_y; i < packet->height; ++i, ++y) {
       for (int j = 0, x = packet->pos_x; j < packet->width; ++j, ++x) {

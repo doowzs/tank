@@ -59,7 +59,7 @@ void Server::run() {
     next = now + (1000 / fps) * 1ms;  // next tick
     ++frame, tick();
   }
-  
+
   Assert(status == SERVER_OVER, "not over after Server");
   Log("server stop");
   over();
@@ -69,7 +69,7 @@ void Server::init() {
   tcp::acceptor acceptor(context, tcp::endpoint(tcp::v4(), stoi(port)));
 
   Log("waiting for player...");
-  Client *client = new SocketClient(acceptor.accept());
+  Client *client = new SocketClient("local", acceptor.accept());
   Player *player = new Player(this, client, MAP_HEIGHT - 5, true);
   players.emplace_back(player);
 

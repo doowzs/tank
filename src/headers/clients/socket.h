@@ -26,8 +26,8 @@ class SocketClient : public Client {
   vector<ServerPacket *> packets, refresh;
 
  public:
-  SocketClient(int fps, string addr, string port);
-  explicit SocketClient(tcp::socket &&socket);
+  SocketClient(const char *name, int fps, string addr, string port);
+  explicit SocketClient(const char *name, tcp::socket &&socket);
   ~SocketClient();
   enum PlayerAction act();
   enum PlayerAction input();
