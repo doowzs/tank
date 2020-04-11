@@ -8,16 +8,11 @@
 #include <packet.h>
 
 #include <chrono>
-#include <string>
-using std::string, std::move, std::exception;
 
-#include <boost/asio.hpp>
-using boost::asio::connect;
-using boost::asio::io_context;
-using boost::asio::io_service;
-using boost::asio::ip::tcp;
-
-Client::Client(int fps) : fps(fps), frame(0) { status = CLIENT_INIT; }
+Client::Client(const char *name, int fps) : fps(fps), frame(0) {
+  strncpy(this->name, name, sizeof(this->name));
+  status = CLIENT_INIT;
+}
 
 Client::~Client() {}
 

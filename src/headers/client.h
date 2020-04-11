@@ -25,13 +25,13 @@ enum PlayerAction {
 
 class Client {
  protected:
-  int fps;
-  int frame;
+  char name[32];
+  int fps, frame;
   enum ClientStatus status;
 
  public:
   Client() = delete;
-  explicit Client(int fps);
+  Client(const char *name, int fps);
   virtual ~Client();
   void run();
   virtual enum PlayerAction act() = 0;
