@@ -26,7 +26,7 @@ void Client::run() {
   using namespace std::chrono_literals;
 
   status = CLIENT_INIT;
-  Log("Client start");
+  Log("client start");
   init();
 
   milliseconds next, now;
@@ -45,5 +45,6 @@ void Client::run() {
   }
 
   Assert(status == CLIENT_OVER, "not over after Server");
+  Log("client stop");
   over();
 }

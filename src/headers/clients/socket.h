@@ -31,7 +31,7 @@ class SocketClient : public Client {
   ~SocketClient();
   enum PlayerAction act();
   enum PlayerAction input();
-  void post(int now, const Object *object);
+  bool post(int now, const Object *object);
   void init();
   void tick();
   void over();

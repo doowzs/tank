@@ -10,8 +10,10 @@ enum PlayerAction AIClient::act() {
   return ACTION_IDLE;  // FIXME
 }
 
-void AIClient::post(__attribute__((unused)) int now,
-                         __attribute__((unused)) const Object *object) {}
+bool AIClient::post(__attribute__((unused)) int now,
+                    __attribute__((unused)) const Object *object) {
+  return true;
+}
 
 void AIClient::init() {}
 

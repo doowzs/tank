@@ -14,7 +14,8 @@ enum ClientStatus {
 };
 
 enum PlayerAction {
-  ACTION_IDLE,
+  ACTION_BAD,   // failed
+  ACTION_IDLE,  // no input
   ACTION_SHOOT,
   ACTION_MOVE_UP,
   ACTION_MOVE_DOWN,
@@ -34,7 +35,7 @@ class Client {
   virtual ~Client();
   void run();
   virtual enum PlayerAction act() = 0;
-  virtual void post(int now, const Object *object) = 0;
+  virtual bool post(int now, const Object *object) = 0;
   virtual void init() = 0;
   virtual void tick() = 0;
   virtual void over() = 0;

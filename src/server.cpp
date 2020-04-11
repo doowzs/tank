@@ -18,7 +18,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <string>
-using std::make_pair, std::string, std::stoi, std::move, std::remove_if;
+using std::make_pair, std::string, std::stoi, std::move, std::remove_if,
+    std::exception;
 
 #include <boost/asio.hpp>
 using boost::asio::io_context;
@@ -41,7 +42,7 @@ void Server::run() {
   using namespace std::chrono_literals;
 
   status = SERVER_INIT;
-  Log("Server start");
+  Log("server start");
   init();
 
   milliseconds next, now;
@@ -58,7 +59,9 @@ void Server::run() {
     next = now + (1000 / fps) * 1ms;  // next tick
     ++frame, tick();
   }
+  
   Assert(status == SERVER_OVER, "not over after Server");
+  Log("server stop");
   over();
 }
 
@@ -118,10 +121,17 @@ void Server::logic() {
 
 void Server::post() {
   for (auto &player : players) {
+    bool healthy = true;
     for (auto &object : objects) {
-      player->client->post(frame, object);
+      if (!player->client->post(frame, object)) {
+        Log("server post failed");
+        healthy = false;
+        break;
+      }
     }
-    player->client->post(frame, nullptr);
+    if (healthy) {
+      player->client->post(frame, nullptr); // end-of-frame
+    }
   }
 }
 

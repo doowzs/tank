@@ -45,18 +45,21 @@ SocketClient::~SocketClient() {
 
 enum PlayerAction SocketClient::act() {
   char buffer[128] = "";  // ISO C++ forbids VLA
-  size_t length = socket.available();
-
-  while (length >= ClientPacket::length) {
-    length -= boost::asio::read(
-        socket, boost::asio::buffer(buffer, ClientPacket::length));
-  }
-
-  if (buffer[0] == '\0') {
-    // no input from client
-    return ACTION_IDLE;
-  } else {
-    return ClientPacket(buffer).action;
+  try {
+    size_t length = socket.available();
+    while (length >= ClientPacket::length) {
+      length -= boost::asio::read(
+          socket, boost::asio::buffer(buffer, ClientPacket::length));
+    }
+    if (buffer[0] == '\0') {
+      // no input from client
+      return ACTION_IDLE;
+    } else {
+      return ClientPacket(buffer).action;
+    }
+  } catch (exception &e) {
+    Log("act failed: %s", e.what());
+    return ACTION_BAD;
   }
 }
 
@@ -83,15 +86,21 @@ enum PlayerAction SocketClient::input() {
   return ACTION_IDLE;
 }
 
-void SocketClient::post(int now, const Object *object) {
-  if (object != nullptr) {
-    ServerPacket packet = ServerPacket(now, object);
-    boost::asio::write(
-        socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
-  } else {
-    ServerPacket packet = ServerPacket(now);
-    boost::asio::write(
-        socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
+bool SocketClient::post(int now, const Object *object) {
+  try {
+    if (object != nullptr) {
+      ServerPacket packet = ServerPacket(now, object);
+      boost::asio::write(
+          socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
+    } else {
+      ServerPacket packet = ServerPacket(now);
+      boost::asio::write(
+          socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
+    }
+    return true;
+  } catch (exception &e) {
+    Log("post failed: %s", e.what());
+    return false;
   }
 }
 
@@ -100,7 +109,7 @@ void SocketClient::init() {
     tcp::resolver resolver(context);
     connect(socket, resolver.resolve(addr, port));
   } catch (exception &e) {
-    Log("client init failed");
+    Log("client init failed: %s", e.what());
   }
 }
 
@@ -118,15 +127,19 @@ void SocketClient::over() {
 
 void SocketClient::sync() {
   // First, send user input to server.
-  {
+  try {
     enum PlayerAction action = input();
     ClientPacket packet = ClientPacket(frame, status, action);
 
     boost::asio::write(
         socket, boost::asio::buffer(packet.buffer, ClientPacket::length));
+  } catch (exception &e) {
+    Log("sync-1 failed: %s", e.what());
+    status = CLIENT_OVER;
+    return;
   }
   // Second, read object packets from server.
-  {
+  try {
     char buffer[128] = "";  // ISO C++ forbids VLA
     size_t length = socket.available();
 
@@ -157,6 +170,9 @@ void SocketClient::sync() {
         }
       }
     }
+  } catch (exception &e) {
+    Log("sync-2 failed: %s", e.what());
+    status = CLIENT_OVER;
   }
 }
 
