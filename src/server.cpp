@@ -132,9 +132,9 @@ void Server::post() {
       if (!healthy) break;
       healthy &= player->client->post(frame, object);
     }
-    for (auto &someone : players) {
+    for (auto &_player : players) { // cautious!
       if (!healthy) break;
-      healthy &= player->client->post(frame, someone);
+      healthy &= player->client->post(frame, _player);
     }
     if (healthy) {
       player->client->post(frame); // end-of-frame
