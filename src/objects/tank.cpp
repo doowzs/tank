@@ -12,7 +12,7 @@
 const int Tank::BULLET_SPEED = 3;
 
 Tank::Tank(Server *server, Player *player, int pos_y, int pos_x,
-           enum Direction direction)
+           enum TankDirection direction)
     : Object(server, player, OBJECT_TANK, pos_y, pos_x, 3, 3, "         ", 3),
       direction(direction) {}
 

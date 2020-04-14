@@ -8,7 +8,7 @@ class Server;
 class Player;
 class ServerPacket;
 
-enum ObjectType {
+enum ObjectType : unsigned {
   OBJECT_BASE,
   OBJECT_TANK,
   OBJECT_WALL,

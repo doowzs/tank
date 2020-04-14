@@ -8,7 +8,7 @@
 #include <object.h>
 #include <server.h>
 
-enum PacketType {
+enum PacketType : unsigned {
   PACKET_OBJECT,
   PACKET_PLAYER,
   PACKET_NULL,

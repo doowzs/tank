@@ -7,9 +7,9 @@
 // forward declaration
 class Object;
 class Player;
-enum PlayerAction : short;
+enum PlayerAction : unsigned;
 
-enum ClientStatus : short {
+enum ClientStatus : unsigned {
   CLIENT_INIT,
   CLIENT_PLAY,
   CLIENT_OVER,

@@ -10,7 +10,7 @@ class Client;
 class Tank;
 class Base;
 
-enum PlayerAction : short {
+enum PlayerAction : unsigned {
   ACTION_BAD,   // failed
   ACTION_IDLE,  // no input
   ACTION_SHOOT,

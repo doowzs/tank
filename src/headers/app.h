@@ -12,7 +12,7 @@ using std::string;
 // forward declarations
 class Server;
 
-enum AppStatus {
+enum AppStatus : unsigned {
   APP_INIT,
   APP_MENU,
   APP_GAME_NORMAL,

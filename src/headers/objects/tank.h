@@ -9,7 +9,7 @@
 // forward declaration
 class Bullet;
 
-enum Direction {
+enum TankDirection : unsigned {
   D_UP,
   D_DOWN,
   D_LEFT,
@@ -19,10 +19,10 @@ enum Direction {
 class Tank : public Object {
  private:
   const static int BULLET_SPEED;
-  enum Direction direction;
+  enum TankDirection direction;
 
  public:
-  Tank(Server *server, Player *player, int pos_y, int pos_x, enum Direction direction);
+  Tank(Server *server, Player *player, int pos_y, int pos_x, enum TankDirection direction);
   void operator()();
   void operator()(Object *object);
   void update();

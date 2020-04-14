@@ -20,7 +20,7 @@ class Player;
 class Object;
 class Tank;
 
-enum ServerStatus {
+enum ServerStatus : unsigned {
   SERVER_INIT,
   SERVER_PLAY,
   SERVER_OVER,
