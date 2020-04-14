@@ -121,6 +121,7 @@ void Server::logic() {
     switch (broken->getType()) {
       case OBJECT_BASE: {
         // one base of players broken, Server over.
+        Log("player %s's base destroyed", broken->player->getName());
         status = SERVER_OVER;
         break;
       }

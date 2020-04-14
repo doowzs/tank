@@ -4,6 +4,7 @@
 #include <client.h>
 #include <common.h>
 #include <object.h>
+#include <player.h>
 
 #include <cstring>
 
@@ -96,7 +97,7 @@ void Object::move() {
       tick_x = speed_x < 0 ? -speed_x : speed_x;
     }
   }
-  Log("move to %d, %d", pos_y, pos_x);
+  Log("%s's %d move to %d, %d", player->getName(), type, pos_y, pos_x);
 }
 
 void Object::damage() {

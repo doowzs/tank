@@ -2,6 +2,7 @@
 // Tianyun Zhang 2020 all rights reserved.
 
 #include <client.h>
+#include <common.h>
 #include <object.h>
 #include <objects/base.h>
 #include <objects/tank.h>
@@ -13,7 +14,9 @@ Player::Player(Server *server, Client *client, int respawn_y, bool hasBase)
       client(client),
       score(0),
       respawn_y(respawn_y),
-      respawn_countdown(0) {
+      respawn_countdown(0),
+      tank(nullptr),
+      base(nullptr) {
   respawn();
   if (hasBase) {
     genBase();
@@ -36,8 +39,10 @@ void Player::respawn() {
     --respawn_countdown;
   } else {
     // do not delete the broken tank, server will handle it
-    tank = new Tank(server, this, respawn_y, 0,
-                    respawn_y > Server::MAP_HEIGHT / 2 ? D_UP : D_DOWN);
+    int ry = respawn_y, rx = 0;
+    tank = new Tank(server, this, ry, rx,
+                    ry > Server::MAP_HEIGHT / 2 ? D_UP : D_DOWN);
+    Log("player %s respawn at %d, %d", getName(), ry, rx);
     server->addObject(tank);
   }
 }
@@ -47,6 +52,4 @@ void Player::genBase() {
   server->addObject(base);
 }
 
-void Player::addScore(int points) {
-  score += points;
-}
+void Player::addScore(int points) { score += points; }
