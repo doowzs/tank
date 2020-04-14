@@ -98,6 +98,7 @@ void Server::logic() {
     if (object->broken()) continue;
     (*object)();
     for (auto &target : objects) {
+      if (object->broken()) break;
       if (target == object) continue;
       if (target->broken()) continue;
       if (collide(object, target)) {
