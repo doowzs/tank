@@ -46,3 +46,7 @@ void Player::genBase() {
   base = new Base(server, this, respawn_y, Server::MAP_WIDTH / 2 - 2);
   server->addObject(base);
 }
+
+void Player::addScore(int points) {
+  score += points;
+}

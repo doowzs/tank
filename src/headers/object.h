@@ -58,6 +58,8 @@ class Object {
   int getHeight() const { return height; }
   int getWidth() const { return width; }
   const char *getPattern() const { return pattern; }
+  int getSpeedY() const { return speed_y; }
+  int getSpeedX() const { return speed_x; }
   friend bool collide(const Object *obj1, const Object *obj2);
 };
 

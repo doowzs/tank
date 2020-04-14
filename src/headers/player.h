@@ -40,6 +40,7 @@ class Player {
   enum PlayerAction act();
   void respawn();
   void genBase();
+  void addScore(int points);
 };
 
 #endif

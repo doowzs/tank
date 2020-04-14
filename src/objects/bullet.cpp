@@ -5,6 +5,7 @@
 #include <common.h>
 #include <object.h>
 #include <objects/bullet.h>
+#include <player.h>
 #include <server.h>
 
 Bullet::Bullet(Server *server, Player *player, int pos_y, int pos_x,
@@ -21,7 +22,13 @@ void Bullet::operator()() {
 }
 
 void Bullet::operator()(Object *object) {
+  if (object->getType() == OBJECT_BULLET and
+      (object->getSpeedY() == speed_y and object->getSpeedX() == speed_x)) {
+    // should not break a chasing bullet
+    return;
+  }
   object->damage();
+  player->addscore();
   life = 0;  // bullet conducts suicide
   Log("bullet hits");
 }
