@@ -28,9 +28,10 @@ enum ServerStatus : unsigned {
 
 class Server {
  public:
-  static const int MAP_HEIGHT;
-  static const int MAP_WIDTH;
+  static const int MAP_HEIGHT, MAP_WIDTH;
   static const int RESPAWN_COUNTDOWN;
+  static const int POINTS_SHOOT, POINTS_HIT_BASE, POINTS_HIT_TANK, 
+      POINTS_HIT_BULLET;
 
  private:
   int fps;

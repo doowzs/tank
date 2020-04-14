@@ -28,7 +28,21 @@ void Bullet::operator()(Object *object) {
     return;
   }
   object->damage();
-  player->addscore();
+  if (object->broken()) {
+    switch (object->getType()) {
+      case OBJECT_BASE:
+        player->addScore(Server::POINTS_HIT_BASE);
+        break;
+      case OBJECT_TANK:
+        player->addScore(Server::POINTS_HIT_TANK);
+        break;
+      case OBJECT_BULLET:
+        player->addScore(Server::POINTS_HIT_BULLET);
+        break;
+      default:
+        break; // TODO
+    }
+  }
   life = 0;  // bullet conducts suicide
-  Log("bullet hits");
+  Log("player %s's bullet hits", player->getName());
 }

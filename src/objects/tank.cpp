@@ -21,6 +21,7 @@ void Tank::operator()() {
   switch (action) {
     case ACTION_SHOOT:
       server->addObject(shoot());
+      player->addScore(Server::POINTS_SHOOT);
       break;
     case ACTION_MOVE_UP:
       direction = D_UP;
