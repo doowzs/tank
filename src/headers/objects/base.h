@@ -4,13 +4,12 @@
 #ifndef TANK_BASE_H
 #define TANK_BASE_H
 
-#include <common.h>
 #include <object.h>
 
 class Base : public Object {
  private:
  public:
-  Base(Server *server, Client *client, int pos_y, int pos_x);
+  Base(Server *server, Player *player, int pos_y, int pos_x);
   void operator()();
   void operator()(Object *object);
   void update();

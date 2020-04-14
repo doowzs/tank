@@ -7,8 +7,8 @@
 #include <objects/base.h>
 #include <server.h>
 
-Base::Base(Server *server, Client *client, int pos_y, int pos_x)
-    : Object(server, client, OBJECT_BASE, pos_y, pos_x, 5, 5,
+Base::Base(Server *server, Player *player, int pos_y, int pos_x)
+    : Object(server, player, OBJECT_BASE, pos_y, pos_x, 5, 5,
              "+---+"
              "|X X|"
              "| 9 |"

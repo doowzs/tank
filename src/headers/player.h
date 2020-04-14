@@ -10,6 +10,16 @@ class Client;
 class Tank;
 class Base;
 
+enum PlayerAction : short {
+  ACTION_BAD,   // failed
+  ACTION_IDLE,  // no input
+  ACTION_SHOOT,
+  ACTION_MOVE_UP,
+  ACTION_MOVE_DOWN,
+  ACTION_MOVE_LEFT,
+  ACTION_MOVE_RIGHT,
+};
+
 class Player {
  public:
   friend class Server;
@@ -17,7 +27,7 @@ class Player {
  private:
   Server *server;
   Client *client;
-  int score, respawn_y;
+  int score, respawn_y, respawn_countdown;
   Tank *tank;  // each player MUST control a tank
   Base *base;  // each player MAY have a base
 
@@ -27,6 +37,7 @@ class Player {
   ~Player();
   int getScore() const { return score; }
   const char *getName() const { return client->name; }
+  enum PlayerAction act();
   void respawn();
   void genBase();
 };

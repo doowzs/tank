@@ -7,9 +7,9 @@
 #include <objects/bullet.h>
 #include <server.h>
 
-Bullet::Bullet(Server *server, Client *client, int pos_y, int pos_x,
+Bullet::Bullet(Server *server, Player *player, int pos_y, int pos_x,
                int speed_y, int speed_x)
-    : Object(server, client, OBJECT_BULLET, pos_y, pos_x, 1, 1, "*", speed_y,
+    : Object(server, player, OBJECT_BULLET, pos_y, pos_x, 1, 1, "*", speed_y,
              speed_x) {}
 
 void Bullet::operator()() {

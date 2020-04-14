@@ -3,11 +3,9 @@
 #ifndef TANK_OBJECT_H
 #define TANK_OBJECT_H
 
-#include <curses.h>
-
 // forward declaration
 class Server;
-class Client;
+class Player;
 class ServerPacket;
 
 enum ObjectType {
@@ -19,9 +17,12 @@ enum ObjectType {
 };
 
 class Object {
+ public:
+  friend class Server;
+
  protected:
   Server *server;
-  Client *client;
+  Player *player;
   enum ObjectType type;
   int pos_y, pos_x;
   int height, width;
@@ -35,12 +36,13 @@ class Object {
   Object() = delete;
   Object(enum ObjectType type, int pos_y, int pos_x, int height, int width,
          const char *pattern);  // client-side rendering
-  Object(Server *server, Client *client, enum ObjectType type, int pos_y, int pos_x, int height,
-         int width, const char *pattern);
-  Object(Server *server, Client *client, enum ObjectType type, int pos_y, int pos_x, int height,
-         int width, const char *pattern, int life);
-  Object(Server *server, Client *client, enum ObjectType type, int pos_y, int pos_x, int height,
-         int width, const char *pattern, int speed_y, int speed_x);
+  Object(Server *server, Player *player, enum ObjectType type, int pos_y,
+         int pos_x, int height, int width, const char *pattern);
+  Object(Server *server, Player *player, enum ObjectType type, int pos_y,
+         int pos_x, int height, int width, const char *pattern, int life);
+  Object(Server *server, Player *player, enum ObjectType type, int pos_y,
+         int pos_x, int height, int width, const char *pattern, int speed_y,
+         int speed_x);
   virtual ~Object() = default;
   virtual void operator()() = 0;
   virtual void operator()(Object *object) = 0;
@@ -49,7 +51,7 @@ class Object {
   void suicide();
   virtual void update();
   bool broken() const;
-  Client *getClient() const { return client; }
+  const Player *getPlayer() const { return player; }
   enum ObjectType getType() const { return type; }
   int getPosY() const { return pos_y; }
   int getPosX() const { return pos_x; }

@@ -7,21 +7,12 @@
 // forward declaration
 class Object;
 class Player;
+enum PlayerAction : short;
 
-enum ClientStatus {
+enum ClientStatus : short {
   CLIENT_INIT,
   CLIENT_PLAY,
   CLIENT_OVER,
-};
-
-enum PlayerAction {
-  ACTION_BAD,   // failed
-  ACTION_IDLE,  // no input
-  ACTION_SHOOT,
-  ACTION_MOVE_UP,
-  ACTION_MOVE_DOWN,
-  ACTION_MOVE_LEFT,
-  ACTION_MOVE_RIGHT,
 };
 
 class Client {

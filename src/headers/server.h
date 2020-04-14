@@ -30,6 +30,7 @@ class Server {
  public:
   static const int MAP_HEIGHT;
   static const int MAP_WIDTH;
+  static const int RESPAWN_COUNTDOWN;
 
  private:
   int fps;

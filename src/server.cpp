@@ -28,6 +28,7 @@ using boost::asio::ip::tcp;
 
 const int Server::MAP_HEIGHT = 30;
 const int Server::MAP_WIDTH = 20;
+const int Server::RESPAWN_COUNTDOWN = 3;
 
 Server::Server(int fps, string addr, string port)
     : fps(fps),
@@ -88,6 +89,7 @@ void Server::tick() {
 }
 
 void Server::logic() {
+  // run all objects
   for (auto &object : objects) {
     if (object->broken()) continue;
     (*object)();
@@ -99,6 +101,7 @@ void Server::logic() {
       }
     }
   }
+  // check health of all objects
   objects.erase(remove_if(objects.begin(), objects.end(),
                           [this](Object *object) -> bool {
                             if (object->broken()) {
@@ -108,20 +111,41 @@ void Server::logic() {
                             return false;
                           }),
                 objects.end());
+  // remove all broken objects
   for (auto &broken : brokens) {
-    if (broken->getType() == OBJECT_BASE) {
-      // One base of players broken, Server over.
-      status = SERVER_OVER;
+    switch (broken->getType()) {
+      case OBJECT_BASE: {
+        // one base of players broken, Server over.
+        status = SERVER_OVER;
+        break;
+      }
+      case OBJECT_TANK: {
+        // tank broken, set player's respawn counter
+        broken->player->tank = nullptr;
+        broken->player->respawn_countdown = Server::RESPAWN_COUNTDOWN * fps;
+        break;
+      }
+      default: {
+        // do nothing
+      }
     }
     delete broken;
   }
+  // append new created objects
   for (auto &append : appends) {
     objects.emplace_back(append);
   }
   brokens.clear();
   appends.clear();
+  // update pattern of all objects
   for (auto &object : objects) {
     object->update();
+  }
+  // respawn player if tank broken
+  for (auto &player : players) {
+    if (player->tank == nullptr) {
+      player->respawn();
+    }
   }
 }
 
@@ -132,12 +156,12 @@ void Server::post() {
       if (!healthy) break;
       healthy &= player->client->post(frame, object);
     }
-    for (auto &_player : players) { // cautious!
+    for (auto &_player : players) {  // cautious!
       if (!healthy) break;
       healthy &= player->client->post(frame, _player);
     }
     if (healthy) {
-      player->client->post(frame); // end-of-frame
+      player->client->post(frame);  // end-of-frame
     }
   }
 }

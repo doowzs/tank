@@ -17,6 +17,7 @@ using boost::asio::ip::tcp;
 // forward declaration
 class ClientPacket;
 class ServerPacket;
+enum PlayerAction : short;
 
 class SocketClient : public Client {
  private:

@@ -3,7 +3,6 @@
 
 #include <client.h>
 #include <common.h>
-#include <curses.h>
 #include <object.h>
 
 #include <cstring>
@@ -11,7 +10,7 @@
 Object::Object(enum ObjectType type, int pos_y, int pos_x, int height,
                int width, const char *pattern)
     : server(nullptr),
-      client(nullptr),
+      player(nullptr),
       type(type),
       pos_y(pos_y),
       pos_x(pos_x),
@@ -26,10 +25,10 @@ Object::Object(enum ObjectType type, int pos_y, int pos_x, int height,
   memcpy(this->pattern, pattern, sizeof(this->pattern));
 }
 
-Object::Object(Server *server, Client *client, enum ObjectType type, int pos_y,
+Object::Object(Server *server, Player *player, enum ObjectType type, int pos_y,
                int pos_x, int height, int width, const char *pattern)
     : server(server),
-      client(client),
+      player(player),
       type(type),
       pos_y(pos_y),
       pos_x(pos_x),
@@ -44,10 +43,10 @@ Object::Object(Server *server, Client *client, enum ObjectType type, int pos_y,
   memcpy(this->pattern, pattern, sizeof(this->pattern));
 }
 
-Object::Object(Server *server, Client *client, enum ObjectType type, int pos_y,
+Object::Object(Server *server, Player *player, enum ObjectType type, int pos_y,
                int pos_x, int height, int width, const char *pattern, int life)
     : server(server),
-      client(client),
+      player(player),
       type(type),
       pos_y(pos_y),
       pos_x(pos_x),
@@ -62,11 +61,11 @@ Object::Object(Server *server, Client *client, enum ObjectType type, int pos_y,
   memcpy(this->pattern, pattern, sizeof(this->pattern));
 }
 
-Object::Object(Server *server, Client *client, enum ObjectType type, int pos_y,
+Object::Object(Server *server, Player *player, enum ObjectType type, int pos_y,
                int pos_x, int height, int width, const char *pattern,
                int speed_y, int speed_x)
     : server(server),
-      client(client),
+      player(player),
       type(type),
       pos_y(pos_y),
       pos_x(pos_x),

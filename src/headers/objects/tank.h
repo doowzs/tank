@@ -6,8 +6,7 @@
 
 #include <object.h>
 
-// forward declarations
-class Client;
+// forward declaration
 class Bullet;
 
 enum Direction {
@@ -23,7 +22,7 @@ class Tank : public Object {
   enum Direction direction;
 
  public:
-  Tank(Server *server, Client *client, int pos_y, int pos_x, enum Direction direction);
+  Tank(Server *server, Player *player, int pos_y, int pos_x, enum Direction direction);
   void operator()();
   void operator()(Object *object);
   void update();
