@@ -80,7 +80,7 @@ void Server::init() {
   players.emplace_back(player);
 
   Log("adding AI players...");
-  Client *ai_client = new AIClient("artificial idiot");
+  Client *ai_client = new AIClient(this, "artificial idiot");
   Player *ai_player = new Player(this, ai_client, 5, true);
   players.emplace_back(ai_player);
 

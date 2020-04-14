@@ -17,12 +17,17 @@ enum TankDirection : unsigned {
 };
 
 class Tank : public Object {
+ public:
+  friend class Server;
+  friend class AIClient;
+
  private:
   const static int BULLET_SPEED;
   enum TankDirection direction;
 
  public:
-  Tank(Server *server, Player *player, int pos_y, int pos_x, enum TankDirection direction);
+  Tank(Server *server, Player *player, int pos_y, int pos_x,
+       enum TankDirection direction);
   void operator()();
   void operator()(Object *object);
   void update();

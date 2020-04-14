@@ -8,7 +8,12 @@
 
 class Bullet : public Object {
  public:
-  Bullet(Server *server, Player *player, int pos_y, int pos_x, int speed_y, int speed_x);
+  friend class Server;
+  friend class AIClient;
+
+ public:
+  Bullet(Server *server, Player *player, int pos_y, int pos_x, int speed_y,
+         int speed_x);
   void operator()();
   void operator()(Object *object);
 };

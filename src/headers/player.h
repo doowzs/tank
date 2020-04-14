@@ -7,6 +7,7 @@
 // forward declaration
 class Server;
 class Client;
+class AIClient;
 class Tank;
 class Base;
 
@@ -36,7 +37,10 @@ class Player {
   Player(Server *server, Client *client, int respawn_y, bool hasBase);
   ~Player();
   int getScore() const { return score; }
+  const Client *getClient() const { return client; }
   const char *getName() const { return client->name; }
+  const Tank *getTank() const { return tank; }
+  const Base *getBase() const { return base; }
   enum PlayerAction act();
   void respawn();
   void genBase();

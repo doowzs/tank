@@ -16,6 +16,7 @@ using boost::asio::ip::tcp;
 
 // forward decalaration
 class Client;
+class AIClient;
 class Player;
 class Object;
 class Tank;
@@ -30,8 +31,9 @@ class Server {
  public:
   static const int MAP_HEIGHT, MAP_WIDTH;
   static const int RESPAWN_COUNTDOWN;
-  static const int POINTS_SHOOT, POINTS_HIT_BASE, POINTS_HIT_TANK, 
+  static const int POINTS_SHOOT, POINTS_HIT_BASE, POINTS_HIT_TANK,
       POINTS_HIT_BULLET;
+  friend class AIClient;
 
  private:
   int fps;

@@ -6,9 +6,15 @@
 
 #include <client.h>
 
+// forward declaration
+class Server;
+
 class AIClient : public Client {
+ private:
+  const Server *server;  // read-only
+
  public:
-  AIClient(const char *name);
+  AIClient(const Server *server, const char *name);
   enum PlayerAction act();
   bool post(int now);
   bool post(int now, const Object *object);

@@ -19,6 +19,7 @@ enum ObjectType : unsigned {
 class Object {
  public:
   friend class Server;
+  friend class AIClient;
 
  protected:
   Server *server;

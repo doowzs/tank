@@ -7,7 +7,10 @@
 #include <object.h>
 
 class Base : public Object {
- private:
+ public:
+  friend class Server;
+  friend class AIClient;
+
  public:
   Base(Server *server, Player *player, int pos_y, int pos_x);
   void operator()();
