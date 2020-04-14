@@ -11,10 +11,11 @@ class Server;
 
 class AIClient : public Client {
  private:
-  const Server *server;  // read-only
+  const Server *server;                     // read-only access to server
+  int thinking_frames, thinking_countdown;  // frames until next action
 
  public:
-  AIClient(const Server *server, const char *name);
+  AIClient(const Server *server, const char *name, double difficulty);
   enum PlayerAction act();
   bool post(int now);
   bool post(int now, const Object *object);

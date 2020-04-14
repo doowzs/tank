@@ -30,6 +30,8 @@ void App::run() {
         Server *server = new Server(App::FPS, App::addr, App::port);
         SocketClient *client = new SocketClient("local", App::FPS, "localhost", App::port);
 
+        // a mutex is required: client must connect after server initialized
+        std::mutex mutex;
         std::thread st(&Server::run, server);
         std::thread ct(&Client::run, client);
 

@@ -9,12 +9,20 @@
 #include <player.h>
 #include <server.h>
 
-AIClient::AIClient(const Server *server, const char *name)
-    : Client(name, 0), server(server) {}
+AIClient::AIClient(const Server *server, const char *name, double difficulty)
+    : Client(name, 0), server(server) {
+  thinking_frames = thinking_countdown = (int)(difficulty * server->fps);
+}
 
 enum PlayerAction AIClient::act() {
   const Tank *tank = nullptr;
   const Base *target = nullptr;
+  if (thinking_countdown > 0) {
+    --thinking_countdown;
+    return ACTION_IDLE;  // AI is "thinking"
+  } else {
+    thinking_countdown = thinking_frames;
+  }
   {
     // search for target
     for (auto &player : server->players) {
