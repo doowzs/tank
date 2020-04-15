@@ -56,6 +56,11 @@ void Tank::operator()() {
         tick_y = tick_x = 0;
         move();
         break;
+      case ACTION_SUICIDE:
+        cooldown = 0;
+        suicide();
+        Log("%s commits suicide", player->getName());
+        return;
       default:
         cooldown = 0;
         return;  // IDLE

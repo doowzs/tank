@@ -19,6 +19,7 @@ enum PlayerAction : unsigned {
   ACTION_MOVE_DOWN,
   ACTION_MOVE_LEFT,
   ACTION_MOVE_RIGHT,
+  ACTION_SUICIDE,
 };
 
 class Player {

@@ -84,6 +84,8 @@ enum PlayerAction SocketClient::input() {
       return ACTION_MOVE_LEFT;
     case KEY_RIGHT:
       return ACTION_MOVE_RIGHT;
+    case 'R':
+      return ACTION_SUICIDE;
   }
   return ACTION_IDLE;
 }
