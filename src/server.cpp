@@ -78,24 +78,24 @@ void Server::run() {
 void Server::init() {
   Log("waiting for player...");
   Client *client = new SocketClient("local", acceptor.accept());
-  Player *player = new Player(this, client, MAP_HEIGHT - 5, true);
+  Player *player = new Player(this, client, MAP_HEIGHT + 1 - 5, true);
   players.emplace_back(player);
 
   Log("adding AI players...");
   Client *ai_client = new AIClient(this, "artificial idiot", 0.2);
-  Player *ai_player = new Player(this, ai_client, 5, true);
+  Player *ai_player = new Player(this, ai_client, 1, false);
   players.emplace_back(ai_player);
 
   Log("generating game map...");
-  for (int x = 0; x < MAP_WIDTH; ++x) {
-    objects.emplace_back(new Wall(this, world, 0, x, 1, 1, " ", 0));
+  for (int x = 1; x <= MAP_WIDTH; ++x) {
+    objects.emplace_back(new Wall(this, world, 0, x, 1, 1, "v", 0));
   }
   for (int y = 1; y <= MAP_HEIGHT; ++y) {
-    objects.emplace_back(new Wall(this, world, y, 0, 1, 1, " ", 0));
-    objects.emplace_back(new Wall(this, world, y, MAP_WIDTH + 1, 1, 1, " ", 0));
+    objects.emplace_back(new Wall(this, world, y, 0, 1, 1, ">", 0));
+    objects.emplace_back(new Wall(this, world, y, MAP_WIDTH + 1, 1, 1, "<", 0));
   }
-  for (int x = 0; x < MAP_WIDTH; ++x) {
-    objects.emplace_back(new Wall(this, world, MAP_HEIGHT + 1, x, 1, 1, " ", 0));
+  for (int x = 1; x <= MAP_WIDTH; ++x) {
+    objects.emplace_back(new Wall(this, world, MAP_HEIGHT + 1, x, 1, 1, "^", 0));
   }
   for (int x = 1; x + 2 <= MAP_WIDTH; x += 2) {
     objects.emplace_back(new Wall(this, world, MAP_HEIGHT / 2, x));

@@ -199,7 +199,7 @@ void SocketClient::sync() {
 
 void SocketClient::draw() {
   wclear(stdscr);
-  mvwprintw(stdscr, 0, 0, "server: %s", addr.c_str());
+  mvwprintw(stdscr, 0, Server::MAP_WIDTH + 3, "server: %s", addr.c_str());
   int line = 0;
   for (auto &packet : packets) {
     switch (packet->type) {
@@ -212,7 +212,7 @@ void SocketClient::draw() {
         break;
       }
       case PACKET_PLAYER: {
-        mvwprintw(stdscr, ++line, 0, "player %s: %d", packet->name,
+        mvwprintw(stdscr, ++line, Server::MAP_WIDTH + 3, "player %s: %d", packet->name,
                   packet->score);
         break;
       }
