@@ -26,7 +26,7 @@ class SocketClient : public Client {
   io_context context;
   tcp::socket socket;
   vector<ServerPacket *> packets, refresh;
-  WINDOW *game_screen, *info_screen;
+  WINDOW *game_window, *info_window;
 
  public:
   SocketClient(const char *name, int fps, const string &addr, const string &port);
