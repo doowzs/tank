@@ -34,13 +34,13 @@ const int Server::POINTS_HIT_BASE = 10000;
 const int Server::POINTS_HIT_TANK = 50;
 const int Server::POINTS_HIT_BULLET = 1;
 
-Server::Server(int fps, string addr, string port)
+Server::Server(int fps, const string &addr, const string &port)
     : fps(fps),
       frame(0),
       status(SERVER_INIT),
-      addr(move(addr)),
-      port(move(port)),
-      acceptor(context, tcp::endpoint(tcp::v4(), stoi(this->port))) {}
+      addr(addr),
+      port(port),
+      acceptor(context, tcp::endpoint(tcp::v4(), stoi(port))) {}
 
 Server::~Server() {}
 

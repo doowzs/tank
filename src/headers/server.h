@@ -50,7 +50,7 @@ class Server {
 
  public:
   Server() = delete;
-  Server(int fps, string addr, string port);
+  Server(int fps, const string &addr, const string &port);
   ~Server();
   void run();
   void init();

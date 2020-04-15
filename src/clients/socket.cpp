@@ -20,8 +20,9 @@ using boost::asio::io_service;
 using boost::asio::ip::tcp;
 
 // client side constructor
-SocketClient::SocketClient(const char *name, int fps, string addr, string port)
-    : Client(name, fps), addr(move(addr)), port(move(port)), socket(context) {
+SocketClient::SocketClient(const char *name, int fps, const string &addr,
+                           const string &port)
+    : Client(name, fps), addr(addr), port(port), socket(context) {
   packets = vector<ServerPacket *>();
   refresh = vector<ServerPacket *>();
 }
@@ -211,7 +212,8 @@ void SocketClient::draw() {
         break;
       }
       case PACKET_PLAYER: {
-        mvwprintw(stdscr, ++line, 0, "player %s: %d", packet->name, packet->score);
+        mvwprintw(stdscr, ++line, 0, "player %s: %d", packet->name,
+                  packet->score);
         break;
       }
       default: {
