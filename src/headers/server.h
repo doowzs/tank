@@ -42,6 +42,7 @@ class Server {
   string addr, port;
   WINDOW *screen;
   io_context context;
+  tcp::acceptor acceptor;
   vector<Player *> players;
   vector<Object *> objects;  // current objects
   vector<Object *> appends;  // new objects

@@ -39,7 +39,8 @@ Server::Server(int fps, string addr, string port)
       frame(0),
       status(SERVER_INIT),
       addr(move(addr)),
-      port(move(port)) {}
+      port(move(port)),
+      acceptor(context, tcp::endpoint(tcp::v4(), stoi(this->port))) {}
 
 Server::~Server() {}
 
@@ -72,8 +73,6 @@ void Server::run() {
 }
 
 void Server::init() {
-  tcp::acceptor acceptor(context, tcp::endpoint(tcp::v4(), stoi(port)));
-
   Log("waiting for player...");
   Client *client = new SocketClient("local", acceptor.accept());
   Player *player = new Player(this, client, MAP_HEIGHT - 5, true);
