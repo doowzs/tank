@@ -11,7 +11,8 @@
 
 AIClient::AIClient(const Server *server, const char *name, double difficulty)
     : Client(name, 0), server(server) {
-  thinking_frames = thinking_countdown = (int)(difficulty * server->fps);
+  thinking_frames = thinking_countdown =
+      (int)(difficulty * server->fps) < 0 ? 1 : (int)(difficulty * server->fps);
 }
 
 enum PlayerAction AIClient::act() {
