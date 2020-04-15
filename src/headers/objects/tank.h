@@ -22,8 +22,12 @@ class Tank : public Object {
   friend class AIClient;
 
  private:
-  const static int BULLET_SPEED;
+  const static int BULLET_SPEED_SLOW;
+  const static int BULLET_SPEED_FAST;
+  const static int COOLDOWN_FRAMES_SLOW;
+  const static int COOLDOWN_FRAMES_FAST;
   enum TankDirection direction;
+  int cooldown;
 
  public:
   Tank(Server *server, Player *player, int pos_y, int pos_x,
