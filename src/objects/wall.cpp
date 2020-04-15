@@ -1,4 +1,4 @@
-// Definition of the wal object.
+// Definition of the wall object.
 // Tianyun Zhang 2020 all rights reserved.
 
 #include <client.h>

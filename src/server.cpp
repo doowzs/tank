@@ -9,6 +9,7 @@
 #include <ncurses.h>
 #include <object.h>
 #include <objects/base.h>
+#include <objects/border.h>
 #include <objects/bullet.h>
 #include <objects/tank.h>
 #include <objects/wall.h>
@@ -93,14 +94,14 @@ void Server::init() {
 
   Log("generating game map...");
   for (int x = 1; x <= MAP_WIDTH; ++x) {
-    addObject(new Wall(this, world, 0, x, 1, 1, "v", 0));
+    addObject(new Border(this, world, 0, x));
   }
   for (int y = 1; y <= MAP_HEIGHT; ++y) {
-    addObject(new Wall(this, world, y, 0, 1, 1, ">", 0));
-    addObject(new Wall(this, world, y, MAP_WIDTH + 1, 1, 1, "<", 0));
+    addObject(new Border(this, world, y, 0));
+    addObject(new Border(this, world, y, MAP_WIDTH + 1));
   }
   for (int x = 1; x <= MAP_WIDTH; ++x) {
-    addObject(new Wall(this, world, MAP_HEIGHT + 1, x, 1, 1, "^", 0));
+    addObject(new Border(this, world, MAP_HEIGHT + 1, x));
   }
   for (int x = 1; x + 2 <= MAP_WIDTH; x += 2) {
     addObject(new Wall(this, world, MAP_HEIGHT / 2, x));
@@ -184,6 +185,7 @@ void Server::post() {
     bool healthy = true;
     for (auto &object : objects) {
       if (!healthy) break;
+      if (object->type == OBJECT_BORDER) continue;
       healthy &= player->client->post(frame, object);
     }
     for (auto &_player : players) {  // cautious!

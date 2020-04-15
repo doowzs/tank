@@ -13,6 +13,7 @@ enum ObjectType : unsigned {
   OBJECT_BASE,
   OBJECT_TANK,
   OBJECT_WALL,
+  OBJECT_BORDER,
   OBJECT_BULLET,
   OBJECT_NULL,
 };

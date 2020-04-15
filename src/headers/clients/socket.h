@@ -5,6 +5,7 @@
 #define TANK_CLIENTS_SOCKET_H
 
 #include <client.h>
+#include <curses.h>
 
 #include <string>
 #include <vector>
@@ -25,6 +26,7 @@ class SocketClient : public Client {
   io_context context;
   tcp::socket socket;
   vector<ServerPacket *> packets, refresh;
+  WINDOW *game_screen, *info_screen;
 
  public:
   SocketClient(const char *name, int fps, const string &addr, const string &port);

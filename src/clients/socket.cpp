@@ -23,16 +23,20 @@ using boost::asio::ip::tcp;
 SocketClient::SocketClient(const char *name, int fps, const string &addr,
                            const string &port)
     : Client(name, fps), addr(addr), port(port), socket(context) {
-  packets = vector<ServerPacket *>();
-  refresh = vector<ServerPacket *>();
+  game_screen = newwin(Server::MAP_HEIGHT + 2, Server::MAP_WIDTH + 2, 0, 0);
+  info_screen = newwin(Server::MAP_HEIGHT + 2, 20, 0, Server::MAP_WIDTH + 2);
+  box(game_screen, 0, 0);
+  box(info_screen, 0, 0);
 }
 
 // server side constructor
 SocketClient::SocketClient(const char *name, tcp::socket &&socket)
-    : Client(name, 0), addr(""), port(""), socket(move(socket)) {
-  packets = vector<ServerPacket *>();
-  refresh = vector<ServerPacket *>();
-}
+    : Client(name, 0),
+      addr(""),
+      port(""),
+      socket(move(socket)),
+      game_screen(nullptr),
+      info_screen(nullptr) {}
 
 SocketClient::~SocketClient() {
   for (auto &packet : packets) {
@@ -43,6 +47,12 @@ SocketClient::~SocketClient() {
     delete packet;
   }
   refresh.clear();
+  if (game_screen != nullptr) {
+    delwin(game_screen);
+  }
+  if (info_screen != nullptr) {
+    delwin(info_screen);
+  }
 }
 
 enum PlayerAction SocketClient::act() {
@@ -147,6 +157,13 @@ void SocketClient::over() {
     socket.close();
     socket.release();
   });
+  WINDOW *win = newwin(5, 20, 5, 5);
+  box(win, 0, 0);
+  mvwprintw(win, 1, 1, "Game Over");
+  wrefresh(win);
+  while (getch() != '\n')
+    ;
+  delwin(win);
 }
 
 void SocketClient::sync() {
@@ -200,22 +217,22 @@ void SocketClient::sync() {
 }
 
 void SocketClient::draw() {
-  werase(stdscr);
-  mvwprintw(stdscr, 0, Server::MAP_WIDTH + 3, "server: %s", addr.c_str());
+  werase(game_screen), werase(info_screen);
+  mvwprintw(info_screen, 0, Server::MAP_WIDTH + 3, "server: %s", addr.c_str());
   int line = 0;
   for (auto &packet : packets) {
     switch (packet->type) {
       case PACKET_OBJECT: {
         for (int i = 0, y = packet->pos_y; i < packet->height; ++i, ++y) {
           for (int j = 0, x = packet->pos_x; j < packet->width; ++j, ++x) {
-            mvwaddch(stdscr, y, x, packet->pattern[i * packet->width + j]);
+            mvwaddch(game_screen, y - 1, x - 1, packet->pattern[i * packet->width + j]);
           }
         }
         break;
       }
       case PACKET_PLAYER: {
-        mvwprintw(stdscr, ++line, Server::MAP_WIDTH + 3, "player %s: %d", packet->name,
-                  packet->score);
+        mvwprintw(info_screen, ++line, Server::MAP_WIDTH + 3, "player %s: %d",
+                  packet->name, packet->score);
         break;
       }
       default: {
@@ -224,5 +241,5 @@ void SocketClient::draw() {
       }
     }
   }
-  wrefresh(stdscr);
+  wrefresh(game_screen), wrefresh(info_screen);
 }
