@@ -78,12 +78,12 @@ void Server::run() {
 
 void Server::init() {
   Log("waiting for player...");
-  Client *client = new SocketClient("local", acceptor.accept());
+  Client *client = new SocketClient("you", acceptor.accept());
   Player *player = new Player(this, client, MAP_HEIGHT + 1 - 5, true);
   players.emplace_back(player);
 
   Log("adding AI players...");
-  Client *ai_client = new AIClient(this, "artificial idiot", 0.2);
+  Client *ai_client = new AIClient(this, "bot", 0.2);
   Player *ai_player = new Player(this, ai_client, 1, false);
   players.emplace_back(ai_player);
 
