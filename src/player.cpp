@@ -33,7 +33,7 @@ Player::~Player() {
 enum PlayerAction Player::act() { return client->act(); }
 
 void Player::respawn() {
-  if (tank != nullptr) return;
+  if (tank != nullptr or respawn_y < 0) return;
   if (respawn_countdown > 0) {
     // waiting to be respawned
     --respawn_countdown;

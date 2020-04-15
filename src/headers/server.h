@@ -43,6 +43,7 @@ class Server {
   WINDOW *screen;
   io_context context;
   tcp::acceptor acceptor;
+  Player *world;
   vector<Player *> players;
   vector<Object *> objects;  // current objects
   vector<Object *> appends;  // new objects

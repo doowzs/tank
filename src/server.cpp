@@ -11,6 +11,7 @@
 #include <objects/base.h>
 #include <objects/bullet.h>
 #include <objects/tank.h>
+#include <objects/wall.h>
 #include <player.h>
 #include <server.h>
 
@@ -40,9 +41,11 @@ Server::Server(int fps, const string &addr, const string &port)
       status(SERVER_INIT),
       addr(addr),
       port(port),
-      acceptor(context, tcp::endpoint(tcp::v4(), stoi(port))) {}
+      acceptor(context, tcp::endpoint(tcp::v4(), stoi(port))) {
+  world = new Player(this, nullptr, -1, false);
+}
 
-Server::~Server() {}
+Server::~Server() { delete world; }
 
 void Server::run() {
   using namespace std::chrono;
@@ -82,6 +85,11 @@ void Server::init() {
   Client *ai_client = new AIClient(this, "artificial idiot", 0.2);
   Player *ai_player = new Player(this, ai_client, 5, true);
   players.emplace_back(ai_player);
+
+  Log("generating game map...");
+  for (int x = 0; x < MAP_WIDTH; x += 2) {
+    objects.emplace_back(new Wall(this, world, MAP_HEIGHT / 2, x));
+  }
 
   Log("all players connected");
 }
