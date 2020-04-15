@@ -91,13 +91,13 @@ void Tank::update() {
 Bullet *Tank::shoot() {
   switch (direction) {
     case D_UP:
-      return new Bullet(server, player, pos_y - 1, pos_x + 1, -BULLET_SPEED, 0);
+      return new Bullet(server, player, pos_y + 0, pos_x + 1, -BULLET_SPEED, 0);
     case D_DOWN:
-      return new Bullet(server, player, pos_y + 3, pos_x + 1, BULLET_SPEED, 0);
+      return new Bullet(server, player, pos_y + 2, pos_x + 1, BULLET_SPEED, 0);
     case D_LEFT:
-      return new Bullet(server, player, pos_y + 1, pos_x - 1, 0, -BULLET_SPEED);
+      return new Bullet(server, player, pos_y + 1, pos_x + 0, 0, -BULLET_SPEED);
     case D_RIGHT:
-      return new Bullet(server, player, pos_y + 1, pos_x + 3, 0, BULLET_SPEED);
+      return new Bullet(server, player, pos_y + 1, pos_x + 2, 0, BULLET_SPEED);
   }
   Panic("should not reach here");
   return nullptr;
