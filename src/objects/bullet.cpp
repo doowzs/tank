@@ -17,7 +17,7 @@ void Bullet::operator()() {
   move();
   if (pos_y < 0 or pos_y > Server::MAP_HEIGHT or pos_x < 0 or
       pos_x > Server::MAP_WIDTH) {
-    suicide();
+    suicide();  // bullet is out of bound
   }
 }
 
@@ -40,9 +40,9 @@ void Bullet::operator()(Object *object) {
         player->addScore(Server::POINTS_HIT_BULLET);
         break;
       default:
-        break; // TODO
+        break;  // TODO
     }
   }
-  life = 0;  // bullet conducts suicide
-  Log("player %s's bullet hits", player->getName());
+  suicide();  // bullet conducts suicide
+  Log("%s's bullet hits", player->getName());
 }

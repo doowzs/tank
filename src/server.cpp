@@ -206,7 +206,12 @@ void Server::over() {
   }
 }
 
-void Server::addObject(Object *object) { appends.emplace_back(object); }
+void Server::addObject(Object *object) {
+  appends.emplace_back(object);
+  if (object->type == OBJECT_BULLET) {
+    Log("%s shoots", object->player->getName());
+  }
+}
 
 bool Server::placeObject(Object *object, int new_y, int new_x) {
   int old_y = object->pos_y, old_x = object->pos_x;
@@ -220,8 +225,9 @@ bool Server::placeObject(Object *object, int new_y, int new_x) {
       }
     }
   }
-  Log("%s's %d move to %d, %d", object->player->getName(), object->type, new_y,
-      new_x);
+  if (object->type == OBJECT_TANK) {
+    Log("%s moves to (%d, %d)", object->player->getName(), new_y, new_x);
+  }
   return true;
 }
 
@@ -230,11 +236,11 @@ bool Server::respawnTank(Tank *tank, int respawn_y) {
   // make 10 attempts to respawn the tank
   for (int i = 0; i < 10; ++i) {
     int pos_y = uniform_int_distribution<int>(
-        max(respawn_y - 3, 1), min(respawn_y + 3, MAP_HEIGHT))(rng);
-    int pos_x = uniform_int_distribution<int>(1, MAP_WIDTH)(rng);
+        max(respawn_y - 3, 1), min(respawn_y + 3, MAP_HEIGHT - tank->height))(rng);
+    int pos_x = uniform_int_distribution<int>(1, MAP_WIDTH - tank->width)(rng);
     if (placeObject(tank, pos_y, pos_x)) {
       objects.emplace_back(tank);
-      Log("player %s respawned at %d, %d", tank->player->getName(), pos_y,
+      Log("%s respawned at (%d, %d)", tank->player->getName(), pos_y,
           pos_x);
       return true;
     }
