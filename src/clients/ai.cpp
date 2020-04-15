@@ -65,7 +65,7 @@ enum PlayerAction AIClient::act() {
       }
       // shoot an object in sight
       for (auto &object : server->objects) {
-        if (in_sight(tank, object)) {
+        if (object->breakable and in_sight(tank, object)) {
           if (uniform_real_distribution<double>(0.0, 1.0)(rng) <
               shoot_threshold) {
             return ACTION_SHOOT;

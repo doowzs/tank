@@ -126,9 +126,9 @@ Bullet *Tank::shoot() {
 
 bool in_sight(const Tank *tank, const Object *object) {
   bool in_sight_y = object->pos_x <= tank->pos_x + 1 and
-                    tank->pos_x + 1 <= object->pos_x + object->width;
+                    tank->pos_x + 1 < object->pos_x + object->width;
   bool in_sight_x = object->pos_y <= tank->pos_y + 1 and
-                    tank->pos_y + 1 <= object->pos_y + object->height;
+                    tank->pos_y + 1 < object->pos_y + object->height;
   switch (tank->direction) {
     case D_UP:
       return object->pos_y < tank->pos_y and in_sight_y;
