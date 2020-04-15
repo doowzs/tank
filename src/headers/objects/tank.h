@@ -36,6 +36,7 @@ class Tank : public Object {
   void operator()(Object *object);
   void update();
   Bullet *shoot();
+  friend bool in_sight(const Tank *tank, const Object *object);
 };
 
 #endif

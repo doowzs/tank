@@ -12,21 +12,28 @@
 
 #include <chrono>
 #include <random>
+#include <vector>
+using std::default_random_engine, std::uniform_int_distribution,
+    std::uniform_real_distribution, std::vector, std::pair;
 
-AIClient::AIClient(const Server *server, const char *name, double difficulty)
-    : Client(name, 0), server(server) {
+default_random_engine AIClient::rng;
+const vector<pair<int, enum PlayerAction>> AIClient::random_actions = {
+    {20, ACTION_SHOOT},     {10, ACTION_MOVE_UP},    {10, ACTION_MOVE_DOWN},
+    {10, ACTION_MOVE_LEFT}, {10, ACTION_MOVE_RIGHT},
+};
+const int AIClient::random_total_tickets = 20 + 10 + 10 + 10 + 10;
+
+AIClient::AIClient(const Server *server, const char *name, double coef_thinking,
+                   double coef_shooting, double coef_random)
+    : Client(name, 0),
+      server(server),
+      shoot_threshold(coef_shooting),
+      random_threshold(coef_random) {
   thinking_frames = thinking_countdown =
-      (int)(difficulty * server->fps) < 0 ? 1 : (int)(difficulty * server->fps);
+      (int)(coef_thinking * server->fps) < 0
+          ? 1
+          : (int)(coef_thinking * server->fps);
   rng.seed(std::chrono::system_clock::now().time_since_epoch().count());
-
-  random_actions.emplace_back(std::make_pair(20, ACTION_SHOOT));
-  random_actions.emplace_back(std::make_pair(10, ACTION_MOVE_UP));
-  random_actions.emplace_back(std::make_pair(10, ACTION_MOVE_DOWN));
-  random_actions.emplace_back(std::make_pair(10, ACTION_MOVE_LEFT));
-  random_actions.emplace_back(std::make_pair(10, ACTION_MOVE_RIGHT));
-  for (auto it = random_actions.begin() + 1; it != random_actions.end(); ++it) {
-    it->first = (it - 1)->first + it->first;  // prefix sum
-  }
 }
 
 enum PlayerAction AIClient::act() {
@@ -37,25 +44,35 @@ enum PlayerAction AIClient::act() {
     return ACTION_IDLE;  // AI is "thinking"
   } else {
     thinking_countdown = thinking_frames;
-  }
-  if (std::uniform_real_distribution<double>(0.0, 1.0)(rng) < 0.3) {
-    return actRandomly();
-  } else {
-    {
+    if (std::uniform_real_distribution<double>(0.0, 1.0)(rng) <
+        random_threshold) {
+      // 0.0 < random < threshold < 1.0
+      return actRandomly();
+    } else {
       // search for target
       for (auto &player : server->players) {
         if (player->getClient() == this) {
           tank = player->getTank();
         } else {
-          target = player->getBase();
+          if (player->hasBase()) {
+            target = player->getBase();
+          }
         }
       }
       if (tank == nullptr or target == nullptr) {
         // no tank or target in game, AI go to sleep
         return ACTION_IDLE;
       }
-    }
-    {
+      // shoot an object in sight
+      for (auto &object : server->objects) {
+        if (in_sight(tank, object)) {
+          if (uniform_real_distribution<double>(0.0, 1.0)(rng) <
+              shoot_threshold) {
+            return ACTION_SHOOT;
+          }
+        }
+      }
+      // go directly to target and shoot
       if (tank->pos_y < target->pos_y - 1) {
         return ACTION_MOVE_DOWN;
       } else if (tank->pos_y > target->pos_y + target->height + 1) {
@@ -72,11 +89,12 @@ enum PlayerAction AIClient::act() {
 }
 
 enum PlayerAction AIClient::actRandomly() {
-  int lottery =
-      std::uniform_int_distribution<int>(1, random_actions.back().first)(rng);
+  int lottery = uniform_int_distribution<int>(1, random_total_tickets)(rng);
   for (auto action : random_actions) {
     if (lottery <= action.first) {
       return action.second;
+    } else {
+      lottery -= action.first;
     }
   }
   Panic("should not reach here");

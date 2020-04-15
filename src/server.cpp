@@ -83,10 +83,10 @@ void Server::init() {
   players.emplace_back(player);
 
   Log("adding AI players...");
-  Client *ai_client1 = new AIClient(this, "bot1", 0.2);
+  Client *ai_client1 = new AIClient(this, "bot1", 0.2, 0.2, 0.1);
   Player *ai_player1 = new Player(this, ai_client1, 1, false);
   players.emplace_back(ai_player1);
-  Client *ai_client2 = new AIClient(this, "bot2", 0.2);
+  Client *ai_client2 = new AIClient(this, "bot2", 0.2, 0.2, 0.1);
   Player *ai_player2 = new Player(this, ai_client2, 1, false);
   players.emplace_back(ai_player2);
   Log("all players connected");

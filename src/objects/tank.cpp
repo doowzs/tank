@@ -108,14 +108,37 @@ void Tank::update() {
 Bullet *Tank::shoot() {
   switch (direction) {
     case D_UP:
-      return new Bullet(server, player, pos_y + 0, pos_x + 1, -BULLET_SPEED_SLOW, 0);
+      return new Bullet(server, player, pos_y + 0, pos_x + 1,
+                        -BULLET_SPEED_SLOW, 0);
     case D_DOWN:
-      return new Bullet(server, player, pos_y + 2, pos_x + 1, BULLET_SPEED_SLOW, 0);
+      return new Bullet(server, player, pos_y + 2, pos_x + 1, BULLET_SPEED_SLOW,
+                        0);
     case D_LEFT:
-      return new Bullet(server, player, pos_y + 1, pos_x + 0, 0, -BULLET_SPEED_SLOW);
+      return new Bullet(server, player, pos_y + 1, pos_x + 0, 0,
+                        -BULLET_SPEED_SLOW);
     case D_RIGHT:
-      return new Bullet(server, player, pos_y + 1, pos_x + 2, 0, BULLET_SPEED_SLOW);
+      return new Bullet(server, player, pos_y + 1, pos_x + 2, 0,
+                        BULLET_SPEED_SLOW);
   }
   Panic("should not reach here");
   return nullptr;
+}
+
+bool in_sight(const Tank *tank, const Object *object) {
+  bool in_sight_y = object->pos_x <= tank->pos_x + 1 and
+                    tank->pos_x + 1 <= object->pos_x + object->width;
+  bool in_sight_x = object->pos_y <= tank->pos_y + 1 and
+                    tank->pos_y + 1 <= object->pos_y + object->height;
+  switch (tank->direction) {
+    case D_UP:
+      return object->pos_y < tank->pos_y and in_sight_y;
+    case D_DOWN:
+      return object->pos_y > tank->pos_y and in_sight_y;
+    case D_LEFT:
+      return object->pos_x < tank->pos_x and in_sight_x;
+    case D_RIGHT:
+      return object->pos_x > tank->pos_x and in_sight_x;
+  }
+  Panic("should not reach here");
+  return false;
 }

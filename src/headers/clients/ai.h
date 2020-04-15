@@ -8,19 +8,26 @@
 
 #include <random>
 #include <vector>
+using std::default_random_engine, std::vector, std::pair;
 
 // forward declaration
 class Server;
 
 class AIClient : public Client {
  private:
+  static default_random_engine rng;  // random number generator
+  const static vector<pair<int, enum PlayerAction>> random_actions;
+  const static int random_total_tickets;
+
+ private:
   const Server *server;                     // read-only access to server
   int thinking_frames, thinking_countdown;  // frames until next action
-  std::default_random_engine rng;           // random number generator
-  std::vector<std::pair<int, enum PlayerAction>> random_actions;
+  double shoot_threshold;   // threshold for shoot target in sight
+  double random_threshold;  // threshold for shooting and random action
 
  public:
-  AIClient(const Server *server, const char *name, double difficulty);
+  AIClient(const Server *server, const char *name, double coef_thinking,
+           double coef_shooting, double coef_random);
   enum PlayerAction act();
   enum PlayerAction actRandomly();
   bool post(int now);

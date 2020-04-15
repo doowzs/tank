@@ -41,6 +41,7 @@ class Player {
   const Client *getClient() const { return client; }
   const char *getName() const { return client->name; }
   const Tank *getTank() const { return tank; }
+  bool hasBase() const { return base != nullptr; }
   const Base *getBase() const { return base; }
   enum PlayerAction act();
   void respawn();

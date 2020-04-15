@@ -7,6 +7,7 @@
 class Server;
 class Player;
 class ServerPacket;
+class Tank;
 
 enum ObjectType : unsigned {
   OBJECT_BASE,
@@ -62,6 +63,7 @@ class Object {
   int getSpeedY() const { return speed_y; }
   int getSpeedX() const { return speed_x; }
   friend bool collide(const Object *obj1, const Object *obj2);
+  friend bool in_sight(const Tank *tank, const Object *object);
 };
 
 #endif
