@@ -17,11 +17,8 @@ Player::Player(Server *server, Client *client, int respawn_y, bool hasBase)
       respawn_countdown(respawn_y < 0 ? -1 : 0),
       tank(nullptr),
       base(nullptr) {
-  respawn();
   if (hasBase) {
     genBase();
-  } else {
-    base = nullptr;
   }
 }
 

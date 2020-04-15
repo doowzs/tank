@@ -112,6 +112,12 @@ void Server::tick() {
 }
 
 void Server::logic() {
+  // respawn player if tank broken
+  for (auto &player : players) {
+    if (player->respawn_countdown >= 0) {
+      player->respawn();
+    }
+  }
   // run all objects
   for (auto &object : objects) {
     if (object->broken()) continue;
@@ -165,12 +171,6 @@ void Server::logic() {
   // update pattern of all objects
   for (auto &object : objects) {
     object->update();
-  }
-  // respawn player if tank broken
-  for (auto &player : players) {
-    if (player->respawn_countdown >= 0) {
-      player->respawn();
-    }
   }
 }
 
