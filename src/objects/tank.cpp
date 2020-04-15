@@ -22,7 +22,8 @@ void Tank::operator()() {
     case ACTION_SHOOT:
       server->addObject(shoot());
       player->addScore(Server::POINTS_SHOOT);
-      break;
+      Log("%s shoots", player->getName());
+      return;
     case ACTION_MOVE_UP:
       direction = D_UP;
       speed_y = -1, speed_x = 0;
@@ -48,8 +49,9 @@ void Tank::operator()() {
       move();
       break;
     default:
-      break;  // IDLE
+      return;  // IDLE
   }
+  Log("%s moves to (%d, %d)", player->getName(), pos_y, pos_x);
 }
 
 void Tank::operator()(__attribute__((unused)) Object *object) {}

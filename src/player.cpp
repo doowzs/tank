@@ -42,14 +42,18 @@ void Player::respawn() {
     tank = new Tank(server, this, 0, 0,
                     respawn_y > Server::MAP_HEIGHT / 2 ? D_UP : D_DOWN);
     if (server->respawnTank(tank, respawn_y)) {
+      Log("%s respawned at (%d, %d)", getName(), tank->getPosY(),
+          tank->getPosX());
       respawn_countdown = -1;
     }
   }
 }
 
 void Player::genBase() {
-  base = new Base(server, this, respawn_y, Server::MAP_WIDTH / 2 - 2);
+  int pos_y = respawn_y, pos_x = Server::MAP_WIDTH / 2 - 2;
+  base = new Base(server, this, pos_y, pos_x);
   server->addObject(base);
+  Log("%s's base generated at (%d, %d)", getName(), pos_y, pos_x);
 }
 
 void Player::addScore(int points) { score += points; }

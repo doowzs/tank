@@ -28,6 +28,7 @@ void Bullet::operator()(Object *object) {
     return;
   }
   object->damage();
+  Log("%s's bullet hits", player->getName());
   if (object->broken()) {
     switch (object->getType()) {
       case OBJECT_BASE:
@@ -35,6 +36,8 @@ void Bullet::operator()(Object *object) {
         break;
       case OBJECT_TANK:
         player->addScore(Server::POINTS_HIT_TANK);
+        Log("%s destroies %s's tank", player->getName(),
+            object->getPlayer()->getName());
         break;
       case OBJECT_BULLET:
         player->addScore(Server::POINTS_HIT_BULLET);
@@ -44,5 +47,4 @@ void Bullet::operator()(Object *object) {
     }
   }
   suicide();  // bullet conducts suicide
-  Log("%s's bullet hits", player->getName());
 }
