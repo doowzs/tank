@@ -21,7 +21,6 @@ Tank::Tank(Server *server, Player *player, int pos_y, int pos_x,
       cooldown(0) {}
 
 void Tank::operator()() {
-  Log("%s act", player->getName());
   enum PlayerAction action = player->act();
   if (cooldown > 0) {
     --cooldown;  // waiting for next move

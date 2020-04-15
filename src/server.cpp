@@ -28,7 +28,7 @@ using boost::asio::io_context;
 using boost::asio::ip::tcp;
 
 const int Server::MAP_HEIGHT = 30;
-const int Server::MAP_WIDTH = 20;
+const int Server::MAP_WIDTH = 30;
 const int Server::RESPAWN_COUNTDOWN = 3;
 const int Server::POINTS_SHOOT = -1;
 const int Server::POINTS_HIT_BASE = 10000;
