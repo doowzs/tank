@@ -11,6 +11,7 @@
 #include <server.h>
 
 #include <chrono>
+#include <climits>
 #include <random>
 #include <vector>
 using std::default_random_engine, std::uniform_int_distribution,
@@ -38,7 +39,7 @@ AIClient::AIClient(const Server *server, const char *name, double coef_thinking,
 
 enum PlayerAction AIClient::act() {
   const Tank *tank = nullptr;
-  const Base *target = nullptr;
+  const Object *target = nullptr;
   if (thinking_countdown > 0) {
     --thinking_countdown;
     return ACTION_IDLE;  // AI is "thinking"
@@ -49,19 +50,30 @@ enum PlayerAction AIClient::act() {
       // 0.0 < random < threshold < 1.0
       return actRandomly();
     } else {
-      // search for target
+      // get current tank
       for (auto &player : server->players) {
         if (player->getClient() == this) {
           tank = player->getTank();
-        } else {
-          if (player->hasBase()) {
-            target = player->getBase();
-          }
+          break;
         }
       }
-      if (tank == nullptr or target == nullptr) {
-        // no tank or target in game, AI go to sleep
-        return ACTION_IDLE;
+      if (tank == nullptr) return ACTION_IDLE;
+      // find target by distance
+      int min_dis = INT_MAX;
+      for (auto &player : server->players) {
+        if (player->getClient() == this) continue;
+        if (player->hasBase()) {
+          if (distance(tank, player->getBase()) < min_dis) {
+            target = player->getBase();
+            min_dis = distance(tank, target);
+          }
+          if (player->getTank() != nullptr) {
+            if (distance(tank, player->getTank()) < min_dis) {
+              target = player->getTank();
+              min_dis = distance(tank, target);
+            }
+          }
+        }
       }
       // shoot an object in sight
       for (auto &object : server->objects) {

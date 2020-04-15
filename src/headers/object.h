@@ -63,6 +63,7 @@ class Object {
   const char *getPattern() const { return pattern; }
   int getSpeedY() const { return speed_y; }
   int getSpeedX() const { return speed_x; }
+  friend int distance(const Object *obj1, const Object *obj2);
   friend bool collide(const Object *obj1, const Object *obj2);
   friend bool in_sight(const Tank *tank, const Object *object);
 };

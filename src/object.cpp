@@ -120,6 +120,17 @@ void Object::update() {}  // do nothing
 
 bool Object::broken() const { return breakable and life <= 0; }
 
+// Get taxicab geometry of two objects.
+int distance(const Object *obj1, const Object *obj2) {
+  int dis = 0;
+  dis += std::max(obj2->pos_y - (obj1->pos_y + obj1->height), 0);
+  dis += std::max(obj1->pos_y - (obj2->pos_y + obj2->height), 0);
+  dis += std::max(obj2->pos_x - (obj1->pos_x + obj1->width), 0);
+  dis += std::max(obj1->pos_x - (obj2->pos_x + obj2->width), 0);
+  return dis;
+}
+
+// Check if two object collides.
 bool collide(const Object *obj1, const Object *obj2) {
   return obj1->pos_y + obj1->height > obj2->pos_y and
          obj1->pos_y < obj2->pos_y + obj2->height and
