@@ -87,7 +87,17 @@ void Server::init() {
   players.emplace_back(ai_player);
 
   Log("generating game map...");
-  for (int x = 0; x < MAP_WIDTH; x += 2) {
+  for (int x = 0; x < MAP_WIDTH; ++x) {
+    objects.emplace_back(new Wall(this, world, 0, x, 1, 1, " ", 0));
+  }
+  for (int y = 1; y <= MAP_HEIGHT; ++y) {
+    objects.emplace_back(new Wall(this, world, y, 0, 1, 1, " ", 0));
+    objects.emplace_back(new Wall(this, world, y, MAP_WIDTH + 1, 1, 1, " ", 0));
+  }
+  for (int x = 0; x < MAP_WIDTH; ++x) {
+    objects.emplace_back(new Wall(this, world, MAP_HEIGHT + 1, x, 1, 1, " ", 0));
+  }
+  for (int x = 1; x + 2 <= MAP_WIDTH; x += 2) {
     objects.emplace_back(new Wall(this, world, MAP_HEIGHT / 2, x));
   }
 

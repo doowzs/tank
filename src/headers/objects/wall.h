@@ -13,6 +13,7 @@ class Wall : public Object {
 
  public:
   Wall(Server *server, Player *player, int pos_y, int pos_x);
+  Wall(Server *server, Player *player, int pos_y, int pos_x, int height, int width, const char *pattern, int life);
   void operator()();
   void operator()(Object *object);
   void update();

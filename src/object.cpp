@@ -61,7 +61,7 @@ Object::Object(Server *server, Player *player, enum ObjectType type, int pos_y,
       tick_y(0),
       tick_x(0),
       life(life),
-      breakable(true),
+      breakable(life > 0),
       coverable(false) {
   memcpy(this->pattern, pattern, sizeof(this->pattern));
 }
@@ -87,7 +87,6 @@ Object::Object(Server *server, Player *player, enum ObjectType type, int pos_y,
 }
 
 void Object::move() {
-  // FIXME: border and collision detection
   int new_y = pos_y, new_x = pos_x;
   if (speed_y != 0) {
     tick_y = tick_y - 1;
