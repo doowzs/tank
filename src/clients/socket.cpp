@@ -198,7 +198,7 @@ void SocketClient::sync() {
 }
 
 void SocketClient::draw() {
-  wclear(stdscr);
+  werase(stdscr);
   mvwprintw(stdscr, 0, Server::MAP_WIDTH + 3, "server: %s", addr.c_str());
   int line = 0;
   for (auto &packet : packets) {

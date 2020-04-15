@@ -68,7 +68,7 @@ void App::menu() {
   set_menu_win(menu, screen);
   set_menu_mark(menu, " -> ");
 
-  wclear(screen);
+  werase(screen);
   post_menu(menu);
   wrefresh(screen);
   status = APP_MENU;
@@ -101,7 +101,7 @@ void App::menu() {
     }
     wrefresh(screen);
   }
-  wclear(screen);
+  werase(screen);
   wrefresh(screen);
 
   unpost_menu(menu);
