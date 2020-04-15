@@ -6,6 +6,7 @@
 
 #include <curses.h>
 
+#include <random>
 #include <string>
 #include <vector>
 using std::pair, std::vector, std::string;
@@ -45,9 +46,10 @@ class Server {
   tcp::acceptor acceptor;
   Player *world;
   vector<Player *> players;
-  vector<Object *> objects;  // current objects
-  vector<Object *> appends;  // new objects
-  vector<Object *> brokens;  // past objects
+  vector<Object *> objects;        // current objects
+  vector<Object *> appends;        // new objects
+  vector<Object *> brokens;        // past objects
+  std::default_random_engine rng;  // random number generator
 
  public:
   Server() = delete;
@@ -61,6 +63,7 @@ class Server {
   void over();
   void addObject(Object *object);
   bool placeObject(Object *object, int new_y, int new_x);
+  bool respawnTank(Tank *tank, int respawn_y);
 };
 
 #endif

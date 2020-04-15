@@ -14,7 +14,7 @@ Player::Player(Server *server, Client *client, int respawn_y, bool hasBase)
       client(client),
       score(0),
       respawn_y(respawn_y),
-      respawn_countdown(0),
+      respawn_countdown(respawn_y < 0 ? -1 : 0),
       tank(nullptr),
       base(nullptr) {
   respawn();
@@ -37,13 +37,13 @@ void Player::respawn() {
   if (respawn_countdown > 0) {
     // waiting to be respawned
     --respawn_countdown;
-  } else {
+  } else if (respawn_countdown == 0) {
     // do not delete the broken tank, server will handle it
-    int ry = respawn_y, rx = 0;
-    tank = new Tank(server, this, ry, rx,
-                    ry > Server::MAP_HEIGHT / 2 ? D_UP : D_DOWN);
-    Log("player %s respawn at %d, %d", getName(), ry, rx);
-    server->addObject(tank);
+    tank = new Tank(server, this, 0, 0,
+                    respawn_y > Server::MAP_HEIGHT / 2 ? D_UP : D_DOWN);
+    if (server->respawnTank(tank, respawn_y)) {
+      respawn_countdown = -1;
+    }
   }
 }
 

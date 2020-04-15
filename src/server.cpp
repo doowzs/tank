@@ -43,6 +43,7 @@ Server::Server(int fps, const string &addr, const string &port)
       port(port),
       acceptor(context, tcp::endpoint(tcp::v4(), stoi(port))) {
   world = new Player(this, nullptr, -1, false);
+  rng.seed(std::chrono::system_clock::now().time_since_epoch().count());
 }
 
 Server::~Server() { delete world; }
@@ -95,7 +96,8 @@ void Server::init() {
     objects.emplace_back(new Wall(this, world, y, MAP_WIDTH + 1, 1, 1, "<", 0));
   }
   for (int x = 1; x <= MAP_WIDTH; ++x) {
-    objects.emplace_back(new Wall(this, world, MAP_HEIGHT + 1, x, 1, 1, "^", 0));
+    objects.emplace_back(
+        new Wall(this, world, MAP_HEIGHT + 1, x, 1, 1, "^", 0));
   }
   for (int x = 1; x + 2 <= MAP_WIDTH; x += 2) {
     objects.emplace_back(new Wall(this, world, MAP_HEIGHT / 2, x));
@@ -166,7 +168,7 @@ void Server::logic() {
   }
   // respawn player if tank broken
   for (auto &player : players) {
-    if (player->tank == nullptr) {
+    if (player->respawn_countdown >= 0) {
       player->respawn();
     }
   }
@@ -221,4 +223,21 @@ bool Server::placeObject(Object *object, int new_y, int new_x) {
   Log("%s's %d move to %d, %d", object->player->getName(), object->type, new_y,
       new_x);
   return true;
+}
+
+bool Server::respawnTank(Tank *tank, int respawn_y) {
+  using std::min, std::max, std::uniform_int_distribution;
+  // make 10 attempts to respawn the tank
+  for (int i = 0; i < 10; ++i) {
+    int pos_y = uniform_int_distribution<int>(
+        max(respawn_y - 3, 1), min(respawn_y + 3, MAP_HEIGHT))(rng);
+    int pos_x = uniform_int_distribution<int>(1, MAP_WIDTH)(rng);
+    if (placeObject(tank, pos_y, pos_x)) {
+      objects.emplace_back(tank);
+      Log("player %s respawned at %d, %d", tank->player->getName(), pos_y,
+          pos_x);
+      return true;
+    }
+  }
+  return false;
 }
