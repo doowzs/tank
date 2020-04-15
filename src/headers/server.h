@@ -59,7 +59,7 @@ class Server {
   void post();
   void over();
   void addObject(Object *object);
-  bool placeObject(Object *object, int pos_y, int pos_x);
+  bool placeObject(Object *object, int new_y, int new_x);
 };
 
 #endif

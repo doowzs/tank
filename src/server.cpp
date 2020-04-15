@@ -188,17 +188,19 @@ void Server::over() {
 
 void Server::addObject(Object *object) { appends.emplace_back(object); }
 
-bool Server::placeObject(Object *object, int pos_y, int pos_x) {
+bool Server::placeObject(Object *object, int new_y, int new_x) {
+  int old_y = object->pos_y, old_x = object->pos_x;
+  object->pos_y = new_y, object->pos_x = new_x;
   if (!object->coverable) {
     for (auto &target : objects) {
       if (target == object) continue;
       if (!target->coverable and collide(object, target)) {
+        object->pos_y = old_y, object->pos_x = old_x;
         return false;
       }
     }
   }
-  object->pos_y = pos_y, object->pos_x = pos_x;
-  Log("%s's %d move to %d, %d", object->player->getName(), object->type, pos_y,
-      pos_x);
+  Log("%s's %d move to %d, %d", object->player->getName(), object->type, new_y,
+      new_x);
   return true;
 }
