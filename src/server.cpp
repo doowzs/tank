@@ -187,3 +187,18 @@ void Server::over() {
 }
 
 void Server::addObject(Object *object) { appends.emplace_back(object); }
+
+bool Server::placeObject(Object *object, int pos_y, int pos_x) {
+  if (!object->coverable) {
+    for (auto &target : objects) {
+      if (target == object) continue;
+      if (!target->coverable and collide(object, target)) {
+        return false;
+      }
+    }
+  }
+  object->pos_y = pos_y, object->pos_x = pos_x;
+  Log("%s's %d move to %d, %d", object->player->getName(), object->type, pos_y,
+      pos_x);
+  return true;
+}

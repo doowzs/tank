@@ -5,6 +5,7 @@
 #include <common.h>
 #include <object.h>
 #include <player.h>
+#include <server.h>
 
 #include <cstring>
 
@@ -22,7 +23,8 @@ Object::Object(enum ObjectType type, int pos_y, int pos_x, int height,
       tick_y(0),
       tick_x(0),
       life(0),
-      breakable(false) {
+      breakable(false),
+      coverable(false) {
   memcpy(this->pattern, pattern, sizeof(this->pattern));
 }
 
@@ -40,7 +42,8 @@ Object::Object(Server *server, Player *player, enum ObjectType type, int pos_y,
       tick_y(0),
       tick_x(0),
       life(0),
-      breakable(false) {
+      breakable(false),
+      coverable(false) {
   memcpy(this->pattern, pattern, sizeof(this->pattern));
 }
 
@@ -58,7 +61,8 @@ Object::Object(Server *server, Player *player, enum ObjectType type, int pos_y,
       tick_y(0),
       tick_x(0),
       life(life),
-      breakable(true) {
+      breakable(true),
+      coverable(false) {
   memcpy(this->pattern, pattern, sizeof(this->pattern));
 }
 
@@ -77,27 +81,29 @@ Object::Object(Server *server, Player *player, enum ObjectType type, int pos_y,
       tick_y(0),
       tick_x(0),
       life(1),
-      breakable(true) {
+      breakable(true),
+      coverable(true) {
   memcpy(this->pattern, pattern, sizeof(this->pattern));
 }
 
 void Object::move() {
   // FIXME: border and collision detection
+  int new_y = pos_y, new_x = pos_x;
   if (speed_y != 0) {
     tick_y = tick_y - 1;
     if (tick_y <= 0) {
-      pos_y += speed_y < 0 ? -1 : 1;
+      new_y += speed_y < 0 ? -1 : 1;
       tick_y = speed_y < 0 ? -speed_y : speed_y;
     }
   }
   if (speed_x != 0) {
     tick_x = tick_x - 1;
     if (tick_x <= 0) {
-      pos_x += speed_x < 0 ? -1 : 1;
+      new_x += speed_x < 0 ? -1 : 1;
       tick_x = speed_x < 0 ? -speed_x : speed_x;
     }
   }
-  Log("%s's %d move to %d, %d", player->getName(), type, pos_y, pos_x);
+  server->placeObject(this, new_y, new_x);
 }
 
 void Object::damage() {

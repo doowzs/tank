@@ -31,7 +31,7 @@ class Object {
   int speed_y, speed_x;  // speed is 2 == move 1 block per 2 ticks
   int tick_y, tick_x;
   int life;
-  bool breakable;
+  bool breakable, coverable;
 
  public:
   Object() = delete;

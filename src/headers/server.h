@@ -59,6 +59,7 @@ class Server {
   void post();
   void over();
   void addObject(Object *object);
+  bool placeObject(Object *object, int pos_y, int pos_x);
 };
 
 #endif
