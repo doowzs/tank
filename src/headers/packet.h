@@ -11,6 +11,7 @@
 
 #define FLAG_IS_CURRENT_PLAYER 0
 #define FLAG_IS_ANOTHER_PLAYER 1
+#define FLAG_IS_ITEM 11
 #define FLAG_END_OF_FRAME 31
 
 enum PacketType : unsigned {

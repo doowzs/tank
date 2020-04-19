@@ -209,6 +209,9 @@ void Server::post() {
       if (object->player == player) {
         flags |= (1 << FLAG_IS_CURRENT_PLAYER);
       }
+      if (object->type == OBJECT_ITEM) {
+        flags |= (1 << FLAG_IS_ITEM);
+      }
       healthy &= player->client->post(frame, flags, object);
     }
     for (auto &_player : players) {  // cautious!

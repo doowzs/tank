@@ -236,6 +236,8 @@ void SocketClient::draw() {
             char ch = packet->pattern[i * packet->width + j];
             if (packet->flags & (1 << FLAG_IS_CURRENT_PLAYER)) {
               wattron(game_window, A_BOLD | COLOR_PAIR(COLOR_FG_YELLOW));
+            } else if (packet->flags & (1 << FLAG_IS_ITEM)) {
+              wattron(game_window, A_BOLD | COLOR_PAIR(COLOR_FG_BLUE));
             }
             if (isdigit(ch) or isspace(ch)) {
               mvwaddch(game_window, y, x, ch);
@@ -244,6 +246,8 @@ void SocketClient::draw() {
             }
             if (packet->flags & (1 << FLAG_IS_CURRENT_PLAYER)) {
               wattroff(game_window, A_BOLD | COLOR_PAIR(COLOR_FG_YELLOW));
+            } else if (packet->flags & (1 << FLAG_IS_ITEM)) {
+              wattroff(game_window, A_BOLD | COLOR_PAIR(COLOR_FG_BLUE));
             }
           }
         }
