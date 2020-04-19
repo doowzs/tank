@@ -14,7 +14,7 @@ Base::Base(Server *server, Player *player, int pos_y, int pos_x)
              "x   x"
              "x` `x"
              "mqqqj",
-             100) {}
+             100, 999) {}
 
 void Base::operator()() {}
 

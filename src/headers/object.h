@@ -33,7 +33,7 @@ class Object {
   char pattern[32];
   int speed_y, speed_x;  // speed is 2 == move 1 block per 2 ticks
   int tick_y, tick_x;
-  int life;
+  int life, max_life;
   bool breakable, coverable;
 
  public:
@@ -43,10 +43,11 @@ class Object {
   Object(Server *server, Player *player, enum ObjectType type, int pos_y,
          int pos_x, int height, int width, const char *pattern);
   Object(Server *server, Player *player, enum ObjectType type, int pos_y,
-         int pos_x, int height, int width, const char *pattern, int life);
+         int pos_x, int height, int width, const char *pattern, int life,
+         int max_life);
   Object(Server *server, Player *player, enum ObjectType type, int pos_y,
          int pos_x, int height, int width, const char *pattern, int speed_y,
-         int speed_x);
+         int speed_x, int life, int max_life, bool coverable);
   virtual ~Object() = default;
   virtual void operator()() = 0;
   virtual void operator()(Object *object) = 0;

@@ -16,7 +16,7 @@ const int Tank::COOLDOWN_FRAMES_FAST = 3;
 
 Tank::Tank(Server *server, Player *player, int pos_y, int pos_x,
            enum TankDirection direction)
-    : Object(server, player, OBJECT_TANK, pos_y, pos_x, 3, 3, "         ", 3),
+    : Object(server, player, OBJECT_TANK, pos_y, pos_x, 3, 3, "         ", 3, 9),
       direction(direction),
       cooldown(0) {}
 

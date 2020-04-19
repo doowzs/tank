@@ -23,6 +23,7 @@ Object::Object(enum ObjectType type, int pos_y, int pos_x, int height,
       tick_y(0),
       tick_x(0),
       life(0),
+      max_life(0),
       breakable(false),
       coverable(false) {
   memcpy(this->pattern, pattern, sizeof(this->pattern));
@@ -42,13 +43,14 @@ Object::Object(Server *server, Player *player, enum ObjectType type, int pos_y,
       tick_y(0),
       tick_x(0),
       life(0),
+      max_life(0),
       breakable(false),
       coverable(false) {
   memcpy(this->pattern, pattern, sizeof(this->pattern));
 }
 
 Object::Object(Server *server, Player *player, enum ObjectType type, int pos_y,
-               int pos_x, int height, int width, const char *pattern, int life)
+               int pos_x, int height, int width, const char *pattern, int life, int max_life)
     : server(server),
       player(player),
       type(type),
@@ -61,14 +63,15 @@ Object::Object(Server *server, Player *player, enum ObjectType type, int pos_y,
       tick_y(0),
       tick_x(0),
       life(life),
-      breakable(life > 0),
+      max_life(max_life),
+      breakable(max_life > 0),
       coverable(false) {
   memcpy(this->pattern, pattern, sizeof(this->pattern));
 }
 
 Object::Object(Server *server, Player *player, enum ObjectType type, int pos_y,
                int pos_x, int height, int width, const char *pattern,
-               int speed_y, int speed_x)
+               int speed_y, int speed_x, int life, int max_life, bool coverable)
     : server(server),
       player(player),
       type(type),
@@ -80,9 +83,10 @@ Object::Object(Server *server, Player *player, enum ObjectType type, int pos_y,
       speed_x(speed_x),
       tick_y(0),
       tick_x(0),
-      life(1),
-      breakable(true),
-      coverable(true) {
+      life(life),
+      max_life(max_life),
+      breakable(max_life > 0),
+      coverable(coverable) {
   memcpy(this->pattern, pattern, sizeof(this->pattern));
 }
 
@@ -117,7 +121,10 @@ void Object::recover() {
   }
 }
 
-void Object::recover(int delta) { life += delta; }
+void Object::recover(int delta) {
+  using std::min;
+  life = min(life + delta, max_life);
+}
 
 void Object::suicide() {
   life = 0;
