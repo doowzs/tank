@@ -50,6 +50,7 @@ class Server {
   vector<Object *> appends;        // new objects
   vector<Object *> brokens;        // past objects
   std::default_random_engine rng;  // random number generator
+  unsigned next_item_frame;
 
  public:
   Server() = delete;

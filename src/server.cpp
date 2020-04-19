@@ -46,7 +46,8 @@ Server::Server(unsigned fps, const string &addr, const string &port)
       status(SERVER_INIT),
       addr(addr),
       port(port),
-      acceptor(context, tcp::endpoint(tcp::v4(), stoi(port))) {
+      acceptor(context, tcp::endpoint(tcp::v4(), stoi(port))),
+      next_item_frame(fps * GEN_ITEM_COUNTDOWN * 2) {
   world = new Player(this, nullptr, PLAYER_WORLD, -1, false);
   rng.seed(std::chrono::system_clock::now().time_since_epoch().count());
 }
@@ -197,8 +198,15 @@ void Server::logic() {
     }
     delete broken;
   }
-  // generate a random item with probability
-  generateItem();
+  // generate a random item
+  using std::uniform_int_distribution;
+  if (uniform_int_distribution<int>(1, fps * GEN_ITEM_COUNTDOWN)(rng) == 1) {
+    generateItem();
+  }
+  if (frame > next_item_frame) {
+    generateItem();
+    next_item_frame = frame + fps * GEN_ITEM_COUNTDOWN;
+  }
   // append new created objects
   for (auto &append : appends) {
     objects.emplace_back(append);
@@ -322,29 +330,27 @@ bool Server::respawnTank(Tank *tank, int respawn_y) {
 
 void Server::generateItem() {
   using std::uniform_int_distribution;
-  if (uniform_int_distribution<int>(1, fps * GEN_ITEM_COUNTDOWN)(rng) == 1) {
-    int type = uniform_int_distribution<int>(1, 4)(rng);
-    Item *item = nullptr;
-    switch (type) {
-      case 1:
-        item = new Item(this, world, ITEM_MOVE_SPEED, fps, 15 * fps, 0, 0);
-        break;
-      case 2:
-        item = new Item(this, world, ITEM_SHOOT_SPEED, fps, 15 * fps, 0, 0);
-        break;
-      case 3:
-        item = new Item(this, world, ITEM_WALL_BUILDER, fps, 15 * fps, 0, 0);
-        break;
-      default:
-        item = new Item(this, world, ITEM_HEALTH_KIT, fps, 15 * fps, 0, 0);
-        break;
-    }
-    if (placeRandomly(item, 1, MAP_HEIGHT, 1, MAP_WIDTH, 5)) {
-      item->coverable = true;
-      addObject(item);
-    } else {
-      item->suicide();
-      brokens.emplace_back(item);
-    }
+  int type = uniform_int_distribution<int>(1, 4)(rng);
+  Item *item = nullptr;
+  switch (type) {
+    case 1:
+      item = new Item(this, world, ITEM_MOVE_SPEED, fps, 15 * fps, 0, 0);
+      break;
+    case 2:
+      item = new Item(this, world, ITEM_SHOOT_SPEED, fps, 15 * fps, 0, 0);
+      break;
+    case 3:
+      item = new Item(this, world, ITEM_WALL_BUILDER, fps, 15 * fps, 0, 0);
+      break;
+    default:
+      item = new Item(this, world, ITEM_HEALTH_KIT, fps, 15 * fps, 0, 0);
+      break;
+  }
+  if (placeRandomly(item, 1, MAP_HEIGHT, 1, MAP_WIDTH, 5)) {
+    item->coverable = true;
+    addObject(item);
+  } else {
+    item->suicide();
+    brokens.emplace_back(item);
   }
 }
