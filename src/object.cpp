@@ -115,9 +115,9 @@ void Object::damage() {
   }
 }
 
-void Object::recover() {
+void Object::recover(int tr, int br) {
   if (type == OBJECT_TANK) {
-    player->recover();
+    player->recover(tr, br);
   }
 }
 

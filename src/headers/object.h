@@ -53,12 +53,13 @@ class Object {
   virtual void operator()(Object *object) = 0;
   void move();
   void damage();
-  void recover();
+  void recover(int tr, int br);
   void recover(int delta);
+  void buildWalls(int nr);
   void suicide();
   virtual void update();
   bool broken() const;
-  const Player *getPlayer() const { return player; }
+  Player *getPlayer() const { return player; }
   enum ObjectType getType() const { return type; }
   int getPosY() const { return pos_y; }
   int getPosX() const { return pos_x; }

@@ -6,6 +6,7 @@
 #include <object.h>
 #include <objects/item.h>
 #include <objects/tank.h>
+#include <objects/wall.h>
 #include <player.h>
 #include <server.h>
 
@@ -34,7 +35,20 @@ void Item::operator()(Object *object) {
         break;
       case ITEM_HEALTH_KIT:
         Log("%s life recovered", object->getPlayer()->getName());
-        object->recover();
+        object->recover(3, 5);
+        break;
+      case ITEM_WALL_BUILDER:
+        Log("%s build some walls", object->getPlayer()->getName());
+        for (int i = 0; i < 5; ++i) {
+          Wall *wall = new Wall(server, object->getPlayer(), 0, 0);
+          int min_y = 10, max_y = Server::MAP_HEIGHT - 10 - wall->getHeight();
+          int min_x = 1, max_x = Server::MAP_WIDTH - wall->getHeight();
+          if (server->placeRandomly(wall, min_y, max_y, min_x, max_x, 5)) {
+            server->addObject(wall);
+          } else {
+            delete wall;
+          }
+        }
         break;
       default:
         Panic("should not reach here");

@@ -29,12 +29,12 @@ Player::~Player() {
 
 enum PlayerAction Player::act() { return client->act(); }
 
-void Player::recover() {
+void Player::recover(int tr, int br) {
   if (tank != nullptr) {
-    tank->recover(3);
+    tank->recover(tr);
   }
   if (base != nullptr) {
-    base->recover(15);
+    base->recover(br);
   }
 }
 

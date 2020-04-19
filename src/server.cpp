@@ -329,7 +329,7 @@ void Server::generateItem() {
         item = new Item(this, world, ITEM_HEALTH_KIT, fps, 15 * fps, 0, 0);
         break;
     }
-    if (placeRandomly(item, 1, MAP_HEIGHT, 1, MAP_WIDTH, 10)) {
+    if (placeRandomly(item, 1, MAP_HEIGHT, 1, MAP_WIDTH, 5)) {
       item->coverable = true;
       addObject(item);
     } else {
