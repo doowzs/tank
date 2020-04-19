@@ -237,7 +237,7 @@ void SocketClient::draw() {
             if (isdigit(ch) or isspace(ch)) {
               mvwaddch(game_window, y, x, ch);
             } else {
-              mvwadd_wch(game_window, y, x, NCURSES_WACS(ch));
+              mvwaddch(game_window, y, x, NCURSES_ACS(ch));
             }
           }
         }
