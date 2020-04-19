@@ -10,26 +10,38 @@
 #include <server.h>
 
 const int Tank::BULLET_SPEED_SLOW = 3;
-const int Tank::BULLET_SPEED_FAST = 2;
+const int Tank::BULLET_SPEED_FAST = 1;
 const int Tank::COOLDOWN_FRAMES_SLOW = 5;
 const int Tank::COOLDOWN_FRAMES_FAST = 3;
 
 Tank::Tank(Server *server, Player *player, int pos_y, int pos_x,
            enum TankDirection direction)
-    : Object(server, player, OBJECT_TANK, pos_y, pos_x, 3, 3, "         ", 3, 9),
+    : Object(server, player, OBJECT_TANK, pos_y, pos_x, 3, 3, "         ", 3,
+             9),
       direction(direction),
       cooldown(0) {}
 
 void Tank::operator()() {
+  if (speed_countdown > 0) {
+    --speed_countdown;
+  }
+  if (shoot_countdown > 0) {
+    --shoot_countdown;
+  }
+
   enum PlayerAction action = player->act();
   if (cooldown > 0) {
     --cooldown;  // waiting for next move
   } else {
-    cooldown = COOLDOWN_FRAMES_SLOW;
+    cooldown =
+        speed_countdown > 0 ? COOLDOWN_FRAMES_FAST : COOLDOWN_FRAMES_SLOW;
     switch (action) {
       case ACTION_SHOOT:
-        server->addObject(shoot());
-        player->addScore(Server::POINTS_SHOOT);
+        server->addObject(shoot(1));
+        if (shoot_countdown > 0) {
+          server->addObject(shoot(0));
+          server->addObject(shoot(2));
+        }
         Log("%s shoots", player->getName());
         return;
       case ACTION_MOVE_UP:
@@ -74,55 +86,92 @@ void Tank::operator()(__attribute__((unused)) Object *object) {}
 void Tank::update() {
   switch (direction) {
     case D_UP:
-      sprintf(pattern,
-              "lXk"
-              "x%cx"
-              "mqj",
-              (char)('0' + life));
+      if (shoot_countdown > 0) {
+        sprintf(pattern,
+                "XXX"
+                "x%cx"
+                "mqj",
+                (char)('0' + life));
+      } else {
+        sprintf(pattern,
+                "lXk"
+                "x%cx"
+                "mqj",
+                (char)('0' + life));
+      }
       return;
     case D_DOWN:
-      sprintf(pattern,
-              "lqk"
-              "x%cx"
-              "mXj",
-              (char)('0' + life));
+      if (shoot_countdown > 0) {
+        sprintf(pattern,
+                "lqk"
+                "x%cx"
+                "XXX",
+                (char)('0' + life));
+      } else {
+        sprintf(pattern,
+                "lqk"
+                "x%cx"
+                "mXj",
+                (char)('0' + life));
+      }
       return;
     case D_LEFT:
-      sprintf(pattern,
-              "lqk"
-              "Q%cx"
-              "mqj",
-              (char)('0' + life));
+      if (shoot_countdown > 0) {
+        sprintf(pattern,
+                "Qqk"
+                "Q%cx"
+                "Qqj",
+                (char)('0' + life));
+      } else {
+        sprintf(pattern,
+                "lqk"
+                "Q%cx"
+                "mqj",
+                (char)('0' + life));
+      }
       return;
     case D_RIGHT:
-      sprintf(pattern,
-              "lqk"
-              "x%cQ"
-              "mqj",
-              (char)('0' + life));
+      if (shoot_countdown > 0) {
+        sprintf(pattern,
+                "lqQ"
+                "x%cQ"
+                "mqQ",
+                (char)('0' + life));
+      } else {
+        sprintf(pattern,
+                "lqk"
+                "x%cQ"
+                "mqj",
+                (char)('0' + life));
+      }
       return;
   }
   Panic("should not reach here");
 }
 
-Bullet *Tank::shoot() {
+Bullet *Tank::shoot(int pos) {
+  int speed = speed_countdown > 0 ? BULLET_SPEED_FAST : BULLET_SPEED_SLOW;
+  player->addScore(Server::POINTS_SHOOT);  // shoot costs 1 point of player
   switch (direction) {
     case D_UP:
-      return new Bullet(server, player, pos_y + 0, pos_x + 1,
-                        -BULLET_SPEED_SLOW, 0);
+      return new Bullet(server, player, pos_y + 0, pos_x + pos, -speed, 0);
     case D_DOWN:
-      return new Bullet(server, player, pos_y + 2, pos_x + 1, BULLET_SPEED_SLOW,
-                        0);
+      return new Bullet(server, player, pos_y + 2, pos_x + pos, speed, 0);
     case D_LEFT:
-      return new Bullet(server, player, pos_y + 1, pos_x + 0, 0,
-                        -BULLET_SPEED_SLOW);
+      return new Bullet(server, player, pos_y + pos, pos_x + 0, 0, -speed);
     case D_RIGHT:
-      return new Bullet(server, player, pos_y + 1, pos_x + 2, 0,
-                        BULLET_SPEED_SLOW);
+      return new Bullet(server, player, pos_y + pos, pos_x + 2, 0, speed);
   }
   Panic("should not reach here");
   return nullptr;
 }
+
+void Tank::upgradeSpeed(int countdown) {
+  cooldown = 0;
+  speed_countdown = countdown;
+}
+
+void Tank::upgradeShoot(int countdown) { shoot_countdown = countdown; }
 
 bool in_sight(const Tank *tank, const Object *object) {
   bool in_sight_y = object->pos_x <= tank->pos_x + 1 and

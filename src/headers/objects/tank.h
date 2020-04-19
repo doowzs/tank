@@ -28,6 +28,8 @@ class Tank : public Object {
   const static int COOLDOWN_FRAMES_FAST;
   enum TankDirection direction;
   int cooldown;
+  int speed_countdown;
+  int shoot_countdown;
 
  public:
   Tank(Server *server, Player *player, int pos_y, int pos_x,
@@ -35,7 +37,9 @@ class Tank : public Object {
   void operator()();
   void operator()(Object *object);
   void update();
-  Bullet *shoot();
+  Bullet *shoot(int pos);
+  void upgradeSpeed(int countdown);
+  void upgradeShoot(int countdown);
   friend bool in_sight(const Tank *tank, const Object *object);
 };
 

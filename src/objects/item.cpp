@@ -26,12 +26,15 @@ void Item::operator()() {
 
 void Item::operator()(Object *object) {
   if (object->getType() == OBJECT_TANK) {
+    Tank *tank = static_cast<Tank *>(object);  // RTTI with dynamic_cast is slow
     switch (type) {
       case ITEM_MOVE_SPEED:
-        Log("%s move speed upgraded", object->getPlayer()->getName());
+        Log("%s speed upgraded", object->getPlayer()->getName());
+        tank->upgradeSpeed(8 * fps);
         break;
       case ITEM_SHOOT_SPEED:
-        Log("%s shoot speed upgraded", object->getPlayer()->getName());
+        Log("%s shoot upgraded", object->getPlayer()->getName());
+        tank->upgradeShoot(8 * fps);
         break;
       case ITEM_HEALTH_KIT:
         Log("%s life recovered", object->getPlayer()->getName());
@@ -66,7 +69,7 @@ void Item::update() {
         pattern[0] = '}';
         break;
       case ITEM_SHOOT_SPEED:
-        pattern[0] = 'f';
+        pattern[0] = 'h';
         break;
       case ITEM_HEALTH_KIT:
         pattern[0] = '`';
