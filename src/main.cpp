@@ -25,6 +25,11 @@ int main() {
   keypad(stdscr, true);
   nodelay(stdscr, true);
 
+  // initialize colors
+  start_color();
+  init_pair(COLOR_PAIR_RED, COLOR_RED, COLOR_BLACK);
+  init_pair(COLOR_PAIR_BLUE, COLOR_BLUE, COLOR_BLACK);
+
   // start the game
   app = new App(stdscr);
   app->run();

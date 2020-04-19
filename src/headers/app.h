@@ -24,7 +24,7 @@ enum AppStatus : unsigned {
 
 class App {
  public:
-  static const int FPS;
+  static const unsigned FPS;
   static const string addr;
   static const string port;
 

@@ -37,8 +37,8 @@ class Server {
   friend class AIClient;
 
  private:
-  int fps;
-  unsigned long frame;
+  unsigned fps;
+  unsigned frame;
   enum ServerStatus status;
   string addr, port;
   WINDOW *screen;
@@ -53,7 +53,7 @@ class Server {
 
  public:
   Server() = delete;
-  Server(int fps, const string &addr, const string &port);
+  Server(unsigned fps, const string &addr, const string &port);
   ~Server();
   void run();
   void init();

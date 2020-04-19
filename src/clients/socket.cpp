@@ -20,7 +20,7 @@ using boost::asio::io_service;
 using boost::asio::ip::tcp;
 
 // client side constructor
-SocketClient::SocketClient(const char *name, int fps, const string &addr,
+SocketClient::SocketClient(const char *name, unsigned fps, const string &addr,
                            const string &port)
     : Client(name, fps), addr(addr), port(port), socket(context) {
   game_window = newwin(Server::MAP_HEIGHT + 2, Server::MAP_WIDTH + 2, 0, 0);
@@ -106,9 +106,9 @@ enum PlayerAction SocketClient::input() {
   return ACTION_IDLE;
 }
 
-bool SocketClient::post(int now) {
+bool SocketClient::post(unsigned now) {
   try {
-    ServerPacket packet = ServerPacket(now);
+    ServerPacket packet = ServerPacket(now, 0);
     boost::asio::write(
         socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
     return true;
@@ -118,10 +118,10 @@ bool SocketClient::post(int now) {
   }
 }
 
-bool SocketClient::post(int now, const Object *object) {
+bool SocketClient::post(unsigned now, const Object *object) {
   if (object == nullptr) return true;
   try {
-    ServerPacket packet = ServerPacket(now, object);
+    ServerPacket packet = ServerPacket(now, 0, object);
     boost::asio::write(
         socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
     return true;
@@ -131,10 +131,10 @@ bool SocketClient::post(int now, const Object *object) {
   }
 }
 
-bool SocketClient::post(int now, const Player *player) {
+bool SocketClient::post(unsigned now, const Player *player) {
   if (player == nullptr) return true;
   try {
-    ServerPacket packet = ServerPacket(now, player);
+    ServerPacket packet = ServerPacket(now, 0, player);
     boost::asio::write(
         socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
     return true;
@@ -176,7 +176,7 @@ void SocketClient::sync() {
   // First, send user input to server.
   try {
     enum PlayerAction action = input();
-    ClientPacket packet = ClientPacket(frame, status, action);
+    ClientPacket packet = ClientPacket(frame, 0, status, action);
 
     boost::asio::write(
         socket, boost::asio::buffer(packet.buffer, ClientPacket::length));

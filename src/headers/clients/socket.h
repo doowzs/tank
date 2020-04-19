@@ -29,14 +29,14 @@ class SocketClient : public Client {
   WINDOW *game_window, *info_window;
 
  public:
-  SocketClient(const char *name, int fps, const string &addr, const string &port);
+  SocketClient(const char *name, unsigned fps, const string &addr, const string &port);
   explicit SocketClient(const char *name, tcp::socket &&socket);
   ~SocketClient();
   enum PlayerAction act();
   enum PlayerAction input();
-  bool post(int now);
-  bool post(int now, const Object *object);
-  bool post(int now, const Player *player);
+  bool post(unsigned now);
+  bool post(unsigned now, const Object *object);
+  bool post(unsigned now, const Player *player);
   void init();
   void tick();
   void over();

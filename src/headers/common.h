@@ -7,4 +7,10 @@
 #define DEBUG true
 #include <debug.h>
 
+enum ColorPair : unsigned {
+  COLOR_PAIR_NONE,
+  COLOR_PAIR_RED,
+  COLOR_PAIR_BLUE,
+};
+
 #endif

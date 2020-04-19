@@ -9,7 +9,7 @@
 
 #include <chrono>
 
-Client::Client(const char *name, int fps) : fps(fps), frame(0) {
+Client::Client(const char *name, unsigned fps) : fps(fps), frame(0) {
   strncpy(this->name, name, sizeof(this->name));
   status = CLIENT_INIT;
 }

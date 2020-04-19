@@ -5,6 +5,7 @@
 #define TANK_PACKET_H
 
 #include <client.h>
+#include <common.h>
 #include <object.h>
 #include <server.h>
 
@@ -20,14 +21,16 @@ class ClientPacket {
   static const size_t length;
 
  private:
-  int frame;
+  unsigned frame;
+  unsigned flags;
   enum ClientStatus status;
   enum PlayerAction action;
-  char buffer[32];
+  char buffer[40];
 
  public:
   ClientPacket() = delete;
-  ClientPacket(int frame, enum ClientStatus status, enum PlayerAction action);
+  ClientPacket(unsigned frame, unsigned flags, enum ClientStatus status,
+               enum PlayerAction action);
   ClientPacket(const char *buf);
 };
 
@@ -38,7 +41,7 @@ class ServerPacket {
   static const size_t length;
 
  private:
-  int frame;
+  unsigned frame, flags;
   enum PacketType type;
   // Object-type data
   int pos_y, pos_x;
@@ -47,16 +50,16 @@ class ServerPacket {
   // Player-type data
   int score;
   char name[32];
-  char buffer[80];
+  char buffer[120];
 
  public:
   ServerPacket() = delete;
-  ServerPacket(int frame);
-  ServerPacket(int frame, const Object *object);
-  ServerPacket(int frame, int pos_y, int pos_x, int height, int width,
-               const char *pattern);
-  ServerPacket(int frame, const Player *player);
-  ServerPacket(int frame, int score, const char *name);
+  ServerPacket(unsigned frame, unsigned flags);
+  ServerPacket(unsigned frame, unsigned flags, const Object *object);
+  ServerPacket(unsigned frame, unsigned flags, int pos_y, int pos_x, int height,
+               int width, const char *pattern);
+  ServerPacket(unsigned frame, unsigned flags, const Player *player);
+  ServerPacket(unsigned frame, unsigned flags, int score, const char *name);
   ServerPacket(const char *buf);
 };
 
