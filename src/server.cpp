@@ -94,17 +94,15 @@ void Server::init() {
 
   Log("generating game world...");
   for (int x = 1; x <= MAP_WIDTH; ++x) {
-    addObject(new Border(this, world, 0, x));
+    objects.emplace_back(new Border(this, world, 0, x));
   }
   for (int y = 1; y <= MAP_HEIGHT; ++y) {
-    addObject(new Border(this, world, y, 0));
-    addObject(new Border(this, world, y, MAP_WIDTH + 1));
+    objects.emplace_back(new Border(this, world, y, 0));
+    objects.emplace_back(new Border(this, world, y, MAP_WIDTH + 1));
   }
   for (int x = 1; x <= MAP_WIDTH; ++x) {
-    addObject(new Border(this, world, MAP_HEIGHT + 1, x));
+    objects.emplace_back(new Border(this, world, MAP_HEIGHT + 1, x));
   }
-  objects = appends;
-  appends.clear();
 
   Log("generating random walls...");
   using std::uniform_int_distribution;
@@ -118,8 +116,10 @@ void Server::init() {
       y = uniform_int_distribution<int>(miny, maxy)(rng);
       x = uniform_int_distribution<int>(minx, maxx)(rng);
     }
-    addObject(wall);
+    objects.emplace_back(wall);
   }
+
+  Log("add objects in append list...");
   for (auto &object : appends) {
     objects.emplace_back(object);
   }
