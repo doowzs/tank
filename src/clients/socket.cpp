@@ -235,7 +235,7 @@ void SocketClient::draw() {
           for (int j = 0, x = packet->pos_x; j < packet->width; ++j, ++x) {
             char ch = packet->pattern[i * packet->width + j];
             if (packet->flags & (1 << FLAG_IS_CURRENT_PLAYER)) {
-              attron(COLOR_PAIR(COLOR_PAIR_BLUE));
+              wattron(game_window, A_BOLD | COLOR_PAIR(COLOR_FG_YELLOW));
             }
             if (isdigit(ch) or isspace(ch)) {
               mvwaddch(game_window, y, x, ch);
@@ -243,7 +243,7 @@ void SocketClient::draw() {
               mvwaddch(game_window, y, x, NCURSES_ACS(ch));
             }
             if (packet->flags & (1 << FLAG_IS_CURRENT_PLAYER)) {
-              attroff(COLOR_PAIR(COLOR_PAIR_BLUE));
+              wattroff(game_window, A_BOLD | COLOR_PAIR(COLOR_FG_YELLOW));
             }
           }
         }
