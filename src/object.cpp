@@ -113,9 +113,11 @@ void Object::damage() {
 
 void Object::recover() {
   if (type == OBJECT_TANK) {
-    life += 3;
+    player->recover();
   }
 }
+
+void Object::recover(int delta) { life += delta; }
 
 void Object::suicide() {
   life = 0;

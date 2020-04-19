@@ -53,6 +53,7 @@ class Object {
   void move();
   void damage();
   void recover();
+  void recover(int delta);
   void suicide();
   virtual void update();
   bool broken() const;

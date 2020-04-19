@@ -32,7 +32,7 @@ using boost::asio::ip::tcp;
 const int Server::MAP_HEIGHT = 30;
 const int Server::MAP_WIDTH = 30;
 const int Server::RESPAWN_COUNTDOWN = 3;
-const int Server::GEN_ITEM_COUNTDOWN = 15;
+const int Server::GEN_ITEM_COUNTDOWN = 10;
 const int Server::POINTS_SHOOT = -1;
 const int Server::POINTS_HIT_BASE = 10000;
 const int Server::POINTS_HIT_TANK = 50;
@@ -267,7 +267,7 @@ bool Server::respawnTank(Tank *tank, int respawn_y) {
 void Server::generateItem() {
   using std::uniform_int_distribution;
   if (uniform_int_distribution<int>(1, fps * GEN_ITEM_COUNTDOWN)(rng) == 1) {
-    int type = uniform_int_distribution<int>(1, 3)(rng);
+    int type = uniform_int_distribution<int>(1, 4)(rng);
     Item *item = nullptr;
     switch (type) {
       case 1:
@@ -276,11 +276,9 @@ void Server::generateItem() {
       case 2:
         item = new Item(this, world, ITEM_SHOOT_SPEED, fps, 15 * fps, 0, 0);
         break;
-      case 3:
+      default:
         item = new Item(this, world, ITEM_HEALTH_KIT, fps, 15 * fps, 0, 0);
         break;
-      default:
-        Panic("should not reach here");
     }
     int y = uniform_int_distribution<int>(1, MAP_HEIGHT)(rng);
     int x = uniform_int_distribution<int>(1, MAP_WIDTH)(rng);

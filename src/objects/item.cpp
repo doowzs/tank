@@ -44,7 +44,7 @@ void Item::operator()(Object *object) {
 }
 
 void Item::update() {
-  if (ticks < fps * 3 and (ticks % fps) > fps / 2) {
+  if (ticks < fps * 5 and (ticks % fps) > fps / 2) {
     pattern[0] = ' ';
   } else {
     switch (type) {

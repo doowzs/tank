@@ -29,6 +29,15 @@ Player::~Player() {
 
 enum PlayerAction Player::act() { return client->act(); }
 
+void Player::recover() {
+  if (tank != nullptr) {
+    tank->recover(3);
+  }
+  if (base != nullptr) {
+    base->recover(15);
+  }
+}
+
 void Player::respawn() {
   if (tank != nullptr or respawn_y < 0) return;
   if (respawn_countdown > 0) {

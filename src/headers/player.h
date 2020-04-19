@@ -44,6 +44,7 @@ class Player {
   bool hasBase() const { return base != nullptr; }
   const Base *getBase() const { return base; }
   enum PlayerAction act();
+  void recover();
   void respawn();
   void genBase();
   void addScore(int points);
