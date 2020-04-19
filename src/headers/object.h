@@ -15,6 +15,7 @@ enum ObjectType : unsigned {
   OBJECT_WALL,
   OBJECT_BORDER,
   OBJECT_BULLET,
+  OBJECT_ITEM,
   OBJECT_NULL,
 };
 
@@ -51,6 +52,7 @@ class Object {
   virtual void operator()(Object *object) = 0;
   void move();
   void damage();
+  void recover();
   void suicide();
   virtual void update();
   bool broken() const;

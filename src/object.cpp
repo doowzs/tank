@@ -111,6 +111,12 @@ void Object::damage() {
   }
 }
 
+void Object::recover() {
+  if (type == OBJECT_TANK) {
+    life += 3;
+  }
+}
+
 void Object::suicide() {
   life = 0;
   breakable = true;

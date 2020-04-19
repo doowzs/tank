@@ -22,6 +22,7 @@ void Bullet::operator()() {
 }
 
 void Bullet::operator()(Object *object) {
+  if (object->getType() == OBJECT_ITEM) return;  // should not break items
   if (object->getType() == OBJECT_BULLET and
       (object->getSpeedY() == speed_y and object->getSpeedX() == speed_x)) {
     // should not break a chasing bullet

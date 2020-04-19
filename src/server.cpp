@@ -11,6 +11,7 @@
 #include <objects/base.h>
 #include <objects/border.h>
 #include <objects/bullet.h>
+#include <objects/item.h>
 #include <objects/tank.h>
 #include <objects/wall.h>
 #include <player.h>
@@ -31,6 +32,7 @@ using boost::asio::ip::tcp;
 const int Server::MAP_HEIGHT = 30;
 const int Server::MAP_WIDTH = 30;
 const int Server::RESPAWN_COUNTDOWN = 3;
+const int Server::GEN_ITEM_COUNTDOWN = 15;
 const int Server::POINTS_SHOOT = -1;
 const int Server::POINTS_HIT_BASE = 10000;
 const int Server::POINTS_HIT_TANK = 50;
@@ -109,7 +111,7 @@ void Server::init() {
   for (int i = 0; i < 30; ++i) {
     Wall *wall = new Wall(this, world, 0, 0);
     int miny = 10, maxy = MAP_HEIGHT - 10 - wall->height;
-    int minx = 0, maxx = MAP_WIDTH - wall->width;
+    int minx = 1, maxx = MAP_WIDTH - wall->width;
     int y = uniform_int_distribution<int>(miny, maxy)(rng);
     int x = uniform_int_distribution<int>(minx, maxx)(rng);
     while (!placeObject(wall, y, x)) {
@@ -182,6 +184,8 @@ void Server::logic() {
     }
     delete broken;
   }
+  // generate a random item with probability
+  generateItem();
   // append new created objects
   for (auto &append : appends) {
     objects.emplace_back(append);
@@ -258,4 +262,33 @@ bool Server::respawnTank(Tank *tank, int respawn_y) {
     }
   }
   return false;
+}
+
+void Server::generateItem() {
+  using std::uniform_int_distribution;
+  if (uniform_int_distribution<int>(1, fps * GEN_ITEM_COUNTDOWN)(rng) == 1) {
+    int type = uniform_int_distribution<int>(1, 3)(rng);
+    Item *item = nullptr;
+    switch (type) {
+      case 1:
+        item = new Item(this, world, ITEM_MOVE_SPEED, fps, 15 * fps, 0, 0);
+        break;
+      case 2:
+        item = new Item(this, world, ITEM_SHOOT_SPEED, fps, 15 * fps, 0, 0);
+        break;
+      case 3:
+        item = new Item(this, world, ITEM_HEALTH_KIT, fps, 15 * fps, 0, 0);
+        break;
+      default:
+        Panic("should not reach here");
+    }
+    int y = uniform_int_distribution<int>(1, MAP_HEIGHT)(rng);
+    int x = uniform_int_distribution<int>(1, MAP_WIDTH)(rng);
+    while (!placeObject(item, y, x)) {
+      y = uniform_int_distribution<int>(1, MAP_HEIGHT)(rng);
+      x = uniform_int_distribution<int>(1, MAP_WIDTH)(rng);
+    }
+    item->coverable = true;
+    addObject(item);
+  }
 }
