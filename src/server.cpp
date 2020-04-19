@@ -14,6 +14,7 @@
 #include <objects/item.h>
 #include <objects/tank.h>
 #include <objects/wall.h>
+#include <packet.h>
 #include <player.h>
 #include <server.h>
 
@@ -204,14 +205,22 @@ void Server::post() {
     for (auto &object : objects) {
       if (!healthy) break;
       if (object->type == OBJECT_BORDER) continue;
-      healthy &= player->client->post(frame, object);
+      unsigned flags = 0;
+      if (object->player == player) {
+        flags |= (1 << FLAG_IS_CURRENT_PLAYER);
+      }
+      healthy &= player->client->post(frame, flags, object);
     }
     for (auto &_player : players) {  // cautious!
       if (!healthy) break;
-      healthy &= player->client->post(frame, _player);
+      unsigned flags = 0;
+      if (_player == player) {
+        flags |= (1 << FLAG_IS_CURRENT_PLAYER);
+      }
+      healthy &= player->client->post(frame, flags, _player);
     }
     if (healthy) {
-      player->client->post(frame);  // end-of-frame
+      player->client->post(frame, 1 << FLAG_END_OF_FRAME);  // end-of-frame
     }
   }
 }

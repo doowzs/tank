@@ -30,9 +30,9 @@ class AIClient : public Client {
            double coef_shooting, double coef_random);
   enum PlayerAction act();
   enum PlayerAction actRandomly();
-  bool post(unsigned now);
-  bool post(unsigned now, const Object *object);
-  bool post(unsigned now, const Player *player);
+  bool post(unsigned now, unsigned flags);
+  bool post(unsigned now, unsigned flags, const Object *object);
+  bool post(unsigned now, unsigned flags, const Player *player);
   void init();
   void tick();
   void over();

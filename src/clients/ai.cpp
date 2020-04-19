@@ -112,14 +112,19 @@ enum PlayerAction AIClient::actRandomly() {
   Panic("should not reach here");
 }
 
-bool AIClient::post(__attribute__((unused)) unsigned now) { return true; }
+bool AIClient::post(__attribute__((unused)) unsigned now,
+                    __attribute__((unused)) unsigned flags) {
+  return true;
+}
 
 bool AIClient::post(__attribute__((unused)) unsigned now,
+                    __attribute__((unused)) unsigned flags,
                     __attribute__((unused)) const Object *object) {
   return true;
 }
 
 bool AIClient::post(__attribute__((unused)) unsigned now,
+                    __attribute__((unused)) unsigned flags,
                     __attribute__((unused)) const Player *player) {
   return true;
 }

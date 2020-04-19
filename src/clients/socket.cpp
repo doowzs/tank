@@ -106,9 +106,9 @@ enum PlayerAction SocketClient::input() {
   return ACTION_IDLE;
 }
 
-bool SocketClient::post(unsigned now) {
+bool SocketClient::post(unsigned now, unsigned flags) {
   try {
-    ServerPacket packet = ServerPacket(now, 0);
+    ServerPacket packet = ServerPacket(now, flags);
     boost::asio::write(
         socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
     return true;
@@ -118,10 +118,10 @@ bool SocketClient::post(unsigned now) {
   }
 }
 
-bool SocketClient::post(unsigned now, const Object *object) {
+bool SocketClient::post(unsigned now, unsigned flags, const Object *object) {
   if (object == nullptr) return true;
   try {
-    ServerPacket packet = ServerPacket(now, 0, object);
+    ServerPacket packet = ServerPacket(now, flags, object);
     boost::asio::write(
         socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
     return true;
@@ -131,10 +131,10 @@ bool SocketClient::post(unsigned now, const Object *object) {
   }
 }
 
-bool SocketClient::post(unsigned now, const Player *player) {
+bool SocketClient::post(unsigned now, unsigned flags, const Player *player) {
   if (player == nullptr) return true;
   try {
-    ServerPacket packet = ServerPacket(now, 0, player);
+    ServerPacket packet = ServerPacket(now, flags, player);
     boost::asio::write(
         socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
     return true;
@@ -234,10 +234,16 @@ void SocketClient::draw() {
         for (int i = 0, y = packet->pos_y; i < packet->height; ++i, ++y) {
           for (int j = 0, x = packet->pos_x; j < packet->width; ++j, ++x) {
             char ch = packet->pattern[i * packet->width + j];
+            if (packet->flags & (1 << FLAG_IS_CURRENT_PLAYER)) {
+              attron(COLOR_PAIR(COLOR_PAIR_BLUE));
+            }
             if (isdigit(ch) or isspace(ch)) {
               mvwaddch(game_window, y, x, ch);
             } else {
               mvwaddch(game_window, y, x, NCURSES_ACS(ch));
+            }
+            if (packet->flags & (1 << FLAG_IS_CURRENT_PLAYER)) {
+              attroff(COLOR_PAIR(COLOR_PAIR_BLUE));
             }
           }
         }
