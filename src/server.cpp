@@ -115,14 +115,14 @@ void Server::init() {
 
   Log("generating game world...");
   for (int x = 1; x <= MAP_WIDTH; ++x) {
-    objects.emplace_back(new Border(this, world, 0, x));
+    addObject(new Border(this, world, 0, x));
   }
   for (int y = 1; y <= MAP_HEIGHT; ++y) {
-    objects.emplace_back(new Border(this, world, y, 0));
-    objects.emplace_back(new Border(this, world, y, MAP_WIDTH + 1));
+    addObject(new Border(this, world, y, 0));
+    addObject(new Border(this, world, y, MAP_WIDTH + 1));
   }
   for (int x = 1; x <= MAP_WIDTH; ++x) {
-    objects.emplace_back(new Border(this, world, MAP_HEIGHT + 1, x));
+    addObject(new Border(this, world, MAP_HEIGHT + 1, x));
   }
 
   Log("generating random walls...");
@@ -132,18 +132,11 @@ void Server::init() {
     int min_y = 10, max_y = MAP_HEIGHT - 10 - wall->height;
     int min_x = 1, max_x = MAP_WIDTH - wall->width;
     if (placeRandomly(wall, min_y, max_y, min_x, max_x, 10)) {
-      objects.emplace_back(wall);
+      addObject(wall);
     } else {
-      wall->suicide();
-      brokens.emplace_back(wall);
+      delete wall;
     }
   }
-
-  Log("add objects in append list...");
-  for (auto &object : appends) {
-    objects.emplace_back(object);
-  }
-  appends.clear();
 }
 
 void Server::tick() {
@@ -267,6 +260,13 @@ bool Server::placeObject(Object *object, int new_y, int new_x) {
   object->pos_y = new_y, object->pos_x = new_x;
   if (!object->coverable) {
     for (auto &target : objects) {
+      if (target == object) continue;
+      if (!target->coverable and collide(object, target)) {
+        object->pos_y = old_y, object->pos_x = old_x;
+        return false;
+      }
+    }
+    for (auto &target : appends) {
       if (target == object) continue;
       if (!target->coverable and collide(object, target)) {
         object->pos_y = old_y, object->pos_x = old_x;
