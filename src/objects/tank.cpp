@@ -75,30 +75,30 @@ void Tank::update() {
   switch (direction) {
     case D_UP:
       sprintf(pattern,
-              " | "
-              "+%c+"
-              "+++",
+              "lXk"
+              "x%cx"
+              "mqj",
               (char)('0' + life));
       return;
     case D_DOWN:
       sprintf(pattern,
-              "+++"
-              "+%c+"
-              " | ",
+              "lqk"
+              "x%cx"
+              "mXj",
               (char)('0' + life));
       return;
     case D_LEFT:
       sprintf(pattern,
-              " ++"
-              "-%c+"
-              " ++",
+              "lqk"
+              "Q%cx"
+              "mqj",
               (char)('0' + life));
       return;
     case D_RIGHT:
       sprintf(pattern,
-              "++ "
-              "+%c-"
-              "++ ",
+              "lqk"
+              "x%cQ"
+              "mqj",
               (char)('0' + life));
       return;
   }

@@ -233,14 +233,19 @@ void SocketClient::draw() {
       case PACKET_OBJECT: {
         for (int i = 0, y = packet->pos_y; i < packet->height; ++i, ++y) {
           for (int j = 0, x = packet->pos_x; j < packet->width; ++j, ++x) {
-            mvwaddch(game_window, y, x, packet->pattern[i * packet->width + j]);
+            char ch = packet->pattern[i * packet->width + j];
+            if (isdigit(ch) or isspace(ch)) {
+              mvwaddch(game_window, y, x, ch);
+            } else {
+              mvwadd_wch(game_window, y, x, NCURSES_WACS(ch));
+            }
           }
         }
         break;
       }
       case PACKET_PLAYER: {
-        mvwprintw(info_window, ++line, 1, "player %s: %d",
-                  packet->name, packet->score);
+        mvwprintw(info_window, ++line, 1, "player %s: %d", packet->name,
+                  packet->score);
         break;
       }
       default: {

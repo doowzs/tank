@@ -9,11 +9,11 @@
 
 Base::Base(Server *server, Player *player, int pos_y, int pos_x)
     : Object(server, player, OBJECT_BASE, pos_y, pos_x, 5, 5,
-             "+---+"
-             "|X X|"
-             "| ? |"
-             "|X X|"
-             "+---+",
+             "lqqqk"
+             "x` `x"
+             "x   x"
+             "x` `x"
+             "mqqqj",
              100) {}
 
 void Base::operator()() {}

@@ -9,8 +9,8 @@
 
 Wall::Wall(Server *server, Player *player, int pos_y, int pos_x)
     : Object(server, player, OBJECT_WALL, pos_y, pos_x, 2, 2,
-             "OO"
-             "OO",
+             "lk"
+             "mj",
              5) {}
 
 Wall::Wall(Server *server, Player *player, int pos_y, int pos_x, int height,
