@@ -37,6 +37,7 @@ const int Server::GEN_ITEM_COUNTDOWN = 10;
 const int Server::POINTS_SHOOT = -1;
 const int Server::POINTS_HIT_BASE = 10000;
 const int Server::POINTS_HIT_TANK = 50;
+const int Server::POINTS_HIT_WALL = 20;
 const int Server::POINTS_HIT_BULLET = 1;
 
 Server::Server(unsigned fps, const string &addr, const string &port)

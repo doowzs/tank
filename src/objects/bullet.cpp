@@ -33,7 +33,8 @@ void Bullet::operator()(Object *object) {
   if (object->broken()) {
     switch (object->getType()) {
       case OBJECT_BASE:
-        player->addScore(Server::POINTS_HIT_BASE);
+        player->addScore(Server::POINTS_HIT_BASE *
+                         (player == object->getPlayer() ? -1 : 1));
         break;
       case OBJECT_TANK:
         player->addScore(Server::POINTS_HIT_TANK);
@@ -43,8 +44,23 @@ void Bullet::operator()(Object *object) {
       case OBJECT_BULLET:
         player->addScore(Server::POINTS_HIT_BULLET);
         break;
+      case OBJECT_WALL:
+        player->addScore(Server::POINTS_HIT_WALL);
+        break;
       default:
-        break;  // TODO
+        break;  // no scoring
+    }
+  } else {
+    switch (object->getType()) {
+      case OBJECT_BORDER:
+      case OBJECT_NULL:
+        break;
+      case OBJECT_BASE:
+        player->addScore(Server::POINTS_HIT_BULLET *
+                         (player == object->getPlayer() ? -99 : 1));
+        break;
+      default:
+        player->addScore(Server::POINTS_HIT_BULLET);
     }
   }
   suicide();  // bullet conducts suicide
