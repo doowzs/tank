@@ -50,7 +50,25 @@ Server::Server(unsigned fps, const string &addr, const string &port)
   rng.seed(std::chrono::system_clock::now().time_since_epoch().count());
 }
 
-Server::~Server() { delete world; }
+Server::~Server() {
+  delete world;
+  for (auto &player : players) {
+    delete player;
+  }
+  players.clear();
+  for (auto &object : objects) {
+    delete object;
+  }
+  objects.clear();
+  for (auto &append : appends) {
+    delete append;
+  }
+  appends.clear();
+  for (auto &broken : brokens) {
+    delete broken;
+  }
+  brokens.clear();
+}
 
 void Server::run() {
   using namespace std::chrono;
@@ -111,15 +129,14 @@ void Server::init() {
   using std::uniform_int_distribution;
   for (int i = 0; i < 30; ++i) {
     Wall *wall = new Wall(this, world, 0, 0);
-    int miny = 10, maxy = MAP_HEIGHT - 10 - wall->height;
-    int minx = 1, maxx = MAP_WIDTH - wall->width;
-    int y = uniform_int_distribution<int>(miny, maxy)(rng);
-    int x = uniform_int_distribution<int>(minx, maxx)(rng);
-    while (!placeObject(wall, y, x)) {
-      y = uniform_int_distribution<int>(miny, maxy)(rng);
-      x = uniform_int_distribution<int>(minx, maxx)(rng);
+    int min_y = 10, max_y = MAP_HEIGHT - 10 - wall->height;
+    int min_x = 1, max_x = MAP_WIDTH - wall->width;
+    if (placeRandomly(wall, min_y, max_y, min_x, max_x, 10)) {
+      objects.emplace_back(wall);
+    } else {
+      wall->suicide();
+      brokens.emplace_back(wall);
     }
-    objects.emplace_back(wall);
   }
 
   Log("add objects in append list...");
@@ -260,6 +277,23 @@ bool Server::placeObject(Object *object, int new_y, int new_x) {
   return true;
 }
 
+bool Server::placeRandomly(Object *object, int min_y, int max_y, int min_x,
+                           int max_x, int nr) {
+  using std::min, std::max, std::uniform_int_distribution;
+  min_y = max(min_y, 1);
+  max_y = min(max_y, MAP_HEIGHT - object->height);
+  min_x = max(min_x, 1);
+  max_x = min(max_x, MAP_WIDTH - object->width);
+  for (int i = 0; i < nr; ++i) {
+    int y = uniform_int_distribution<int>(min_y, max_y)(rng);
+    int x = uniform_int_distribution<int>(min_x, max_x)(rng);
+    if (placeObject(object, y, x)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 bool Server::respawnTank(Tank *tank, int respawn_y) {
   using std::min, std::max, std::uniform_int_distribution;
   // make 10 attempts to respawn the tank
@@ -288,17 +322,19 @@ void Server::generateItem() {
       case 2:
         item = new Item(this, world, ITEM_SHOOT_SPEED, fps, 15 * fps, 0, 0);
         break;
+      case 3:
+        item = new Item(this, world, ITEM_WALL_BUILDER, fps, 15 * fps, 0, 0);
+        break;
       default:
         item = new Item(this, world, ITEM_HEALTH_KIT, fps, 15 * fps, 0, 0);
         break;
     }
-    int y = uniform_int_distribution<int>(1, MAP_HEIGHT)(rng);
-    int x = uniform_int_distribution<int>(1, MAP_WIDTH)(rng);
-    while (!placeObject(item, y, x)) {
-      y = uniform_int_distribution<int>(1, MAP_HEIGHT)(rng);
-      x = uniform_int_distribution<int>(1, MAP_WIDTH)(rng);
+    if (placeRandomly(item, 1, MAP_HEIGHT, 1, MAP_WIDTH, 10)) {
+      item->coverable = true;
+      addObject(item);
+    } else {
+      item->suicide();
+      brokens.emplace_back(item);
     }
-    item->coverable = true;
-    addObject(item);
   }
 }

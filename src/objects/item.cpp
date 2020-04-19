@@ -49,13 +49,16 @@ void Item::update() {
   } else {
     switch (type) {
       case ITEM_MOVE_SPEED:
-        pattern[0] = 'i';
+        pattern[0] = '}';
         break;
       case ITEM_SHOOT_SPEED:
-        pattern[0] = '-';
+        pattern[0] = 'f';
         break;
       case ITEM_HEALTH_KIT:
         pattern[0] = '`';
+        break;
+      case ITEM_WALL_BUILDER:
+        pattern[0] = '{';
         break;
       default:
         Panic("should not reach here");

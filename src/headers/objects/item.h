@@ -10,6 +10,7 @@ enum ItemType : unsigned {
   ITEM_MOVE_SPEED,
   ITEM_SHOOT_SPEED,
   ITEM_HEALTH_KIT,
+  ITEM_WALL_BUILDER,
 };
 
 class Item : public Object {

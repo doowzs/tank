@@ -63,6 +63,8 @@ class Server {
   void over();
   void addObject(Object *object);
   bool placeObject(Object *object, int new_y, int new_x);
+  bool placeRandomly(Object *object, int min_y, int max_y, int min_x, int max_x,
+                     int nr);
   bool respawnTank(Tank *tank, int respawn_y);
   void generateItem();
 };
