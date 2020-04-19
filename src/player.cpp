@@ -9,9 +9,10 @@
 #include <player.h>
 #include <server.h>
 
-Player::Player(Server *server, Client *client, int respawn_y, bool hasBase)
+Player::Player(Server *server, Client *client, enum PlayerType type, int respawn_y, bool hasBase)
     : server(server),
       client(client),
+      type(type),
       score(0),
       respawn_y(respawn_y),
       respawn_countdown(respawn_y < 0 ? -1 : 0),

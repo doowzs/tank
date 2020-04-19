@@ -11,6 +11,12 @@ class AIClient;
 class Tank;
 class Base;
 
+enum PlayerType : unsigned {
+  PLAYER_WORLD,
+  PLAYER_HUMAN,
+  PLAYER_AI,
+};
+
 enum PlayerAction : unsigned {
   ACTION_BAD,   // failed
   ACTION_IDLE,  // no input
@@ -29,13 +35,14 @@ class Player {
  private:
   Server *server;
   Client *client;
+  enum PlayerType type;
   int score, respawn_y, respawn_countdown;
   Tank *tank;  // each player MUST control a tank
   Base *base;  // each player MAY have a base
 
  public:
   Player() = delete;
-  Player(Server *server, Client *client, int respawn_y, bool hasBase);
+  Player(Server *server, Client *client, enum PlayerType type, int respawn_y, bool hasBase);
   ~Player();
   int getScore() const { return score; }
   const Client *getClient() const { return client; }

@@ -47,7 +47,7 @@ Server::Server(unsigned fps, const string &addr, const string &port)
       addr(addr),
       port(port),
       acceptor(context, tcp::endpoint(tcp::v4(), stoi(port))) {
-  world = new Player(this, nullptr, -1, false);
+  world = new Player(this, nullptr, PLAYER_WORLD, -1, false);
   rng.seed(std::chrono::system_clock::now().time_since_epoch().count());
 }
 
@@ -102,15 +102,16 @@ void Server::run() {
 void Server::init() {
   Log("waiting for player...");
   Client *client = new SocketClient("you", acceptor.accept());
-  Player *player = new Player(this, client, MAP_HEIGHT + 1 - 5, true);
+  Player *player =
+      new Player(this, client, PLAYER_HUMAN, MAP_HEIGHT + 1 - 5, true);
   players.emplace_back(player);
 
   Log("adding AI players...");
   Client *ai_client1 = new AIClient(this, "bot1", 0.2, 0.2, 0.1);
-  Player *ai_player1 = new Player(this, ai_client1, 1, false);
+  Player *ai_player1 = new Player(this, ai_client1, PLAYER_AI, 1, false);
   players.emplace_back(ai_player1);
   Client *ai_client2 = new AIClient(this, "bot2", 0.2, 0.2, 0.1);
-  Player *ai_player2 = new Player(this, ai_client2, 1, false);
+  Player *ai_player2 = new Player(this, ai_client2, PLAYER_AI, 1, false);
   players.emplace_back(ai_player2);
   Log("all players connected");
 
@@ -217,8 +218,12 @@ void Server::post() {
       if (!healthy) break;
       if (object->type == OBJECT_BORDER) continue;
       unsigned flags = 0;
-      if (object->player == player) {
-        flags |= (1 << FLAG_IS_CURRENT_PLAYER);
+      if (player->type == PLAYER_HUMAN) {
+        if (object->player == player) {
+          flags |= (1 << FLAG_IS_CURRENT_PLAYER);
+        } else {
+          flags |= (1 << FLAG_IS_ANOTHER_PLAYER);
+        }
       }
       if (object->type == OBJECT_ITEM) {
         flags |= (1 << FLAG_IS_ITEM);
@@ -228,8 +233,12 @@ void Server::post() {
     for (auto &_player : players) {  // cautious!
       if (!healthy) break;
       unsigned flags = 0;
-      if (_player == player) {
-        flags |= (1 << FLAG_IS_CURRENT_PLAYER);
+      if (player->type == PLAYER_HUMAN) {
+        if (_player == player) {
+          flags |= (1 << FLAG_IS_CURRENT_PLAYER);
+        } else {
+          flags |= (1 << FLAG_IS_ANOTHER_PLAYER);
+        }
       }
       healthy &= player->client->post(frame, flags, _player);
     }
