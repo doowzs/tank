@@ -269,6 +269,12 @@ void Server::post() {
       }
       if (object->type == OBJECT_ITEM) {
         flags |= (1 << FLAG_IS_ITEM);
+      } else if (object->type == OBJECT_WALL) {
+        if (object->max_life <= 5) {
+          flags |= (1 << FLAG_IS_BRICK_WALL);
+        } else {
+          flags |= (1 << FLAG_IS_METAL_WALL);
+        }
       }
       healthy &= player->client->post(frame, flags, object);
     }

@@ -54,15 +54,18 @@ class Server {
   tcp::acceptor acceptor;
   Player *world;
   vector<Player *> players;
-  vector<Object *> objects;        // current objects
-  vector<Object *> appends;        // new objects
-  vector<Object *> brokens;        // past objects
-  std::default_random_engine rng;  // random number generator
+  vector<Object *> objects;  // current objects
+  vector<Object *> appends;  // new objects
+  vector<Object *> brokens;  // past objects
   unsigned next_item_frame;
 
  public:
+  std::default_random_engine rng;  // random number generator
+
+ public:
   Server() = delete;
-  Server(unsigned fps, enum ServerMode mode, const string &addr, const string &port);
+  Server(unsigned fps, enum ServerMode mode, const string &addr,
+         const string &port);
   ~Server();
   void run();
   void init();

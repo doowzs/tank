@@ -239,6 +239,12 @@ void SocketClient::draw() {
             } else if (packet->flags & (1 << FLAG_IS_ITEM)) {
               wattron(game_window, A_BOLD | COLOR_PAIR(COLOR_FG_BLUE));
             }
+            if (packet->flags & (1 << FLAG_IS_BRICK_WALL)) {
+              wattroff(game_window, A_BOLD);
+              wattron(game_window, A_DIM);
+            } else if (packet->flags & (1 << FLAG_IS_METAL_WALL)) {
+              wattron(game_window, A_BOLD);
+            }
             if (isdigit(ch) or isspace(ch)) {
               mvwaddch(game_window, y, x, ch);
             } else {
@@ -248,6 +254,11 @@ void SocketClient::draw() {
               wattroff(game_window, A_BOLD | COLOR_PAIR(COLOR_FG_YELLOW));
             } else if (packet->flags & (1 << FLAG_IS_ITEM)) {
               wattroff(game_window, A_BOLD | COLOR_PAIR(COLOR_FG_BLUE));
+            }
+            if (packet->flags & (1 << FLAG_IS_BRICK_WALL)) {
+              wattroff(game_window, A_DIM);
+            } else if (packet->flags & (1 << FLAG_IS_METAL_WALL)) {
+              wattroff(game_window, A_BOLD);
             }
           }
         }

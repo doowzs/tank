@@ -7,11 +7,18 @@
 #include <objects/wall.h>
 #include <server.h>
 
+#include <random>
+
 Wall::Wall(Server *server, Player *player, int pos_y, int pos_x)
-    : Object(server, player, OBJECT_WALL, pos_y, pos_x, 2, 2,
-             "aa"
-             "aa",
-             5, 5) {}
+    : Object(server, player, OBJECT_WALL, pos_y, pos_x, 2, 2, "lkmj") {
+  using std::uniform_int_distribution;
+  if (uniform_int_distribution<int>(1, 3)(server->rng) == 1) {
+    life = max_life = 10;
+  } else {
+    life = max_life = 5;
+  }
+  breakable = true;
+}
 
 Wall::Wall(Server *server, Player *player, int pos_y, int pos_x, int height,
            int width, const char *pattern, int life)
