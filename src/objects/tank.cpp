@@ -19,7 +19,9 @@ Tank::Tank(Server *server, Player *player, int pos_y, int pos_x,
     : Object(server, player, OBJECT_TANK, pos_y, pos_x, 3, 3, "         ", 3,
              9),
       direction(direction),
-      cooldown(0) {}
+      cooldown(0),
+      speed_countdown(0),
+      shoot_countdown(0) {}
 
 void Tank::operator()() {
   if (speed_countdown > 0) {

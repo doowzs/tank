@@ -38,7 +38,7 @@ void Item::operator()(Object *object) {
         break;
       case ITEM_HEALTH_KIT:
         Log("%s life recovered", tank->getPlayer()->getName());
-        tank->recover(3, 5);
+        tank->recover(3, 15);
         break;
       case ITEM_WALL_BUILDER:
         Log("%s build some walls", tank->getPlayer()->getName());
