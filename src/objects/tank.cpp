@@ -9,19 +9,37 @@
 #include <player.h>
 #include <server.h>
 
+#include <random>
+
+const int Tank::TANK_LIFE_NORMAL = 5;
+const int Tank::TANK_LIFE_SPEED = 3;
+const int Tank::TANK_LIFE_HEAVY = 9;
 const int Tank::BULLET_SPEED_SLOW = 3;
 const int Tank::BULLET_SPEED_FAST = 1;
-const int Tank::COOLDOWN_FRAMES_SLOW = 5;
-const int Tank::COOLDOWN_FRAMES_FAST = 3;
+const int Tank::COOLDOWN_FRAMES_SLOW = 30;
+const int Tank::COOLDOWN_FRAMES_NORM = 5;
+const int Tank::COOLDOWN_FRAMES_FAST = 2;
 
 Tank::Tank(Server *server, Player *player, int pos_y, int pos_x,
            enum TankDirection direction)
-    : Object(server, player, OBJECT_TANK, pos_y, pos_x, 3, 3, "         ", 3,
-             9),
+    : Object(server, player, OBJECT_TANK, pos_y, pos_x, 3, 3, "         ",
+             TANK_LIFE_NORMAL, TANK_LIFE_NORMAL),
       direction(direction),
       cooldown(0),
       speed_countdown(0),
-      shoot_countdown(0) {}
+      shoot_countdown(0) {
+  using std::uniform_int_distribution;
+  int lottery = uniform_int_distribution<int>(1, 5)(server->rng);
+  if (lottery < 3) {
+    type = TANK_NORMAL;
+  } else if (lottery == 4) {
+    type = TANK_SPEED;
+    life = max_life = TANK_LIFE_SPEED;
+  } else {
+    type = TANK_HEAVY;
+    life = max_life = TANK_LIFE_HEAVY;
+  }
+}
 
 void Tank::operator()() {
   if (speed_countdown > 0) {
@@ -35,8 +53,19 @@ void Tank::operator()() {
   if (cooldown > 0) {
     --cooldown;  // waiting for next move
   } else {
-    cooldown =
-        speed_countdown > 0 ? COOLDOWN_FRAMES_FAST : COOLDOWN_FRAMES_SLOW;
+    switch (type) {
+      case TANK_NORMAL:
+        cooldown =
+            speed_countdown > 0 ? COOLDOWN_FRAMES_FAST : COOLDOWN_FRAMES_NORM;
+        break;
+      case TANK_SPEED:
+        cooldown = COOLDOWN_FRAMES_FAST;
+        break;
+      case TANK_HEAVY:
+        cooldown =
+            speed_countdown > 0 ? COOLDOWN_FRAMES_NORM : COOLDOWN_FRAMES_SLOW;
+        break;
+    }
     switch (action) {
       case ACTION_SHOOT:
         server->addObject(shoot(1));
@@ -152,7 +181,8 @@ void Tank::update() {
 }
 
 Bullet *Tank::shoot(int pos) {
-  int speed = speed_countdown > 0 ? BULLET_SPEED_FAST : BULLET_SPEED_SLOW;
+  int speed = (type == TANK_SPEED or speed_countdown > 0) ? BULLET_SPEED_FAST
+                                                          : BULLET_SPEED_SLOW;
   player->addScore(Server::POINTS_SHOOT);  // shoot costs 1 point of player
   switch (direction) {
     case D_UP:

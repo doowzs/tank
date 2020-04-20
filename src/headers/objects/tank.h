@@ -9,6 +9,12 @@
 // forward declaration
 class Bullet;
 
+enum TankType : unsigned {
+  TANK_NORMAL,
+  TANK_SPEED,
+  TANK_HEAVY,
+};
+
 enum TankDirection : unsigned {
   D_UP,
   D_DOWN,
@@ -22,10 +28,15 @@ class Tank : public Object {
   friend class AIClient;
 
  private:
+  const static int TANK_LIFE_NORMAL;
+  const static int TANK_LIFE_SPEED;
+  const static int TANK_LIFE_HEAVY;
   const static int BULLET_SPEED_SLOW;
   const static int BULLET_SPEED_FAST;
   const static int COOLDOWN_FRAMES_SLOW;
+  const static int COOLDOWN_FRAMES_NORM;
   const static int COOLDOWN_FRAMES_FAST;
+  enum TankType type;
   enum TankDirection direction;
   int cooldown;
   int speed_countdown;
