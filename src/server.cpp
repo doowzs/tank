@@ -305,6 +305,11 @@ void Server::post() {
       }
       healthy &= player->client->post(frame, flags, _player);
     }
+    if (mode == MODE_NORMAL) {
+      char message[32] = "";
+      sprintf(message, " %d enemies left.", clear_countdown);
+      player->client->post(frame, 0, message);
+    }
     if (healthy) {
       player->client->post(frame, 1 << FLAG_END_OF_FRAME);  // end-of-frame
     }

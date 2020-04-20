@@ -82,6 +82,15 @@ ServerPacket::ServerPacket(unsigned frame, unsigned flags, int score,
   strncpy(this->buffer + offset, name, sizeof(this->name));
 }
 
+ServerPacket::ServerPacket(unsigned frame, unsigned flags, const char *message)
+    : frame(frame),
+      flags(flags),
+      type(PACKET_MESSAGE) {
+  sprintf(buffer, "%08x%08x%08x", frame, flags, static_cast<unsigned>(type));
+  strncpy(this->message, message, sizeof(this->message));
+  strncpy(this->buffer + offset, message, sizeof(this->message));
+}
+
 ServerPacket::ServerPacket(const char *buf) {
   unsigned utype = 0;
   sscanf(buf, "%08x%08x%08x", &frame, &flags, &utype);
@@ -102,6 +111,10 @@ ServerPacket::ServerPacket(const char *buf) {
       sscanf(buf + 24, "%08x", &uscore);
       score = (int)uscore;
       strncpy(this->name, buf + offset, sizeof(this->name));
+      break;
+    }
+    case PACKET_MESSAGE: {
+      strncpy(this->message, buf + offset, sizeof(this->name));
       break;
     }
     default: {

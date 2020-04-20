@@ -129,7 +129,7 @@ void App::menu() {
   set_menu_mark(menu, " -> ");
 
   post_menu(menu);
-  mvwprintw(window, 8, 5, "Use arrow keys to navigate, press ENTER to select.");
+  mvwprintw(window, 9, 5, "Use arrow keys to navigate, press ENTER to select.");
   wrefresh(window);
   status = APP_MENU;
 

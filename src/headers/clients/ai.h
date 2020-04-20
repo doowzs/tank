@@ -33,6 +33,7 @@ class AIClient : public Client {
   bool post(unsigned now, unsigned flags);
   bool post(unsigned now, unsigned flags, const Object *object);
   bool post(unsigned now, unsigned flags, const Player *player);
+  bool post(unsigned now, unsigned flags, const char *message);
   void init();
   void tick();
   void over();

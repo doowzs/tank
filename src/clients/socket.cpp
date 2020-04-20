@@ -24,11 +24,35 @@ SocketClient::SocketClient(const char *name, unsigned fps, const string &addr,
                            const string &port)
     : Client(name, fps), addr(addr), port(port), socket(context) {
   game_window = newwin(Server::MAP_HEIGHT + 2, Server::MAP_WIDTH + 2, 0, 0);
-  info_window = newwin(Server::MAP_HEIGHT + 2, 30, 0, Server::MAP_WIDTH + 2);
+  info_window = newwin(12, 30, 0, Server::MAP_WIDTH + 2);
+  mesg_window = newwin(8, 30, 12, Server::MAP_WIDTH + 2);
+  help_window = newwin(Server::MAP_HEIGHT - 18, 30, 20, Server::MAP_WIDTH + 2);
   box(game_window, 0, 0);
   box(info_window, 0, 0);
+  box(mesg_window, 0, 0);
+  box(help_window, 0, 0);
+
+  mvwprintw(info_window, 1, 12, "INFO");
+  mvwprintw(mesg_window, 1, 8, "MESSAGES");
+  mvwprintw(help_window, 1, 12, "HELP");
+  mvwprintw(help_window, 2, 1, "Actions:");
+  mvwprintw(help_window, 3, 4, "Move: arrow keys");
+  mvwprintw(help_window, 4, 4, "Shoot: spacebar");
+  mvwprintw(help_window, 5, 4, "Reset: shift+R");
+  mvwprintw(help_window, 6, 1, "Items:");
+  mvwaddch(help_window, 7, 4, NCURSES_ACS('}'));
+  mvwaddch(help_window, 8, 4, NCURSES_ACS('h'));
+  mvwaddch(help_window, 9, 4, NCURSES_ACS('`'));
+  mvwaddch(help_window, 10, 4, NCURSES_ACS('{'));
+  mvwprintw(help_window, 7, 5, ": speed upgrade");
+  mvwprintw(help_window, 8, 5, ": shoot upgrade");
+  mvwprintw(help_window, 9, 5, ": health kit");
+  mvwprintw(help_window, 10, 5, ": wall builder");
+
   wrefresh(game_window);
   wrefresh(info_window);
+  wrefresh(mesg_window);
+  wrefresh(help_window);
 }
 
 // server side constructor
@@ -60,6 +84,18 @@ SocketClient::~SocketClient() {
     werase(info_window);
     wrefresh(info_window);
     delwin(info_window);
+  }
+  if (mesg_window != nullptr) {
+    wborder(mesg_window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+    werase(mesg_window);
+    wrefresh(mesg_window);
+    delwin(mesg_window);
+  }
+  if (help_window != nullptr) {
+    wborder(help_window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+    werase(help_window);
+    wrefresh(help_window);
+    delwin(help_window);
   }
 }
 
@@ -146,6 +182,18 @@ bool SocketClient::post(unsigned now, unsigned flags, const Player *player) {
   }
 }
 
+bool SocketClient::post(unsigned now, unsigned flags, const char *message) {
+  try {
+    ServerPacket packet = ServerPacket(now, flags, message);
+    boost::asio::write(
+        socket, boost::asio::buffer(packet.buffer, ServerPacket::length));
+    return true;
+  } catch (exception &e) {
+    Log("post failed: %s", e.what());
+    return false;
+  }
+}
+
 void SocketClient::init() {
   try {
     tcp::resolver resolver(context);
@@ -205,11 +253,9 @@ void SocketClient::sync() {
           socket, boost::asio::buffer(buffer, ServerPacket::length));
       ServerPacket *current = new ServerPacket(buffer);
       switch (current->type) {
-        case PACKET_OBJECT: {
-          refresh.emplace_back(current);
-          break;
-        }
-        case PACKET_PLAYER: {
+        case PACKET_OBJECT:
+        case PACKET_PLAYER:
+        case PACKET_MESSAGE: {
           refresh.emplace_back(current);
           break;
         }
@@ -233,11 +279,14 @@ void SocketClient::sync() {
 }
 
 void SocketClient::draw() {
-  werase(game_window), werase(info_window);
+  werase(game_window), werase(info_window), werase(mesg_window);
   box(game_window, 0, 0);
   box(info_window, 0, 0);
-  mvwprintw(info_window, 1, 1, "server: %s", addr.c_str());
-  int line = 1;
+  box(mesg_window, 0, 0);
+  mvwprintw(info_window, 1, 12, "INFO");
+  mvwprintw(info_window, 2, 1, "server: %s", addr.c_str());
+  mvwprintw(mesg_window, 1, 10, "MESSAGES");
+  int info_line = 2, mesg_line = 2;
   for (auto &packet : packets) {
     switch (packet->type) {
       case PACKET_OBJECT: {
@@ -275,8 +324,12 @@ void SocketClient::draw() {
         break;
       }
       case PACKET_PLAYER: {
-        mvwprintw(info_window, ++line, 1, "player %s: %d", packet->name,
+        mvwprintw(info_window, ++info_line, 1, "player %s: %d", packet->name,
                   packet->score);
+        break;
+      }
+      case PACKET_MESSAGE: {
+        mvwprintw(mesg_window, ++mesg_line, 1, "%s", packet->message);
         break;
       }
       default: {
@@ -285,5 +338,5 @@ void SocketClient::draw() {
       }
     }
   }
-  wrefresh(game_window), wrefresh(info_window);
+  wrefresh(game_window), wrefresh(info_window), wrefresh(mesg_window);
 }

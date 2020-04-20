@@ -22,6 +22,7 @@
 enum PacketType : unsigned {
   PACKET_OBJECT,
   PACKET_PLAYER,
+  PACKET_MESSAGE,
   PACKET_NULL,
 };
 
@@ -60,6 +61,8 @@ class ServerPacket {
   // Player-type data
   int score;
   char name[32];
+  // Message-type data
+  char message[32];
   char buffer[120];
 
  public:
@@ -70,6 +73,7 @@ class ServerPacket {
                int width, const char *pattern);
   ServerPacket(unsigned frame, unsigned flags, const Player *player);
   ServerPacket(unsigned frame, unsigned flags, int score, const char *name);
+  ServerPacket(unsigned frame, unsigned flags, const char *message);
   ServerPacket(const char *buf);
 };
 

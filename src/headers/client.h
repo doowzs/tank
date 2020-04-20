@@ -33,6 +33,7 @@ class Client {
   virtual bool post(unsigned now, unsigned flags) = 0;
   virtual bool post(unsigned now, unsigned flags, const Object *object) = 0;
   virtual bool post(unsigned now, unsigned flags, const Player *player) = 0;
+  virtual bool post(unsigned now, unsigned flags, const char *message) = 0;
   virtual void init() = 0;
   virtual void tick() = 0;
   virtual void over() = 0;

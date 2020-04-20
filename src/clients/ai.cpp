@@ -129,6 +129,12 @@ bool AIClient::post(__attribute__((unused)) unsigned now,
   return true;
 }
 
+bool AIClient::post(__attribute__((unused)) unsigned now,
+                    __attribute__((unused)) unsigned flags,
+                    __attribute__((unused)) const char *message) {
+  return true;
+}
+
 void AIClient::init() {}
 
 void AIClient::tick() {}

@@ -26,7 +26,7 @@ class SocketClient : public Client {
   io_context context;
   tcp::socket socket;
   vector<ServerPacket *> packets, refresh;
-  WINDOW *game_window, *info_window;
+  WINDOW *game_window, *info_window, *mesg_window, *help_window;
 
  public:
   SocketClient(const char *name, unsigned fps, const string &addr,
@@ -38,6 +38,7 @@ class SocketClient : public Client {
   bool post(unsigned now, unsigned flags);
   bool post(unsigned now, unsigned flags, const Object *object);
   bool post(unsigned now, unsigned flags, const Player *player);
+  bool post(unsigned now, unsigned flags, const char *message);
   void init();
   void tick();
   void over();
