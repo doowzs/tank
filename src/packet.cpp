@@ -58,8 +58,8 @@ ServerPacket::ServerPacket(unsigned frame, unsigned flags, int pos_y, int pos_x,
   sprintf(buffer, "%08x%08x%08x%08x%08x%08x%08x", frame, flags,
           static_cast<unsigned>(type), (unsigned)pos_y, (unsigned)pos_x,
           (unsigned)height, (unsigned)width);
-  strncpy(this->pattern, pattern, sizeof(this->pattern));
-  strncpy(this->buffer + offset, pattern, sizeof(this->pattern));
+  memcpy(this->pattern, pattern, sizeof(this->pattern));
+  memcpy(this->buffer + offset, pattern, sizeof(this->pattern));
 }
 
 ServerPacket::ServerPacket(unsigned frame, unsigned flags, const Player *player)
@@ -69,8 +69,8 @@ ServerPacket::ServerPacket(unsigned frame, unsigned flags, const Player *player)
       score(player->getScore()) {
   sprintf(buffer, "%08x%08x%08x%08x", frame, flags, static_cast<unsigned>(type),
           (unsigned)score);
-  strncpy(this->name, player->getName(), sizeof(this->name));
-  strncpy(this->buffer + offset, player->getName(), sizeof(this->name));
+  memcpy(this->name, player->getName(), sizeof(this->name));
+  memcpy(this->buffer + offset, player->getName(), sizeof(this->name));
 }
 
 ServerPacket::ServerPacket(unsigned frame, unsigned flags, int score,
@@ -78,8 +78,8 @@ ServerPacket::ServerPacket(unsigned frame, unsigned flags, int score,
     : frame(frame), flags(flags), type(PACKET_PLAYER), score(score) {
   sprintf(buffer, "%08x%08x%08x%08x", frame, flags, static_cast<unsigned>(type),
           (unsigned)score);
-  strncpy(this->name, name, sizeof(this->name));
-  strncpy(this->buffer + offset, name, sizeof(this->name));
+  memcpy(this->name, name, sizeof(this->name));
+  memcpy(this->buffer + offset, name, sizeof(this->name));
 }
 
 ServerPacket::ServerPacket(unsigned frame, unsigned flags, const char *message)
@@ -87,8 +87,8 @@ ServerPacket::ServerPacket(unsigned frame, unsigned flags, const char *message)
       flags(flags),
       type(PACKET_MESSAGE) {
   sprintf(buffer, "%08x%08x%08x", frame, flags, static_cast<unsigned>(type));
-  strncpy(this->message, message, sizeof(this->message));
-  strncpy(this->buffer + offset, message, sizeof(this->message));
+  memcpy(this->message, message, sizeof(this->message));
+  memcpy(this->buffer + offset, message, sizeof(this->message));
 }
 
 ServerPacket::ServerPacket(const char *buf) {
@@ -103,18 +103,18 @@ ServerPacket::ServerPacket(const char *buf) {
       pos_x = (int)upos_x;
       height = (int)uheight;
       width = (int)uwidth;
-      strncpy(this->pattern, buf + offset, sizeof(this->pattern));
+      memcpy(this->pattern, buf + offset, sizeof(this->pattern));
       break;
     }
     case PACKET_PLAYER: {
       unsigned uscore = 0;
       sscanf(buf + 24, "%08x", &uscore);
       score = (int)uscore;
-      strncpy(this->name, buf + offset, sizeof(this->name));
+      memcpy(this->name, buf + offset, sizeof(this->name));
       break;
     }
     case PACKET_MESSAGE: {
-      strncpy(this->message, buf + offset, sizeof(this->name));
+      memcpy(this->message, buf + offset, sizeof(this->name));
       break;
     }
     default: {

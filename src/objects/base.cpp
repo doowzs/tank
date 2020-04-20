@@ -23,5 +23,5 @@ void Base::operator()(__attribute__((unused)) Object *object) {}
 void Base::update() {
   char life_str[8] = "";
   sprintf(life_str, "%03d", life);
-  strncpy(pattern + 11, life_str, 3);
+  memcpy(pattern + 11, life_str, sizeof(char) * 3);
 }
