@@ -27,10 +27,11 @@ class App {
   static const unsigned FPS;
   static const string addr;
   static const string port;
+  static const string logo[6];
 
  private:
   enum AppStatus status;
-  WINDOW *screen;
+  WINDOW *screen, *logo_window;
   string remote_address;
 
  public:

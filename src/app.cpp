@@ -19,13 +19,41 @@ const unsigned App::FPS = 60;
 const string App::addr = "0.0.0.0";
 const string App::port = "23333";
 
-App::App(WINDOW *screen) : screen(screen) { status = APP_INIT; }
+const string App::logo[6] = {
+    "aaaaaaaak aaaaak aaak  aakaak  aak", "mqqaalqqjaalqqaakaaaak aaxaax aalj",
+    "   aax   aaaaaaaxaalaakaaxaaaaaqj ", "   aax   aalqqaaxaaxmaaaaxaalqaak ",
+    "   aax   aax  aaxaax maaaxaax maak", "   mqj   mqj  mqjmqj  mqqjmqj  mqj",
+};
 
-App::~App() {}
+App::App(WINDOW *screen) : screen(screen) {
+  status = APP_INIT;
+  logo_window = newwin(6, 60, 1, 7);
+  for (int i = 0; i < 6; ++i) {
+    int len = logo[i].size();
+    for (int j = 0; j < len; ++j) {
+      if (isspace(logo[i][j])) {
+        mvwaddch(logo_window, i, j, logo[i][j]);
+      } else {
+        mvwaddch(logo_window, i, j, NCURSES_ACS(logo[i][j]));
+      }
+    }
+  }
+  mvwprintw(logo_window, 0, 36, "Advanced");
+  mvwprintw(logo_window, 1, 36, "Programming");
+  mvwprintw(logo_window, 2, 36, "Project 2");
+  mvwprintw(logo_window, 4, 36, "by @doowzs");
+  mvwprintw(logo_window, 5, 36, "April 2020");
+  wrefresh(logo_window);
+}
+
+App::~App() { delwin(logo_window); }
 
 void App::run() {
   while (status != APP_EXIT) {
-    menu();
+    status = APP_INIT;
+    redrawwin(logo_window);  // touch the entire windows as updated
+    wrefresh(logo_window);   // redraw the contents to the terminal
+    menu();                  // open the main menu to get selection
     switch (status) {
       case APP_GAME_NORMAL: {
         Server server(App::FPS, MODE_NORMAL, App::addr, App::port);
@@ -81,7 +109,7 @@ void App::menu() {
   ITEM **items = nullptr;
   MENU *menu = nullptr;
 
-  window = newwin(10, 60, 0, 0);
+  window = newwin(11, 60, 7, 1);
   keypad(window, true);
   box(window, 0, 0);
   wrefresh(window);
@@ -96,12 +124,11 @@ void App::menu() {
 
   menu = new_menu(items);
   set_menu_win(menu, window);
-  set_menu_sub(menu, derwin(window, 5, 59, 4, 1));
+  set_menu_sub(menu, derwin(window, 5, 59, 2, 1));
   set_menu_mark(menu, " -> ");
 
   post_menu(menu);
-  mvwprintw(window, 1, 5, "Main Menu");
-  mvwprintw(window, 2, 5, "Use arrow keys to navigate, ENTER to select.");
+  mvwprintw(window, 8, 5, "Use arrow keys to navigate, press ENTER to select.");
   wrefresh(window);
   status = APP_MENU;
 
@@ -157,7 +184,7 @@ void App::askRemoteAddress() {
   FIELD **fields = nullptr;
   FORM *form = nullptr;
 
-  window = newwin(4, 49, 3, 5);
+  window = newwin(4, 51, 8, 5);
   keypad(window, true);
   box(window, 0, 0);
   wrefresh(window);
