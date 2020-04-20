@@ -55,17 +55,28 @@ void App::run() {
     wrefresh(logo_window);   // redraw the contents to the terminal
     menu();                  // open the main menu to get selection
     switch (status) {
-      case APP_GAME_NORMAL: {
-        Server server(App::FPS, MODE_NORMAL, App::addr, App::port);
-        SocketClient client("local", App::FPS, "localhost", App::port);
+    case APP_GAME_NORMAL: {
+      Server server(App::FPS, MODE_NORMAL, App::addr, App::port);
+      SocketClient client("local", App::FPS, "localhost", App::port);
 
-        std::thread st(&Server::run, &server);
-        std::thread ct(&Client::run, &client);
+      std::thread st(&Server::run, &server);
+      std::thread ct(&Client::run, &client);
 
-        st.join();
-        ct.join();
-        break;
-      }
+      st.join();
+      ct.join();
+      break;
+    }
+    case APP_GAME_ENDLESS: {
+      Server server(App::FPS, MODE_ENDLESS, App::addr, App::port);
+      SocketClient client("local", App::FPS, "localhost", App::port);
+
+      std::thread st(&Server::run, &server);
+      std::thread ct(&Client::run, &client);
+
+      st.join();
+      ct.join();
+      break;
+    }
       case APP_GAME_COOP: {
         Server server(App::FPS, MODE_COOP, App::addr, App::port);
         SocketClient client("local", App::FPS, "localhost", App::port);
@@ -187,7 +198,7 @@ void App::askRemoteAddress() {
   FIELD **fields = nullptr;
   FORM *form = nullptr;
 
-  window = newwin(4, 51, 8, 5);
+  window = newwin(5, 51, 8, 5);
   keypad(window, true);
   box(window, 0, 0);
   wrefresh(window);
