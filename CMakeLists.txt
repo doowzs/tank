@@ -25,11 +25,18 @@ endif()
 # and https://stackoverflow.com/questions/13467072/c-boost-undefined-reference-to-boostsystemgeneric-category
 add_definitions(-DNCURSES_NOMACROS -DBOOST_ERROR_CODE_HEADER_ONLY)
 
+# Ncurses needs to be configured on macOS.
+# see https://stackoverflow.com/questions/56622042/clang-on-macos-fails-linking-lmenu-from-ncurses
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+	include_directories(/usr/local/opt/ncurses/include)
+	link_directories(/usr/local/opt/ncurses/lib)
+endif()
+
 find_package(Curses REQUIRED)
 find_package(Boost REQUIRED)
 find_package(Threads REQUIRED)
 add_executable(tank ${CMAKE_CXX_HEADERS} ${CMAKE_CXX_SOURCES})
 
 include_directories(${CMAKE_CXX_INCLUDE_PATH} ${CURSES_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
-target_link_libraries(tank PRIVATE menu ${CURSES_LIBRARIES} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(tank PRIVATE menu form ncurses ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 target_compile_options(tank PRIVATE ${CMAKE_CXX_COMPILE_FLAGS})
