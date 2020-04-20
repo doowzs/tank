@@ -51,12 +51,12 @@ SocketClient::~SocketClient() {
   refresh.clear();
   if (game_window != nullptr) {
     wborder(game_window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-    wrefresh(game_window);
+    wclear(game_window);
     delwin(game_window);
   }
   if (info_window != nullptr) {
     wborder(info_window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-    wrefresh(info_window);
+    wclear(info_window);
     delwin(info_window);
   }
 }
@@ -150,6 +150,11 @@ void SocketClient::init() {
     connect(socket, resolver.resolve(addr, port));
   } catch (exception &e) {
     Log("client init failed: %s", e.what());
+    mvwprintw(game_window, 1, 1, "An error occurred while");
+    mvwprintw(game_window, 2, 1, "connecting to \"%s\"", addr.c_str());
+    mvwprintw(game_window, 3, 1, "%s", e.what());
+    wrefresh(game_window);
+    status = CLIENT_OVER;
   }
 }
 
@@ -163,12 +168,15 @@ void SocketClient::over() {
     socket.close();
     socket.release();
   });
-  WINDOW *win = newwin(5, 20, 5, 5);
+  WINDOW *win = newwin(5, 30, 5, 1);
   box(win, 0, 0);
-  mvwprintw(win, 1, 1, "Game Over");
+  mvwprintw(win, 1, 10, "Game Over");
+  mvwprintw(win, 3, 3, "Press ENTER to continue.");
   wrefresh(win);
   while (getch() != '\n')
     ;
+  wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+  wclear(win);
   delwin(win);
 }
 

@@ -6,6 +6,7 @@
 #include <clients/socket.h>
 #include <common.h>
 #include <curses.h>
+#include <form.h>
 #include <menu.h>
 #include <server.h>
 
@@ -60,8 +61,11 @@ void App::run() {
         break;
       }
       case APP_GAME_CLIENT: {
-        SocketClient client("local", App::FPS, "localhost", App::port);
-        client.run();
+        string address = askServerAddress();
+        if (!address.empty()) {
+          SocketClient client("local", App::FPS, address, App::port);
+          client.run();
+        }
         break;
       }
       default: {
@@ -74,8 +78,14 @@ void App::run() {
 void App::menu() {
   int size = 6;
   bool selected = false;
+  WINDOW *window = nullptr;
   ITEM **items = nullptr;
   MENU *menu = nullptr;
+
+  window = newwin(10, 60, 0, 0);
+  keypad(window, true);
+  box(window, 0, 0);
+  wrefresh(window);
 
   items = (ITEM **)calloc(sizeof(ITEM *), size);
   items[0] = new_item("Normal", "Play against AI.");
@@ -86,16 +96,18 @@ void App::menu() {
   items[5] = new_item(nullptr, nullptr);
 
   menu = new_menu(items);
-  set_menu_win(menu, screen);
+  set_menu_win(menu, window);
+  set_menu_sub(menu, derwin(window, 5, 59, 4, 1));
   set_menu_mark(menu, " -> ");
 
-  werase(screen);
   post_menu(menu);
-  wrefresh(screen);
+  mvwprintw(window, 1, 5, "Main Menu");
+  mvwprintw(window, 2, 5, "Use arrow keys to navigate, ENTER to select.");
+  wrefresh(window);
   status = APP_MENU;
 
   while (!selected) {
-    int ch = getch();
+    int ch = wgetch(window);
     switch (ch) {
       case KEY_DOWN: {
         menu_driver(menu, REQ_DOWN_ITEM);
@@ -122,14 +134,86 @@ void App::menu() {
         break;
       }
     }
-    wrefresh(screen);
+    wrefresh(window);
   }
-  werase(screen);
-  wrefresh(screen);
 
   unpost_menu(menu);
   free_menu(menu);
   for (int i = 0; i < size; ++i) {
     free_item(items[i]);
   }
+  free(items);
+
+  wborder(window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+  wclear(window);
+  delwin(window);
+}
+
+string App::askServerAddress() {
+  int size = 2;
+  bool answered = false;
+  string address = "";
+  WINDOW *window = nullptr;
+  FIELD **fields = nullptr;
+  FORM *form = nullptr;
+
+  window = newwin(4, 49, 3, 5);
+  keypad(window, true);
+  box(window, 0, 0);
+  wrefresh(window);
+
+  fields = (FIELD **)calloc(sizeof(FIELD *), size);
+  fields[0] = new_field(1, 15, 0, 0, 0, 0);
+  set_field_back(fields[0], A_UNDERLINE);
+  field_opts_off(fields[0], O_AUTOSKIP);
+
+  form = new_form(fields);
+  set_form_win(form, window);
+  set_form_sub(form, derwin(window, 1, 15, 1, 21));
+
+  post_form(form);
+  mvwprintw(window, 1, 2, "Server IP address:");
+  mvwprintw(window, 2, 2, "Press ENTER to submit, empty addr to cancel.");
+  wrefresh(window);
+
+  while (!answered) {
+    int ch = wgetch(window);
+    switch (ch) {
+      case KEY_DOWN:
+        form_driver(form, REQ_NEXT_FIELD);
+        form_driver(form, REQ_END_LINE);
+        break;
+      case KEY_UP:
+        form_driver(form, REQ_PREV_FIELD);
+        form_driver(form, REQ_END_LINE);
+        break;
+      case 127: /* BACKSPACE */
+      case KEY_BACKSPACE:
+        form_driver(form, REQ_DEL_PREV);
+        break;
+      case 10: /* ENTER */
+      case KEY_ENTER:
+        answered = true;
+        form_driver(form, REQ_VALIDATION);
+        address = string(field_buffer(fields[0], 0));
+        address = address.substr(0, address.find(' '));
+        break;
+      default:
+        form_driver(form, ch);
+        break;
+    }
+  }
+
+  unpost_form(form);
+  free_form(form);
+  for (int i = 0; i < size; ++i) {
+    free_field(fields[i]);
+  }
+  free(fields);
+
+  wborder(window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+  wclear(window);
+  delwin(window);
+
+  return address;
 }

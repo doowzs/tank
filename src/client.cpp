@@ -28,7 +28,7 @@ void Client::run() {
   next = now =
       duration_cast<milliseconds>(system_clock::now().time_since_epoch());
 
-  status = CLIENT_PLAY;
+  if (status == CLIENT_INIT) status = CLIENT_PLAY;
   Assert(fps > 0, "fps must be positive");
 
   while (status == CLIENT_PLAY) {

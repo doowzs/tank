@@ -38,6 +38,7 @@ class App {
   ~App();
   void run();
   void menu();
+  string askServerAddress();
 };
 
 #endif

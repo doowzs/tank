@@ -29,6 +29,7 @@ int main() {
 
   // initialize colors
   init_colors();
+  refresh();
 
   // start the game
   app = new App(stdscr);
