@@ -61,9 +61,8 @@ void App::run() {
         break;
       }
       case APP_GAME_CLIENT: {
-        string address = askServerAddress();
-        if (!address.empty()) {
-          SocketClient client("local", App::FPS, address, App::port);
+        if (!remote_address.empty()) {
+          SocketClient client("local", App::FPS, remote_address, App::port);
           client.run();
         }
         break;
@@ -127,6 +126,7 @@ void App::menu() {
         } else if (current_item(menu) == items[2]) {
           status = APP_GAME_VERSUS;
         } else if (current_item(menu) == items[3]) {
+          askRemoteAddress();
           status = APP_GAME_CLIENT;
         } else {
           status = APP_EXIT;
@@ -145,14 +145,14 @@ void App::menu() {
   free(items);
 
   wborder(window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-  wclear(window);
+  werase(window);
+  wrefresh(window);
   delwin(window);
 }
 
-string App::askServerAddress() {
+void App::askRemoteAddress() {
   int size = 2;
   bool answered = false;
-  string address = "";
   WINDOW *window = nullptr;
   FIELD **fields = nullptr;
   FORM *form = nullptr;
@@ -195,8 +195,8 @@ string App::askServerAddress() {
       case KEY_ENTER:
         answered = true;
         form_driver(form, REQ_VALIDATION);
-        address = string(field_buffer(fields[0], 0));
-        address = address.substr(0, address.find(' '));
+        remote_address = string(field_buffer(fields[0], 0));
+        remote_address = remote_address.substr(0, remote_address.find(' '));
         break;
       default:
         form_driver(form, ch);
@@ -212,8 +212,7 @@ string App::askServerAddress() {
   free(fields);
 
   wborder(window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-  wclear(window);
+  werase(window);
+  wrefresh(window);
   delwin(window);
-
-  return address;
 }

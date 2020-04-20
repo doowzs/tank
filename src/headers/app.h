@@ -31,6 +31,7 @@ class App {
  private:
   enum AppStatus status;
   WINDOW *screen;
+  string remote_address;
 
  public:
   App() = delete;
@@ -38,7 +39,7 @@ class App {
   ~App();
   void run();
   void menu();
-  string askServerAddress();
+  void askRemoteAddress();
 };
 
 #endif

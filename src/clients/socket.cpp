@@ -51,12 +51,14 @@ SocketClient::~SocketClient() {
   refresh.clear();
   if (game_window != nullptr) {
     wborder(game_window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-    wclear(game_window);
+    werase(game_window);
+    wrefresh(game_window);
     delwin(game_window);
   }
   if (info_window != nullptr) {
     wborder(info_window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-    wclear(info_window);
+    werase(info_window);
+    wrefresh(info_window);
     delwin(info_window);
   }
 }
