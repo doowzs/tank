@@ -4,7 +4,7 @@
 #ifndef TANK_COMMON_H
 #define TANK_COMMON_H
 
-#define DEBUG true
+#define DEBUG false
 #include <debug.h>
 
 #define COLOR_FG_RED 1
