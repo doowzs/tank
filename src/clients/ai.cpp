@@ -110,6 +110,7 @@ enum PlayerAction AIClient::actRandomly() {
     }
   }
   Panic("should not reach here");
+  return ACTION_BAD;
 }
 
 bool AIClient::post(__attribute__((unused)) unsigned now,
