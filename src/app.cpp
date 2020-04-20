@@ -10,8 +10,8 @@
 #include <server.h>
 
 #include <cstdlib>
-#include <thread>
 #include <string>
+#include <thread>
 using std::string, std::to_string;
 
 const unsigned App::FPS = 60;
@@ -27,21 +27,41 @@ void App::run() {
     menu();
     switch (status) {
       case APP_GAME_NORMAL: {
-        Server *server = new Server(App::FPS, App::addr, App::port);
-        SocketClient *client = new SocketClient("local", App::FPS, "localhost", App::port);
+        Server server(App::FPS, MODE_NORMAL, App::addr, App::port);
+        SocketClient client("local", App::FPS, "localhost", App::port);
 
-        // a mutex is required: client must connect after server initialized
-        std::mutex mutex;
-        std::thread st(&Server::run, server);
-        std::thread ct(&Client::run, client);
+        std::thread st(&Server::run, &server);
+        std::thread ct(&Client::run, &client);
 
         st.join();
         ct.join();
+        break;
+      }
+      case APP_GAME_COOP: {
+        Server server(App::FPS, MODE_COOP, App::addr, App::port);
+        SocketClient client("local", App::FPS, "localhost", App::port);
 
-        delete server;
-        delete client;
-        server = nullptr;
-        client = nullptr;
+        std::thread st(&Server::run, &server);
+        std::thread ct(&Client::run, &client);
+
+        st.join();
+        ct.join();
+        break;
+      }
+      case APP_GAME_VERSUS: {
+        Server server(App::FPS, MODE_VERSUS, App::addr, App::port);
+        SocketClient client("local", App::FPS, "localhost", App::port);
+
+        std::thread st(&Server::run, &server);
+        std::thread ct(&Client::run, &client);
+
+        st.join();
+        ct.join();
+        break;
+      }
+      case APP_GAME_CLIENT: {
+        SocketClient client("local", App::FPS, "localhost", App::port);
+        client.run();
         break;
       }
       default: {
@@ -52,17 +72,18 @@ void App::run() {
 }
 
 void App::menu() {
-  int size = 5;
+  int size = 6;
   bool selected = false;
   ITEM **items = nullptr;
   MENU *menu = nullptr;
 
   items = (ITEM **)calloc(sizeof(ITEM *), size);
   items[0] = new_item("Normal", "Play against AI.");
-  items[1] = new_item("Cooperate", "Cooperate with a second player.");
-  items[2] = new_item("Online", "Play over the Internet.");
-  items[3] = new_item("Exit", "Exit the game.");
-  items[4] = new_item(nullptr, nullptr);
+  items[1] = new_item("Coop", "Cooperate with a second player as server.");
+  items[2] = new_item("Versus", "Play against a second player as server.");
+  items[3] = new_item("Connect", "Connect to another player as client.");
+  items[4] = new_item("Exit", "Exit the game.");
+  items[5] = new_item(nullptr, nullptr);
 
   menu = new_menu(items);
   set_menu_win(menu, screen);
@@ -90,9 +111,11 @@ void App::menu() {
         if (current_item(menu) == items[0]) {
           status = APP_GAME_NORMAL;
         } else if (current_item(menu) == items[1]) {
-          Panic("not implemented!");
+          status = APP_GAME_COOP;
         } else if (current_item(menu) == items[2]) {
-          Panic("not implemented!");
+          status = APP_GAME_VERSUS;
+        } else if (current_item(menu) == items[3]) {
+          status = APP_GAME_CLIENT;
         } else {
           status = APP_EXIT;
         }

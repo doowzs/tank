@@ -40,9 +40,11 @@ const int Server::POINTS_HIT_TANK = 50;
 const int Server::POINTS_HIT_WALL = 20;
 const int Server::POINTS_HIT_BULLET = 1;
 
-Server::Server(unsigned fps, const string &addr, const string &port)
+Server::Server(unsigned fps, enum ServerMode mode, const string &addr,
+               const string &port)
     : fps(fps),
       frame(0),
+      mode(mode),
       status(SERVER_INIT),
       addr(addr),
       port(port),
@@ -102,18 +104,50 @@ void Server::run() {
 
 void Server::init() {
   Log("waiting for player...");
-  Client *client = new SocketClient("you", acceptor.accept());
-  Player *player =
-      new Player(this, client, PLAYER_HUMAN, MAP_HEIGHT + 1 - 5, true);
-  players.emplace_back(player);
+  switch (mode) {
+    case MODE_NORMAL:
+    case MODE_INFINITE: {
+      Client *client = new SocketClient("you", acceptor.accept());
+      Player *player =
+          new Player(this, client, PLAYER_HUMAN, MAP_HEIGHT + 1 - 5, true);
+      players.emplace_back(player);
+      break;
+    }
+    case MODE_COOP: {
+      Client *client1 = new SocketClient("p1", acceptor.accept());
+      Player *player1 =
+          new Player(this, client1, PLAYER_HUMAN, MAP_HEIGHT + 1 - 5, true);
+      players.emplace_back(player1);
+      Client *client2 = new SocketClient("p2", acceptor.accept());
+      Player *player2 =
+          new Player(this, client2, PLAYER_HUMAN, MAP_HEIGHT + 1 - 5, false);
+      player2->base = player1->base;
+      players.emplace_back(player2);
+      break;
+    }
+    case MODE_VERSUS: {
+      Client *client1 = new SocketClient("p1", acceptor.accept());
+      Player *player1 =
+          new Player(this, client1, PLAYER_HUMAN, MAP_HEIGHT + 1 - 5, true);
+      players.emplace_back(player1);
+      Client *client2 = new SocketClient("p2", acceptor.accept());
+      Player *player2 = new Player(this, client2, PLAYER_HUMAN, 1, true);
+      players.emplace_back(player2);
+      break;
+    }
+    default:
+      Panic("should not reach here");
+  }
 
   Log("adding AI players...");
-  Client *ai_client1 = new AIClient(this, "bot1", 0.2, 0.2, 0.1);
-  Player *ai_player1 = new Player(this, ai_client1, PLAYER_AI, 1, false);
-  players.emplace_back(ai_player1);
-  Client *ai_client2 = new AIClient(this, "bot2", 0.2, 0.2, 0.1);
-  Player *ai_player2 = new Player(this, ai_client2, PLAYER_AI, 1, false);
-  players.emplace_back(ai_player2);
+  if (mode != MODE_VERSUS) {
+    Client *ai_client1 = new AIClient(this, "bot1", 0.2, 0.2, 0.1);
+    Player *ai_player1 = new Player(this, ai_client1, PLAYER_AI, 1, false);
+    players.emplace_back(ai_player1);
+    Client *ai_client2 = new AIClient(this, "bot2", 0.2, 0.2, 0.1);
+    Player *ai_player2 = new Player(this, ai_client2, PLAYER_AI, 1, false);
+    players.emplace_back(ai_player2);
+  }
   Log("all players connected");
 
   Log("generating game world...");

@@ -29,7 +29,8 @@ class SocketClient : public Client {
   WINDOW *game_window, *info_window;
 
  public:
-  SocketClient(const char *name, unsigned fps, const string &addr, const string &port);
+  SocketClient(const char *name, unsigned fps, const string &addr,
+               const string &port);
   explicit SocketClient(const char *name, tcp::socket &&socket);
   ~SocketClient();
   enum PlayerAction act();

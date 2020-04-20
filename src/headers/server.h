@@ -22,6 +22,13 @@ class Player;
 class Object;
 class Tank;
 
+enum ServerMode : unsigned {
+  MODE_NORMAL,
+  MODE_INFINITE,
+  MODE_COOP,
+  MODE_VERSUS,
+};
+
 enum ServerStatus : unsigned {
   SERVER_INIT,
   SERVER_PLAY,
@@ -39,6 +46,7 @@ class Server {
  private:
   unsigned fps;
   unsigned frame;
+  enum ServerMode mode;
   enum ServerStatus status;
   string addr, port;
   WINDOW *screen;
@@ -54,7 +62,7 @@ class Server {
 
  public:
   Server() = delete;
-  Server(unsigned fps, const string &addr, const string &port);
+  Server(unsigned fps, enum ServerMode mode, const string &addr, const string &port);
   ~Server();
   void run();
   void init();
