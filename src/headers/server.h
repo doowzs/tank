@@ -24,7 +24,7 @@ class Tank;
 
 enum ServerMode : unsigned {
   MODE_NORMAL,
-  MODE_INFINITE,
+  MODE_ENDLESS,
   MODE_COOP,
   MODE_VERSUS,
 };
@@ -58,6 +58,7 @@ class Server {
   vector<Object *> appends;  // new objects
   vector<Object *> brokens;  // past objects
   unsigned next_item_frame;
+  unsigned clear_countdown;  // target to clear game
 
  public:
   std::default_random_engine rng;  // random number generator

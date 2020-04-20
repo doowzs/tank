@@ -49,7 +49,8 @@ Server::Server(unsigned fps, enum ServerMode mode, const string &addr,
       addr(addr),
       port(port),
       acceptor(context, tcp::endpoint(tcp::v4(), stoi(port))),
-      next_item_frame(fps * GEN_ITEM_COUNTDOWN * 2) {
+      next_item_frame(fps * GEN_ITEM_COUNTDOWN * 2),
+      clear_countdown(mode == MODE_NORMAL ? 30 : 0) {
   world = new Player(this, nullptr, PLAYER_WORLD, -1, false);
   rng.seed(std::chrono::system_clock::now().time_since_epoch().count());
 }
@@ -105,8 +106,14 @@ void Server::run() {
 void Server::init() {
   Log("waiting for player...");
   switch (mode) {
-    case MODE_NORMAL:
-    case MODE_INFINITE: {
+    case MODE_NORMAL: {
+      Client *client = new SocketClient("you", acceptor.accept());
+      Player *player =
+          new Player(this, client, PLAYER_HUMAN, MAP_HEIGHT + 1 - 5, true);
+      players.emplace_back(player);
+      break;
+    }
+    case MODE_ENDLESS: {
       Client *client = new SocketClient("you", acceptor.accept());
       Player *player =
           new Player(this, client, PLAYER_HUMAN, MAP_HEIGHT + 1 - 5, true);
@@ -221,6 +228,14 @@ void Server::logic() {
         break;
       }
       case OBJECT_TANK: {
+        // check clear condition for normal mode
+        if (mode == MODE_NORMAL) {
+          --clear_countdown;
+          if (clear_countdown == 0) {
+            status = SERVER_OVER;
+            break;
+          }
+        }
         // tank broken, set player's respawn counter
         broken->player->tank = nullptr;
         broken->player->respawn_countdown = Server::RESPAWN_COUNTDOWN * fps;

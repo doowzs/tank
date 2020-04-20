@@ -103,28 +103,29 @@ void App::run() {
 }
 
 void App::menu() {
-  int size = 6;
+  int size = 7;
   bool selected = false;
   WINDOW *window = nullptr;
   ITEM **items = nullptr;
   MENU *menu = nullptr;
 
-  window = newwin(11, 60, 7, 1);
+  window = newwin(12, 60, 7, 1);
   keypad(window, true);
   box(window, 0, 0);
   wrefresh(window);
 
   items = (ITEM **)calloc(sizeof(ITEM *), size);
   items[0] = new_item("Normal", "Play against AI.");
-  items[1] = new_item("Coop", "Cooperate with a second player as server.");
-  items[2] = new_item("Versus", "Play against a second player as server.");
-  items[3] = new_item("Connect", "Connect to another player as client.");
-  items[4] = new_item("Exit", "Exit the game.");
-  items[5] = new_item(nullptr, nullptr);
+  items[1] = new_item("Endless", "Play against AI (endless mode).");
+  items[2] = new_item("Coop", "Cooperate with a second player as server.");
+  items[3] = new_item("Versus", "Play against a second player as server.");
+  items[4] = new_item("Connect", "Connect to another player as client.");
+  items[5] = new_item("Exit", "Exit the game.");
+  items[6] = new_item(nullptr, nullptr);
 
   menu = new_menu(items);
   set_menu_win(menu, window);
-  set_menu_sub(menu, derwin(window, 5, 59, 2, 1));
+  set_menu_sub(menu, derwin(window, 6, 59, 2, 1));
   set_menu_mark(menu, " -> ");
 
   post_menu(menu);
@@ -149,10 +150,12 @@ void App::menu() {
         if (current_item(menu) == items[0]) {
           status = APP_GAME_NORMAL;
         } else if (current_item(menu) == items[1]) {
-          status = APP_GAME_COOP;
+          status = APP_GAME_ENDLESS;
         } else if (current_item(menu) == items[2]) {
-          status = APP_GAME_VERSUS;
+          status = APP_GAME_COOP;
         } else if (current_item(menu) == items[3]) {
+          status = APP_GAME_VERSUS;
+        } else if (current_item(menu) == items[4]) {
           askRemoteAddress();
           status = APP_GAME_CLIENT;
         } else {
