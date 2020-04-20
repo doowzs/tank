@@ -67,14 +67,18 @@ void Tank::operator()() {
         break;
     }
     switch (action) {
-      case ACTION_SHOOT:
-        server->addObject(shoot(1));
-        if (shoot_countdown > 0) {
-          server->addObject(shoot(0));
-          server->addObject(shoot(2));
+      case ACTION_SHOOT: {
+        int nr = type == TANK_HEAVY ? 2 : 1;
+        for (int i = 0; i < nr; ++i) {
+          server->addObject(shoot(1));
+          if (shoot_countdown > 0) {
+            server->addObject(shoot(0));
+            server->addObject(shoot(2));
+          }
         }
         Log("%s shoots", player->getName());
         return;
+      }
       case ACTION_MOVE_UP:
         direction = D_UP;
         speed_y = -1, speed_x = 0;
