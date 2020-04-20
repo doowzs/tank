@@ -29,10 +29,10 @@ Tank::Tank(Server *server, Player *player, int pos_y, int pos_x,
       speed_countdown(0),
       shoot_countdown(0) {
   using std::uniform_int_distribution;
-  int lottery = uniform_int_distribution<int>(1, 5)(server->rng);
-  if (lottery < 3) {
+  int lottery = uniform_int_distribution<int>(1, 8)(server->rng);
+  if (lottery < 6) {
     type = TANK_NORMAL;
-  } else if (lottery == 4) {
+  } else if (lottery == 7) {
     type = TANK_SPEED;
     life = max_life = TANK_LIFE_SPEED;
   } else {
