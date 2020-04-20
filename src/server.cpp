@@ -229,7 +229,7 @@ void Server::logic() {
       }
       case OBJECT_TANK: {
         // check clear condition for normal mode
-        if (mode == MODE_NORMAL) {
+        if (mode == MODE_NORMAL and broken->player->type == PLAYER_AI) {
           --clear_countdown;
           if (clear_countdown == 0) {
             status = SERVER_OVER;
@@ -275,7 +275,7 @@ void Server::post() {
       if (!healthy) break;
       if (object->type == OBJECT_BORDER) continue;
       unsigned flags = 0;
-      if (player->type == PLAYER_HUMAN) {
+      if (object->player->type == PLAYER_HUMAN) {
         if (object->player == player) {
           flags |= (1 << FLAG_IS_CURRENT_PLAYER);
         } else {

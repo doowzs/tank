@@ -35,19 +35,21 @@ SocketClient::SocketClient(const char *name, unsigned fps, const string &addr,
   mvwprintw(info_window, 1, 12, "INFO");
   mvwprintw(mesg_window, 1, 8, "MESSAGES");
   mvwprintw(help_window, 1, 12, "HELP");
-  mvwprintw(help_window, 2, 1, "Actions:");
-  mvwprintw(help_window, 3, 4, "Move: arrow keys");
-  mvwprintw(help_window, 4, 4, "Shoot: spacebar");
-  mvwprintw(help_window, 5, 4, "Reset: shift+R");
-  mvwprintw(help_window, 6, 1, "Items:");
-  mvwaddch(help_window, 7, 4, NCURSES_ACS('}'));
-  mvwaddch(help_window, 8, 4, NCURSES_ACS('h'));
-  mvwaddch(help_window, 9, 4, NCURSES_ACS('`'));
-  mvwaddch(help_window, 10, 4, NCURSES_ACS('{'));
-  mvwprintw(help_window, 7, 5, ": speed upgrade");
-  mvwprintw(help_window, 8, 5, ": shoot upgrade");
-  mvwprintw(help_window, 9, 5, ": health kit");
-  mvwprintw(help_window, 10, 5, ": wall builder");
+  mvwprintw(help_window, 2, 3, "Actions:");
+  mvwprintw(help_window, 3, 6, "Move: arrow keys");
+  mvwprintw(help_window, 4, 6, "Shoot: spacebar");
+  mvwprintw(help_window, 5, 6, "Reset: shift + R");
+  mvwprintw(help_window, 6, 3, "Items:");
+  wattron(help_window, A_BOLD | COLOR_PAIR(COLOR_FG_GREEN));
+  mvwaddch(help_window, 7, 6, NCURSES_ACS('}'));
+  mvwaddch(help_window, 8, 6, NCURSES_ACS('h'));
+  mvwaddch(help_window, 9, 6, NCURSES_ACS('`'));
+  mvwaddch(help_window, 10, 6, NCURSES_ACS('{'));
+  wattroff(help_window, A_BOLD | COLOR_PAIR(COLOR_FG_GREEN));
+  mvwprintw(help_window, 7, 7, ": speed upgrade");
+  mvwprintw(help_window, 8, 7, ": shoot upgrade");
+  mvwprintw(help_window, 9, 7, ": health kit");
+  mvwprintw(help_window, 10, 7, ": wall builder");
 
   wrefresh(game_window);
   wrefresh(info_window);
@@ -284,14 +286,17 @@ void SocketClient::draw() {
   box(info_window, 0, 0);
   box(mesg_window, 0, 0);
   mvwprintw(info_window, 1, 12, "INFO");
-  mvwprintw(info_window, 2, 1, "server: %s", addr.c_str());
+  mvwprintw(info_window, 3, 3, "Server: %s", addr.c_str());
+  mvwprintw(info_window, 5, 3, "Players:");
   mvwprintw(mesg_window, 1, 10, "MESSAGES");
-  int info_line = 2, mesg_line = 2;
+  int info_line = 6, mesg_line = 3;
   for (auto &packet : packets) {
     if (packet->flags & (1 << FLAG_IS_CURRENT_PLAYER)) {
       wattron(game_window, A_BOLD | COLOR_PAIR(COLOR_FG_YELLOW));
-    } else if (packet->flags & (1 << FLAG_IS_ITEM)) {
+    } else if (packet->flags & (1 << FLAG_IS_ANOTHER_PLAYER)) {
       wattron(game_window, A_BOLD | COLOR_PAIR(COLOR_FG_BLUE));
+    } else if (packet->flags & (1 << FLAG_IS_ITEM)) {
+      wattron(game_window, A_BOLD | COLOR_PAIR(COLOR_FG_GREEN));
     }
     if (packet->flags & (1 << FLAG_IS_BRICK_WALL)) {
       wattroff(game_window, A_BOLD);
@@ -314,12 +319,12 @@ void SocketClient::draw() {
         break;
       }
       case PACKET_PLAYER: {
-        mvwprintw(info_window, ++info_line, 1, "player %s: %d", packet->name,
+        mvwprintw(info_window, info_line++, 5, "%-8s %-5d", packet->name,
                   packet->score);
         break;
       }
       case PACKET_MESSAGE: {
-        mvwprintw(mesg_window, ++mesg_line, 1, "%s", packet->message);
+        mvwprintw(mesg_window, mesg_line++, 2, "%s", packet->message);
         break;
       }
       default: {
@@ -329,8 +334,10 @@ void SocketClient::draw() {
     }
     if (packet->flags & (1 << FLAG_IS_CURRENT_PLAYER)) {
       wattroff(game_window, A_BOLD | COLOR_PAIR(COLOR_FG_YELLOW));
-    } else if (packet->flags & (1 << FLAG_IS_ITEM)) {
+    } else if (packet->flags & (1 << FLAG_IS_ANOTHER_PLAYER)) {
       wattroff(game_window, A_BOLD | COLOR_PAIR(COLOR_FG_BLUE));
+    } else if (packet->flags & (1 << FLAG_IS_ITEM)) {
+      wattroff(game_window, A_BOLD | COLOR_PAIR(COLOR_FG_GREEN));
     }
     if (packet->flags & (1 << FLAG_IS_BRICK_WALL)) {
       wattroff(game_window, A_DIM);
