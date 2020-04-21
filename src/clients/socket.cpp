@@ -238,10 +238,11 @@ void SocketClient::sync() {
   // First, send user input to server.
   try {
     enum PlayerAction action = input();
-    ClientPacket packet = ClientPacket(frame, 0, status, action);
-
-    boost::asio::write(
-        socket, boost::asio::buffer(packet.buffer, ClientPacket::length));
+    if (action != ACTION_IDLE) {
+      ClientPacket packet = ClientPacket(frame, 0, status, action);
+      boost::asio::write(
+          socket, boost::asio::buffer(packet.buffer, ClientPacket::length));
+    }
   } catch (exception &e) {
     Log("sync-1 failed: %s", e.what());
     status = CLIENT_OVER;
