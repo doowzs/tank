@@ -48,8 +48,10 @@ void Player::respawn() {
     --respawn_countdown;
   } else if (respawn_countdown == 0) {
     // do not delete the broken tank, server will handle it
-    tank = new Tank(server, this, 0, 0,
-                    respawn_y > Server::MAP_HEIGHT / 2 ? D_UP : D_DOWN);
+    if (tank == nullptr) {
+      tank = new Tank(server, this, 0, 0,
+                      respawn_y > Server::MAP_HEIGHT / 2 ? D_UP : D_DOWN);
+    }
     if (server->respawnTank(tank, respawn_y)) {
       Log("%s respawned at (%d, %d)", getName(), tank->getPosY(),
           tank->getPosX());

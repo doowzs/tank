@@ -379,7 +379,7 @@ bool Server::respawnTank(Tank *tank, int respawn_y) {
         min(respawn_y + 3, MAP_HEIGHT - tank->height))(rng);
     int pos_x = uniform_int_distribution<int>(1, MAP_WIDTH - tank->width)(rng);
     if (placeObject(tank, pos_y, pos_x)) {
-      objects.emplace_back(tank);
+      addObject(tank);
       return true;
     }
   }
