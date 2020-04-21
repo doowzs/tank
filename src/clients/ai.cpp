@@ -37,6 +37,8 @@ AIClient::AIClient(const Server *server, const char *name, double coef_thinking,
   rng.seed(std::chrono::system_clock::now().time_since_epoch().count());
 }
 
+void AIClient::clear() {}
+
 enum PlayerAction AIClient::act() {
   const Tank *tank = nullptr;
   const Object *target = nullptr;

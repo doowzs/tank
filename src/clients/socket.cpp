@@ -101,6 +101,20 @@ SocketClient::~SocketClient() {
   }
 }
 
+// read and discard all packets to avoid congestion (why not udp?)
+void SocketClient::clear() {
+  char buffer[128] = "";  // ISO C++ forbids VLA
+  try {
+    size_t length = socket.available();
+    while (length > ClientPacket::length) { // keep the last packet
+      length -= boost::asio::read(
+          socket, boost::asio::buffer(buffer, ClientPacket::length));
+    }
+  } catch (exception &e) {
+    Log("clear failed: %s", e.what());
+  }
+}
+
 enum PlayerAction SocketClient::act() {
   char buffer[128] = "";  // ISO C++ forbids VLA
   try {

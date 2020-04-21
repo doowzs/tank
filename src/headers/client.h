@@ -30,6 +30,7 @@ class Client {
   virtual ~Client();
   void run();
   virtual enum PlayerAction act() = 0;
+  virtual void clear() = 0;
   virtual bool post(unsigned now, unsigned flags) = 0;
   virtual bool post(unsigned now, unsigned flags, const Object *object) = 0;
   virtual bool post(unsigned now, unsigned flags, const Player *player) = 0;

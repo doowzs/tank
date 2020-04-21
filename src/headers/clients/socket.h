@@ -33,7 +33,8 @@ class SocketClient : public Client {
                const string &port);
   explicit SocketClient(const char *name, tcp::socket &&socket);
   ~SocketClient();
-  enum PlayerAction act();
+  void clear() final;
+  enum PlayerAction act() final;
   enum PlayerAction input();
   bool post(unsigned now, unsigned flags);
   bool post(unsigned now, unsigned flags, const Object *object);

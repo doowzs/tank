@@ -28,7 +28,8 @@ class AIClient : public Client {
  public:
   AIClient(const Server *server, const char *name, double coef_thinking,
            double coef_shooting, double coef_random);
-  enum PlayerAction act();
+  void clear() final;
+  enum PlayerAction act() final;
   enum PlayerAction actRandomly();
   bool post(unsigned now, unsigned flags);
   bool post(unsigned now, unsigned flags, const Object *object);

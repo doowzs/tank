@@ -264,6 +264,10 @@ void Server::logic() {
   for (auto &object : objects) {
     object->update();
   }
+  // clear all player's input (to avoid congestion)
+  for (auto &player : players) {
+    player->clear();
+  }
 }
 
 void Server::post() {

@@ -51,6 +51,7 @@ class Player {
   bool hasBase() const { return base != nullptr; }
   const Base *getBase() const { return base; }
   enum PlayerAction act();
+  void clear();
   void recover(int tr, int br);
   void buildWalls(int nr);
   void respawn();
