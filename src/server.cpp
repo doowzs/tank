@@ -5,6 +5,8 @@
 #include <clients/ai.h>
 #include <clients/socket.h>
 #include <common.h>
+#include <menu.h>
+#include <curses.h>
 #include <object.h>
 #include <objects/base.h>
 #include <objects/border.h>
@@ -263,10 +265,6 @@ void Server::logic() {
   // update pattern of all objects
   for (auto &object : objects) {
     object->update();
-  }
-  // clear all player's input (to avoid congestion)
-  for (auto &player : players) {
-    player->clear();
   }
 }
 
