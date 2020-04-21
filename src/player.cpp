@@ -54,6 +54,7 @@ void Player::respawn() {
       Log("%s respawned at (%d, %d)", getName(), tank->getPosY(),
           tank->getPosX());
       respawn_countdown = -1;
+      client->act();  // clear input
     }
   }
 }
