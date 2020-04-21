@@ -118,12 +118,14 @@ void SocketClient::clear() {
 enum PlayerAction SocketClient::act() {
   char buffer[128] = "";  // ISO C++ forbids VLA
   try {
+    bool hasInput = false;
     size_t length = socket.available();
     while (length >= ClientPacket::length) {
+      hasInput = true;
       length -= boost::asio::read(
           socket, boost::asio::buffer(buffer, ClientPacket::length));
     }
-    if (buffer[0] == '\0') {
+    if (!hasInput) {
       // no input from client
       return ACTION_IDLE;
     } else {
