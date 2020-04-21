@@ -17,7 +17,8 @@
 #define FLAG_IS_HEAVY_TANK 16
 #define FLAG_IS_BRICK_WALL 17
 #define FLAG_IS_METAL_WALL 18
-#define FLAG_END_OF_FRAME 31
+#define FLAG_END_OF_FRAME 30
+#define FLAG_END_OF_GAME 31
 
 enum PacketType : unsigned {
   PACKET_OBJECT,

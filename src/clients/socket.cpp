@@ -265,7 +265,11 @@ void SocketClient::sync() {
           break;
         }
         default: {
-          if (current->frame > frame) {
+          if (current->flags & (1 << FLAG_END_OF_GAME)) {
+            status = CLIENT_OVER;
+            return;
+          } else if (current->flags & (1 << FLAG_END_OF_FRAME) and
+                     current->frame > frame) {
             frame = current->frame;
             for (auto &packet : packets) {
               delete packet;

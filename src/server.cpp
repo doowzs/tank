@@ -318,7 +318,9 @@ void Server::over() {
   Assert(status == SERVER_OVER, "not over in over");
   // Destroy all players and objects.
   {
+    unsigned flags = 1 << FLAG_END_OF_GAME;
     for (auto &player : players) {
+      player->client->post(frame, flags);
       delete player;
     }
     players.clear();
