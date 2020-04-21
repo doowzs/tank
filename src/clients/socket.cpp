@@ -33,7 +33,7 @@ SocketClient::SocketClient(const char *name, unsigned fps, const string &addr,
   box(help_window, 0, 0);
 
   mvwprintw(info_window, 1, 12, "INFO");
-  mvwprintw(mesg_window, 1, 8, "MESSAGES");
+  mvwprintw(mesg_window, 1, 10, "MESSAGES");
   mvwprintw(help_window, 1, 12, "HELP");
   mvwprintw(help_window, 2, 3, "Actions:");
   mvwprintw(help_window, 3, 6, "Move: arrow keys");
