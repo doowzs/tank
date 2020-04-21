@@ -30,8 +30,6 @@ Player::~Player() {
 
 enum PlayerAction Player::act() { return client->act(); }
 
-void Player::clear() { return client->clear(); }
-
 void Player::recover(int tr, int br) {
   if (tank != nullptr) {
     tank->recover(tr);
