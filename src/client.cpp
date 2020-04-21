@@ -3,7 +3,6 @@
 
 #include <client.h>
 #include <common.h>
-#include <curses.h>
 #include <object.h>
 #include <packet.h>
 
