@@ -4,8 +4,6 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-#include <curses.h>
-
 #include <cstdio>
 #include <cassert>
 

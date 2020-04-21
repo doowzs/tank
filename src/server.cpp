@@ -5,8 +5,6 @@
 #include <clients/ai.h>
 #include <clients/socket.h>
 #include <common.h>
-#include <menu.h>
-#include <curses.h>
 #include <object.h>
 #include <objects/base.h>
 #include <objects/border.h>

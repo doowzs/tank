@@ -4,8 +4,6 @@
 #ifndef TANK_GAME_H
 #define TANK_GAME_H
 
-#include <curses.h>
-
 #include <random>
 #include <string>
 #include <vector>
@@ -49,7 +47,6 @@ class Server {
   enum ServerMode mode;
   enum ServerStatus status;
   string addr, port;
-  WINDOW *screen;
   io_context context;
   tcp::acceptor acceptor;
   Player *world;
