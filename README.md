@@ -369,7 +369,13 @@ init() ---> tick() -+-> over()
 
 由于服务端启动后监听`0.0.0.0:23333`地址，因此在Windows或macOS平台下第一次运行会触发防火墙，提示需要连接网络权限。程序内没有病毒，可以放心使用。
 
-以下截图为Debian10平台下VSCode中的终端的运行截图。
+<p style="text-align:center"><img src="assets/firewall.png" alt="firewall"/></p>
+
+请记得运行前先把命令行窗口开大一点，在Windows Terminal中的运行效果如下图：
+
+<p style="text-align:center"><img src="assets/windows.png" alt="windows"/></p>
+
+以下截图均为Debian10平台下VSCode中的终端的运行截图。
 
 ### 3.1 模式选择
 
@@ -464,7 +470,7 @@ Windows编译问题：mingw64一编译就一堆错误，msvc只能用PDCurses，
 
 ---
 
-macOS上标题出错：我也不知道问题在哪，我觉得是macOS终端的问题，打印超过连续6个该字符就花了。
+macOS上标题出错：我也不知道问题在哪，在VSCode的终端中运行完美，所以应该是macOS终端的问题，打印超过连续6个该字符就花了。
 
 <p style="text-align:center"><img src="assets/macos.png" alt="macos"/></p>
 
