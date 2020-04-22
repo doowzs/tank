@@ -48,7 +48,8 @@ Server::Server(unsigned fps, enum ServerMode mode, const string &addr,
       port(port),
       acceptor(context, tcp::endpoint(tcp::v4(), stoi(port))),
       next_item_frame(fps * GEN_ITEM_COUNTDOWN * 2),
-      clear_countdown(mode == MODE_NORMAL ? 30 : 0) {
+      life_countdown(mode == MODE_NORMAL ? 30 : 0),
+      tank_countdown(mode == MODE_NORMAL ? 30 : 0) {
   world = new Player(this, nullptr, PLAYER_WORLD, -1, false);
   rng.seed(std::chrono::system_clock::now().time_since_epoch().count());
 }
@@ -227,9 +228,13 @@ void Server::logic() {
       }
       case OBJECT_TANK: {
         // check clear condition for normal mode
-        if (mode == MODE_NORMAL and broken->player->type == PLAYER_AI) {
-          --clear_countdown;
-          if (clear_countdown == 0) {
+        if (mode == MODE_NORMAL) {
+          if (broken->player->type == PLAYER_HUMAN) {
+            --life_countdown;
+          } else if (broken->player->type == PLAYER_AI) {
+            --tank_countdown;
+          }
+          if (life_countdown == 0 or tank_countdown == 0) {
             status = SERVER_OVER;
             break;
           }
@@ -305,7 +310,9 @@ void Server::post() {
     }
     if (mode == MODE_NORMAL) {
       char message[32] = "";
-      sprintf(message, " %d enemies left.", clear_countdown);
+      sprintf(message, " %d lives left.", life_countdown);
+      player->client->post(frame, 0, message);
+      sprintf(message, " %d enemies left.", tank_countdown);
       player->client->post(frame, 0, message);
     }
     if (healthy) {

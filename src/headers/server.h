@@ -55,7 +55,8 @@ class Server {
   vector<Object *> appends;  // new objects
   vector<Object *> brokens;  // past objects
   unsigned next_item_frame;
-  unsigned clear_countdown;  // target to clear game
+  unsigned life_countdown;  // lifes remaining (normal mode)
+  unsigned tank_countdown;  // tanks remaining (normal mode)
 
  public:
   std::default_random_engine rng;  // random number generator
