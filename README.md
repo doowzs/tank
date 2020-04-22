@@ -6,9 +6,9 @@
 
 ---
 
-<p style="text-align:center"><img src="assets/meme.jpg" alt="meme"/></p>
+<p style="text-align:center;"><img src="assets/meme.jpg" alt="meme"/></p>
 
-<p style="text-align:center">这个程序看起来很牛逼但是真的没有在内卷</p>
+<p style="text-align:center;">这个程序看起来很牛逼但是真的没有在内卷</p>
 
 ## 一、主要内容
 
@@ -69,7 +69,7 @@ Tank
 
 ### 2.1 类关系图
 
-<p style="text-align:center"><img src="assets/classes.png" alt="classes"/></p>
+<p style="text-align:center;"><img src="assets/classes.png" alt="classes"/></p>
 
 ### 2.2 前后端分离
 
@@ -108,7 +108,7 @@ Tank
 
 TL;DR：套接字通信+状态同步。
 
-<p style="text-align:center"><img src="assets/players.png" alt="players"/></p>
+<p style="text-align:center;"><img src="assets/players.png" alt="players"/></p>
 
 对于AI玩家来说，直接将服务端的各种类都声明它的友元即可。AI玩家在服务端运行，通过友元关系直接获取到游戏的各种数据（相当于上帝视角），并根据这些数据（由于能力不够，所以还有一个随机概率）来做出自己的操作。
 
@@ -121,13 +121,13 @@ TL;DR：套接字通信+状态同步。
   - 如果用TCP可以保证数据包的顺序；
   - 支持各种多人玩法，可扩展性强……
 
-<p style="text-align:center"><img src="assets/meme2.jpg" alt="meme"/></p>
+<p style="text-align:center;"><img src="assets/meme2.jpg" alt="meme"/></p>
 
-<p style="text-align:center">最后脑子一热就选了网络编程（当事人很后悔，就是后悔）。</p>
+<p style="text-align:center;">最后脑子一热就选了网络编程（当事人很后悔，就是后悔）。</p>
 
 下图是最新的2020爆款坦克大战数据协议：
 
-<p style="text-align:center"><img src="assets/protocol.png" alt="protocol"/></p>
+<p style="text-align:center;"><img src="assets/protocol.png" alt="protocol"/></p>
 
 数据采用最简单的定长字段，使用TCP协议传送，避免了给数据包排序、处理丢包和“粘包”的问题。
 
@@ -369,11 +369,11 @@ init() ---> tick() -+-> over()
 
 由于服务端启动后监听`0.0.0.0:23333`地址，因此在Windows或macOS平台下第一次运行会触发防火墙，提示需要连接网络权限。程序内没有病毒，可以放心使用。
 
-<p style="text-align:center"><img src="assets/firewall.png" alt="firewall"/></p>
+<p style="text-align:center;"><img src="assets/firewall.png" alt="firewall"/></p>
 
 请记得运行前先把命令行窗口开大一点，在Windows Terminal中的运行效果如下图：
 
-<p style="text-align:center"><img src="assets/windows.png" alt="windows"/></p>
+<p style="text-align:center;"><img src="assets/windows.png" alt="windows"/></p>
 
 以下截图均为Debian10平台下VSCode中的终端的运行截图。
 
@@ -381,17 +381,17 @@ init() ---> tick() -+-> over()
 
 运行程序后，首先可以看到标题界面：
 
-<p style="text-align:center"><img src="assets/title.png" alt="title"/></p>
+<p style="text-align:center;"><img src="assets/title.png" alt="title"/></p>
 
 可以用方向键选择模式，并按下回车选择。前两项为单人模式（消灭30个坦克胜利和无尽模式），后两项为多人合作/对抗模式。菜单的第五项为连接到远程服务器，需要输入服务器地址：
 
-<p style="text-align:center"><img src="assets/connect.png" alt="connect"/></p>
+<p style="text-align:center;"><img src="assets/connect.png" alt="connect"/></p>
 
 ### 3.2 单人模式
 
 游戏启动后，主界面如下图所示：
 
-<p style="text-align:center"><img src="assets/game.png" alt="game"/></p>
+<p style="text-align:center;"><img src="assets/game.png" alt="game"/></p>
 
 可以看到，界面分为四大块：
 
@@ -413,7 +413,7 @@ init() ---> tick() -+-> over()
 
 所操控玩家的坦克、基地和其他物品用黄色高亮显示。玩家的基地共有100HP。每次玩家复活都有3秒的惩罚时间（自己重置也会有惩罚），会随机生成三种坦克中的一种。当玩家的基地被打爆或者完成了通关条件即游戏结束。
 
-<p style="text-align:center"><img src="assets/gameover.png" alt="gameover"/></p>
+<p style="text-align:center;"><img src="assets/gameover.png" alt="gameover"/></p>
 
 地图上每个一定时间会随机生成一种道具，道具使用绿色高亮表示。玩家捡到即可获得不同种类的能力：
 
@@ -422,7 +422,7 @@ init() ---> tick() -+-> over()
 - 回复HP：玩家回复坦克最多3HP，回复基地最多15HP（上限999）；
 - 制造障碍物：在地图中随机生成最多5堵障碍物，阻碍敌方进攻。
 
-<p style="text-align:center"><img src="assets/item.png" alt="item"/></p>
+<p style="text-align:center;"><img src="assets/item.png" alt="item"/></p>
 
 然而道具是有时间限制的，超过一定时间就会消失，在消失前会闪烁来提醒玩家。
 
@@ -430,7 +430,7 @@ init() ---> tick() -+-> over()
 
 如果选择启动多人模式，那么游戏将会等待另外一个玩家联入后才会开始：
 
-<p style="text-align:center"><img src="assets/waiting.png" alt="waiting"/></p>
+<p style="text-align:center;"><img src="assets/waiting.png" alt="waiting"/></p>
 
 此时可以在另一个进程中选择Connect并输入地址来连接游戏。
 
@@ -438,7 +438,7 @@ init() ---> tick() -+-> over()
 
 多人模式的界面如下图所示，本机玩家使用黄色高亮表示，而另一名真人玩家使用蓝色高亮表示。
 
-<p style="text-align:center"><img src="assets/coop.png" alt="coop"/></p>
+<p style="text-align:center;"><img src="assets/coop.png" alt="coop"/></p>
 
 ## 四、课程设计总结
 
@@ -453,7 +453,7 @@ init() ---> tick() -+-> over()
 
 你甚至可以看到无法阅读的硬编码logo！（草）
 
-<p style="text-align:center"><img src="assets/logo.png" alt="logo"/></p>
+<p style="text-align:center;"><img src="assets/logo.png" alt="logo"/></p>
 
 ---
 
@@ -472,7 +472,7 @@ Windows编译问题：mingw64一编译就一堆错误，msvc只能用PDCurses，
 
 macOS上标题出错：我也不知道问题在哪，在VSCode的终端中运行完美，所以应该是macOS终端的问题，打印超过连续6个该字符就花了。
 
-<p style="text-align:center"><img src="assets/macos.png" alt="macos"/></p>
+<p style="text-align:center;"><img src="assets/macos.png" alt="macos"/></p>
 
 ### 4.2 实验感想
 
